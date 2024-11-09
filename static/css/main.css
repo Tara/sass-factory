@@ -185,15 +185,51 @@ h1, h2, h3 {
 }
 
 .cast-card {
-  border: 1px solid var(--color-primary);
-  border-radius: 4px;
-  overflow: hidden;
+    position: relative; /* Needed for gradient border */
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--color-background);
+    /* Remove the original border since we'll create it with a pseudo-element */
+    border: none;
 }
 
+/* Create gradient border using pseudo-element */
+.cast-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 4px;
+    padding: 1px; /* This is the border width */
+    background: var(--gradient-gold);
+    -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+    mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+}
+
+/* Update the cast-name border to use gradient as well */
 .cast-name {
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid var(--color-primary);
-  margin: 0;
+    padding: 1rem 1.5rem;
+    position: relative;
+    margin: 0;
+    border-bottom: none; /* Remove original border */
+}
+
+.cast-name::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: var(--gradient-gold);
 }
 
 .cast-content {
