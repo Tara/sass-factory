@@ -1,6 +1,4 @@
 ---
-# content/shows/_index.md
----
 title: "Shows"
 defaultImage: "images/default-show.jpg"
 shows:
@@ -11,7 +9,6 @@ shows:
       address: "123 Main St"
       ticketLink: "https://tickets.example.com"
       price: "$15"
-      
   recurring:
     - title: "Monthly Showcase"
       day: "Last Friday"

@@ -1,5 +1,5 @@
 {{/* layouts/shortcodes/next-show.html */}}
-{{ $shows := .Page.Site.GetPage "shows" }}
+{{ $shows := .Site.GetPage "shows" }}
 {{ with $shows }}
     {{ $upcoming := .Params.shows.upcoming }}
     {{ $now := now }}
