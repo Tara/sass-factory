@@ -1,55 +1,56 @@
-{{/* layouts/cast/list.html */}}
 {{ define "main" }}
-<div class="max-w-6xl mx-auto px-4 py-12">
-    <h1 class="theme-heading text-4xl mb-8">{{ .Title }}</h1>
+<div class="container">
+    <h1 class="page-title">{{ .Title }}</h1>
     
-    <!-- Changed this line to properly render the markdown content -->
-    <p class="text-text-secondary text-xl mb-12">{{ .Content | markdownify }}</p>
+    <p class="page-description">{{ .Content | markdownify }}</p>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div class="cast-list">
         {{ range .Pages }}
-        <article class="theme-card">
-            <div class="aspect-w-16 aspect-h-9 bg-background/50">
-                {{ if .Params.image }}
-                <img src="/images/{{ .Params.image }}" 
-                     alt="{{ .Title }}" 
-                     class="object-cover w-full h-full">
-                {{ else }}
-                <div class="flex items-center justify-center bg-accent/10">
-                    <span class="text-text-secondary">Photo Coming Soon</span>
-                </div>
-                {{ end }}
-            </div>
-            <div class="p-6">
-                <h2 class="theme-heading text-2xl mb-2">{{ .Title }}</h2>
-                <p class="text-text-secondary mb-3">{{ .Params.role }}</p>
-                
-                {{ with .Params.specialties }}
-                <div class="flex flex-wrap gap-2 mb-4">
-                    {{ range . }}
-                    <span class="px-3 py-1 text-sm bg-accent/10 text-text-secondary rounded-full">
-                        {{ . }}
-                    </span>
+        <article class="cast-card">
+            <h2 class="cast-name">{{ .Title }}</h2>
+            <div class="cast-content">
+                <div class="cast-photo-container">
+                    {{ if .Params.image }}
+                    <img src="/images/{{ .Params.image }}" 
+                         alt="{{ .Title }}" 
+                         class="cast-photo">
+                    {{ else }}
+                    <div class="cast-photo-placeholder">
+                        <span>Photo Coming Soon</span>
+                    </div>
                     {{ end }}
                 </div>
-                {{ end }}
                 
-                <div class="prose text-text-body mb-4">
-                    {{ .Content | markdownify }}
-                </div>
+                <div class="cast-details">
+                    {{ with .Params.role }}
+                    <p class="cast-role">{{ . }}</p>
+                    {{ end }}
+                    
+                    {{ with .Params.specialties }}
+                    <div class="specialty-tags">
+                        {{ range . }}
+                        <span class="specialty-tag">{{ . }}</span>
+                        {{ end }}
+                    </div>
+                    {{ end }}
+                    
+                    <div class="cast-bio">
+                        {{ .Content | markdownify }}
+                    </div>
 
-                {{ with .Params.social }}
-                <div class="flex gap-4">
-                    {{ with .instagram }}
-                    <a href="https://instagram.com/{{ . }}" 
-                       class="theme-link"
-                       target="_blank"
-                       rel="noopener">
-                        {{ . }}
-                    </a>
+                    {{ with .Params.social }}
+                    <div class="social-links">
+                        {{ with .instagram }}
+                        <a href="https://instagram.com/{{ . }}" 
+                           class="social-link"
+                           target="_blank"
+                           rel="noopener">
+                            {{ . }}
+                        </a>
+                        {{ end }}
+                    </div>
                     {{ end }}
                 </div>
-                {{ end }}
             </div>
         </article>
         {{ end }}
