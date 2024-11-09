@@ -1,0 +1,108 @@
+/* static/css/main.css */
+:root {
+    --color-primary: #FFA500;    /* Golden orange from logo */
+    --color-background: #FFFFFF; /* Rich black */
+    --color-accent: #8A2BE2;     /* Bright purple from logo */
+    --color-secondary: #4FB3FF;  /* Bright blue from waves */
+    --color-text: #1A1A1A;       /* White text */
+    --gradient-gold: linear-gradient(45deg, #FFA500, #FFD700);
+  }
+  
+  /* Base styles */
+  body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+  }
+  
+  /* Layout */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    position: relative;
+  }
+  
+  /* Header */
+  .site-header {
+    background-color: var(--color-background);
+    border-bottom: 2px solid var(--color-primary);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  
+  .site-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 4rem;
+    padding: 0 2rem;
+  }
+  
+  .site-logo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .site-logo img {
+    height: 2.5rem;
+    width: auto;
+  }
+  
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+  }
+  
+  .nav-links a {
+    color: var(--color-text);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+  
+  .nav-links a:hover {
+    color: var(--color-primary);
+  }
+  
+  /* Main content */
+  main {
+    padding: 2rem 0;
+  }
+  
+  /* Hero section */
+  .hero {
+    text-align: center;
+    padding: 4rem 0;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .hero img {
+    max-width: 300px;
+    height: auto;
+    margin-bottom: 2rem;
+  }
+  
+  .hero h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--color-primary);
+  }
+  
+  .hero p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+  
+  /* Footer */
+  .site-footer {
+    background: r
