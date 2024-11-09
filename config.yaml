@@ -1,0 +1,27 @@
+# config.yaml
+baseURL: "https://sassfactory.com"  # Change this to your domain
+languageCode: "en-us"
+title: "Sass Factory"
+
+# Remove theme line if you want to use our custom layouts
+# theme: "paper"
+
+menu:
+  main:
+    - identifier: "shows"
+      name: "Shows"
+      url: "/shows/"
+      weight: 1
+    - identifier: "current-cast"
+      name: "Current Cast"
+      url: "/cast/"
+      weight: 2
+    - identifier: "emeritus"
+      name: "Sassies Emeritus"
+      url: "/emeritus/"
+      weight: 3
+
+params:
+  description: "Bringing unscripted joy and spontaneous sass to the stage"
+
+  
