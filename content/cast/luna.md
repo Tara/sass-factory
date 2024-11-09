@@ -1,5 +1,5 @@
 ---
-title: "Emily"
+title: "Luna"
 role: "Cast Member"
 yearJoined: 2023
 specialties: ["Character Work"]
