@@ -1,11 +1,11 @@
 ---
-title: "Emily"
+title: "Tara"
 role: "Cast Member"
 yearJoined: 2023
 specialties: ["Musical Improv", "Character Work"]
-image: "headshots/emily.jpg"
+image: "headshots/tara.jpg"
 # social:
 #   instagram: "@alexjimprov"
 ---
 
-Emily is full of delightful energy.
+Tara made this website. I'm sorry.
