@@ -7,7 +7,6 @@
     <div class="cast-list">
         {{ range .Pages }}
         <article class="cast-card">
-            <h2 class="cast-name">{{ .Title }}</h2>
             <div class="cast-content">
                 <div class="cast-photo-container">
                     {{ if .Params.image }}
@@ -22,9 +21,11 @@
                 </div>
                 
                 <div class="cast-details">
-                    {{ with .Params.role }}
+                    <h2 class="cast-member-name">{{ .Title }}</h2>
+                    
+                    <!-- {{ with .Params.role }}
                     <p class="cast-role">{{ . }}</p>
-                    {{ end }}
+                    {{ end }} -->
                     
                     {{ with .Params.specialties }}
                     <div class="specialty-tags">

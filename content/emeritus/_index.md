@@ -1,6 +1,6 @@
 ---
 title: "Sassies Emeritus"
-layout: "emeritus-list"
+layout: "cast-list"
 ---
 
 Meet past Sassies.

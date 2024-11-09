@@ -1,0 +1,117 @@
+/* Cast page specific styles */
+.cast-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.cast-card {
+    position: relative;
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--color-background);
+    border: none;
+}
+
+.cast-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 4px;
+    padding: 1px;
+    background: var(--gradient-gold);
+    -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+    mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+}
+
+.cast-content {
+  display: flex;
+  padding: 1.5rem;
+  gap: 1.5rem;
+}
+
+.cast-photo-container {
+  width: 200px;
+  height: 267px;
+  flex: 0 0 auto;
+  overflow: hidden;
+  position: relative;
+}
+
+.cast-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.cast-details {
+  flex: 1 1 auto;
+}
+
+.cast-member-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2rem;
+  color: var(--color-primary);
+  margin: 0 0 0.5rem 0;
+  background: var(--gradient-gold);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.cast-role {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: var(--color-text);
+}
+
+.specialty-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.specialty-tag {
+  padding: 0.25rem 0.75rem;
+  background-color: rgba(138, 43, 226, 0.1);
+  border-radius: 999px;
+  font-size: 0.875rem;
+}
+
+.cast-bio {
+  margin-bottom: 1.5rem;
+}
+
+.social-links {
+  display: flex;
+  gap: 1rem;
+}
+
+/* Media query for mobile devices */
+@media (max-width: 768px) {
+  .cast-content {
+    flex-direction: column;
+  }
+  
+  .cast-photo-container {
+    width: 100%;
+    height: 300px;
+    margin-bottom: 1rem;
+  }
+
+  .cast-member-name {
+    font-size: 1.75rem;
+  }
+}
