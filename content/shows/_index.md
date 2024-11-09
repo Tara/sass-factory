@@ -3,17 +3,23 @@ title: "Shows"
 defaultImage: "images/default-show.jpg"
 shows:
   upcoming:
-    - title: "Friday Night Sass"
-      date: 2024-11-15T20:00:00
-      venue: "Downtown Theater"
-      address: "123 Main St"
-      ticketLink: "https://tickets.example.com"
-      price: "$15"
-  recurring:
-    - title: "Monthly Showcase"
-      day: "Last Friday"
-      time: "8:00 PM"
-      venue: "The Comedy Spot"
-      address: "789 Broadway"
-      price: "$10"
+    - title: "Jokeland"
+      date: 2024-11-09T15:30:00
+      venue: "Jokeland"
+      address: "2727 California Street Berkeley, CA 94703"
+      ticketLink: "https://www.eventbrite.com/e/jokeland-variety-show-tickets-1022823642047?aff=erelexpmlt"
+      price: "FREE!"
+    - title: "Leela Winter Show"
+      date: 2024-11-23T19:30:00
+      venue: "Leela"
+      address: "901 Mission Street San Francisco, CA 94103"
+      ticketLink: "https://www.eventbrite.com/e/leela-improv-show-sat-112324-sanfrancisco-ca-tickets-1027970255707?aff=erelexpmlt"
+      price: "$22.58"      
+  # recurring:
+  #   - title: "Monthly Showcase"
+  #     day: "Last Friday"
+  #     time: "8:00 PM"
+  #     venue: "The Comedy Spot"
+  #     address: "789 Broadway"
+  #     price: "$10"
 ---

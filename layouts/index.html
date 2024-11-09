@@ -9,19 +9,9 @@
 
     <!-- Next Show Card with enhanced styling -->
     <div class="mt-12">
-        <h2 class="text-3xl font-bold mb-8">Next Show</h2>
         {{ if .Params.shows }}
             <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
                 {{/* Show content */}}
-            </div>
-        {{ else }}
-            <div class="text-center py-12 bg-white rounded-xl">
-                <p class="text-gray-600">No upcoming shows scheduled yet.</p>
-                <p class="mt-2">
-                    <a href="/contact" class="text-indigo-600 hover:text-indigo-800">
-                        Contact us to book a show!
-                    </a>
-                </p>
             </div>
         {{ end }}
     </div>
