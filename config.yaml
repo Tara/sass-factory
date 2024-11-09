@@ -21,3 +21,5 @@ markup:
   goldmark:
     renderer:
       unsafe: true
+params:
+  teamPhoto: "/images/team-photo.jpg"

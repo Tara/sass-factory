@@ -1,0 +1,25 @@
+{{/* layouts/shortcodes/hero-banner.html */}}
+<div class="hero-banner">
+  <div class="hero-container">
+    <!-- Main image container -->
+    <div class="hero-image-container">
+      <img src="{{ .Site.Params.teamPhoto }}" alt="Sass Factory Improv Team" class="hero-image">
+      <div class="hero-overlay"></div>
+    </div>
+    
+    <!-- Content overlay -->
+    <div class="hero-content">
+      <h1>
+        <span class="gradient-text">SASS FACTORY</span>
+      </h1>
+      <p>One of San Francisco's premier improv troupe, bringing whimsical, wacky, and wonderful narratives to the Bay Area since 2023.</p>
+    </div>
+  </div>
+  
+  <!-- Diagonal slice -->
+  <div class="hero-slice">
+    <svg viewBox="0 0 100 12" preserveAspectRatio="none">
+      <path d="M0 12 L100 12 L100 0 L0 12 Z" />
+    </svg>
+  </div>
+</div>
