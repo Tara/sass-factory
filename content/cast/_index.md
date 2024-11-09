@@ -1,6 +1,4 @@
 ---
-# content/cast/_index.md
----
 title: "Current Cast"
 layout: "cast-list"
 ---

@@ -1,6 +1,4 @@
----
-# content/cast/example-member.md
----
+<!-- ---
 title: "Alex Johnson"
 role: "Cast Member"
 yearJoined: 2022
@@ -10,4 +8,4 @@ social:
   instagram: "@alexjimprov"
 ---
 
-Alex has been bringing musical mayhem to Sass Factory since 2022.
+Alex has been bringing musical mayhem to Sass Factory since 2022. -->

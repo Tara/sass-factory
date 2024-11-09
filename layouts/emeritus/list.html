@@ -1,10 +1,8 @@
-{{/* layouts/cast/list.html */}}
+{{/* layouts/emeritus/list.html */}}
 {{ define "main" }}
 <div class="max-w-6xl mx-auto px-4 py-12">
     <h1 class="theme-heading text-4xl mb-8">{{ .Title }}</h1>
-    
-    <!-- Changed this line to properly render the markdown content -->
-    <p class="text-text-secondary text-xl mb-12">{{ .Content | markdownify }}</p>
+    <p class="text-text-secondary text-xl mb-12">{{ .Content }}</p>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         {{ range .Pages }}
@@ -35,7 +33,7 @@
                 {{ end }}
                 
                 <div class="prose text-text-body mb-4">
-                    {{ .Content | markdownify }}
+                    {{ .Content }}
                 </div>
 
                 {{ with .Params.social }}
