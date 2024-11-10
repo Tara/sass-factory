@@ -2,7 +2,7 @@
 title: "Shawn"
 role: "Cast Member"
 yearJoined: 2024
-specialties: ["Sexual Innuendo", "Character Work"]
+specialties: ["Never Using Sexual Innuendo", "Character Work"]
 image: "headshots/shawn.jpg"
 # social:
 #   instagram: "@alexjimprov"
