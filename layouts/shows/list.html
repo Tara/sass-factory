@@ -6,7 +6,8 @@
     <!-- Upcoming Shows Section -->
     <section class="mb-16">
         <!-- <h2 class="text-3xl mb-6 font-display" style="color: var(--color-accent)">Upcoming Shows</h2> -->
-        {{ $now := now }}
+        {{ $t24h := time.ParseDuration "-24h" }}
+        {{ $now := now.Add $t24h }} <!-- Subtract 24 because timezones and a bit of buffer -->
         {{ $hasUpcoming := false }}
         {{ range .Params.shows.upcoming }}
             {{ $showDate := time .date }}

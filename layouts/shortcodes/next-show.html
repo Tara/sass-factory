@@ -1,7 +1,8 @@
 {{ $shows := .Site.GetPage "/shows" }}
 {{ with $shows }}
     {{ $upcoming := .Params.shows.upcoming }}
-    {{ $now := now }}
+    {{ $t24h := time.ParseDuration "-24h" }}
+    {{ $now := now.Add $t24h }} <!-- Subtract 24 because timezones and a bit of buffer -->
     {{ $hasUpcoming := false }}
     {{ range $upcoming }}
         {{ $showDate := time .date }}

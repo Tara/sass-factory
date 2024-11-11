@@ -4,7 +4,7 @@ defaultImage: "images/default-show.jpg"
 shows:
   upcoming:
     - title: "Jokeland"
-      date: 2024-11-09T15:30:00
+      date: 2024-11-09T19:30:00
       venue: "Jokeland"
       address: "2727 California Street Berkeley, CA 94703"
       ticketLink: "https://www.eventbrite.com/e/jokeland-variety-show-tickets-1022823642047?aff=erelexpmlt"
