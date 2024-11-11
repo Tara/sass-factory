@@ -1,0 +1,30 @@
+{{ define "main" }}
+<div class="gallery-header">
+    <h1>{{ .Title }}</h1>
+    {{ with .Description }}<p>{{ . }}</p>{{ end }}
+</div>
+
+<div class="gallery-grid">
+    {{ range .Params.images }}
+    {{ $imageUrl := printf "%s/%s" $.Site.Params.imagekit.endpoint .url }}
+    <div class="gallery-item" data-full="{{ $imageUrl }}">
+        <img 
+            src="{{ $imageUrl }}?tr=w-400,h-300,fo-auto" 
+            alt="{{ .caption }}" 
+            loading="lazy"
+            class="gallery-image"
+        >
+        {{ with .caption }}
+        <div class="gallery-caption">{{ . }}</div>
+        {{ end }}
+    </div>
+    {{ end }}
+</div>
+
+<!-- Lightbox Modal -->
+<div id="lightbox" class="lightbox">
+    <button class="lightbox-close">&times;</button>
+    <img id="lightbox-image" src="" alt="">
+    <p id="lightbox-caption"></p>
+</div>
+{{ end }}

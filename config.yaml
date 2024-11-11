@@ -12,10 +12,14 @@ menu:
       name: "Current Cast"
       url: "/cast/"
       weight: 2
+    - identifier: "gallery"
+      name: "Gallery"
+      url: "/gallery/"
+      weight: 3
     - identifier: "emeritus"
       name: "Sassies Emeritus"
       url: "/emeritus/"
-      weight: 3
+      weight: 4
 
 markup:
   goldmark:
@@ -23,3 +27,6 @@ markup:
       unsafe: true
 params:
   teamPhoto: "/images/team-photo.jpg"
+  imagekit:
+    endpoint: "https://ik.imagekit.io/sassfactory"
+    path: "/gallery"
