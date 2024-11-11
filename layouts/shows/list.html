@@ -23,7 +23,7 @@
                     "image" .image 
                     "defaultImage" $.Params.defaultImage 
                     "showTickets" true }}
-                {{ partial "shortcodes/show-card.html" $context }}
+                {{ partial "show-card.html" $context }}
             {{ end }}
         {{ end }}
         {{ if not $hasUpcoming }}
@@ -91,7 +91,7 @@
                     "image" .image 
                     "defaultImage" $.Params.defaultImage 
                     "showTickets" false }}
-                {{ partial "shortcodes/show-card.html" $context }}
+                {{ partial "show-card.html" $context }}
             {{ end }}
         {{ end }}
         {{ if not $hasPast }}
