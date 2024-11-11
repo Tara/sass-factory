@@ -14,7 +14,10 @@ shows:
       venue: "Leela"
       address: "901 Mission Street San Francisco, CA 94103"
       ticketLink: "https://www.eventbrite.com/e/leela-improv-show-sat-112324-sanfrancisco-ca-tickets-1027970255707?aff=erelexpmlt"
-      price: "$22.58"      
+      price: "$22.58"    
+    - title: "Endgames Comedy Festival"
+      date: 2024-09-21T21:00:00
+      venue: Endgames  
   # recurring:
   #   - title: "Monthly Showcase"
   #     day: "Last Friday"
