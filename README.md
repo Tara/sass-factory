@@ -20,14 +20,14 @@ Then to run it locally
 hugo server -D
 ```
 
-And connect to the local site at [http://localhost:1313/]
+And connect to the local site at <http://localhost:1313/>
 
 ## Usage
 
-To add upcoming shows, edit [content/shows/_index.md]
-To edit the cast members, add or move files in [contents/cast] and [contents/emeritus]
+To add upcoming shows, edit <content/shows/_index.md>
+To edit the cast members, add or move files in <contents/cast> and <contents/emeritus>
 
-Headshots for the team are found in [static/images/headshots/]
+Headshots for the team are found in <static/images/headshots/>
 
 The site is currently autodeployed to Vercel. Ask Tara for access if you need it.
 
