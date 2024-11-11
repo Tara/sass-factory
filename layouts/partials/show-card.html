@@ -39,11 +39,11 @@
             </div>
             {{ end }}
             {{ if .showTickets }}
-                {{ with .ticketLink }}
+            {{ with .ticketLink }}
                 <a href="{{ . }}"
-                   style="background: var(--gradient-gold); color: var(--color-background);"
-                   target="_blank" 
-                   rel="noopener">
+                    class="ticket-button"
+                    target="_blank" 
+                    rel="noopener">
                     Get Tickets
                 </a>
                 {{ end }}
