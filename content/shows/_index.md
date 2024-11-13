@@ -24,6 +24,10 @@ shows:
     - title: "Vagabonds"
       date: 2024-10-13T19:00:00
       venue: "All Out Comedy"
+    - title: "Sketchfest 2024"
+      date: 2024-01-21T15:00:00
+      venue: "The Marsh"
+      image: "images/shows/sketchfest2024.png"
   # recurring:
   #   - title: "Monthly Showcase"
   #     day: "Last Friday"
