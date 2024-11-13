@@ -17,7 +17,13 @@ shows:
       price: "$22.58"    
     - title: "Endgames Comedy Festival"
       date: 2024-09-21T21:00:00
-      venue: Endgames  
+      venue: Endgames
+    - title: "Required Taste"
+      date: 2024-10-12T19:00:00
+      venue: "Endgames"
+    - title: "Vagabonds"
+      date: 2024-10-13T19:00:00
+      venue: "All Out Comedy"
   # recurring:
   #   - title: "Monthly Showcase"
   #     day: "Last Friday"

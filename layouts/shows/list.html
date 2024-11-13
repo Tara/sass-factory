@@ -77,20 +77,24 @@
         {{ $t24h := time.ParseDuration "-24h" }}
         {{ $now := now.Add $t24h }}
         {{ $hasPast := false }}
+        {{ $pastShows := slice }}
         {{ range .Params.shows.upcoming }}
             {{ $showDate := time .date }}
             {{ if lt $showDate $now }}
                 {{ $hasPast = true }}
-                {{ $context := dict 
-                    "title" .title 
-                    "date" .date 
-                    "venue" .venue 
-                    "address" .address 
-                    "image" .image 
-                    "defaultImage" $.Params.defaultImage 
-                    "showTickets" false }}
-                {{ partial "show-card.html" $context }}
+                {{ $pastShows = $pastShows | append . }}
             {{ end }}
+        {{ end }}
+        {{ range sort $pastShows "date" "desc" }}
+            {{ $context := dict 
+                "title" .title 
+                "date" .date 
+                "venue" .venue 
+                "address" .address 
+                "image" .image 
+                "defaultImage" $.Params.defaultImage 
+                "showTickets" false }}
+            {{ partial "show-card.html" $context }}
         {{ end }}
         {{ if not $hasPast }}
             <div style="border-color: var(--color-accent)">
