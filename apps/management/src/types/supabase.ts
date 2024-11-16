@@ -34,4 +34,12 @@ export type Rehearsal = {
   location: string
   notes?: string
   created_at: string
+}
+
+export type Venue = {
+  id: string
+  name: string
+  address?: string
+  contact_email?: string
+  created_at: string
 } 
