@@ -1,9 +1,11 @@
 {
-  "dependencies": {
-    "dotenv": "^16.4.5",
-    "imagekit": "^5.2.0",
-    "js-yaml": "^4.1.0",
-    "node-fetch": "^3.3.2",
-    "sharp": "^0.33.5"
+  "name": "improv-team-workspace",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "hugo:dev": "cd apps/hugo-site && hugo server",
+    "hugo:build": "cd apps/hugo-site && hugo"
   }
 }
