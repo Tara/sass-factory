@@ -34,16 +34,14 @@
             <span>{{ . }}</span>
         </div>
         {{ end }}
-        {{ if .showTickets }}
-        {{ with .ticketLink }}
-        <a href="{{ . }}"
+        {{ if and .showTickets .ticketLink }}
+        <a href="{{ .ticketLink }}"
            class="ticket-button"
            target="_blank" 
            rel="noopener">
             <i data-lucide="ticket" class="show-icon"></i>
             <span>Get Tickets</span>
         </a>
-        {{ end }}
         {{ end }}
     </div>
 </div>

@@ -7,13 +7,43 @@
     </div>
     {{ end }}
 
-    <!-- Next Show Card with enhanced styling -->
+    <!-- Next Show Card -->
     <div class="mt-12">
-        {{ if .Params.shows }}
-            <div>
-                {{/* Show content */}}
-            </div>
-        {{ end }}
+        <h2 style="color: var(--color-primary)">Next Show</h2>
+        <div style="max-width: 400px;">
+            {{ $shows := .Site.GetPage "/shows" }}
+            {{ with $shows }}
+                {{ $upcoming := .Params.shows.upcoming }}
+                {{ $t24h := time.ParseDuration "-24h" }}
+                {{ $now := now.Add $t24h }}
+                {{ $hasUpcoming := false }}
+                {{ range $upcoming }}
+                    {{ $showDate := time .date }}
+                    {{ if gt $showDate $now }}
+                        {{ if not $hasUpcoming }}
+                            {{ $hasUpcoming = true }}
+                            {{ $context := dict 
+                                "title" .title 
+                                "date" .date 
+                                "venue" .venue 
+                                "address" .address 
+                                "price" .price 
+                                "ticketLink" .ticketLink 
+                                "image" .image 
+                                "defaultImage" $shows.Params.defaultImage 
+                                "showTickets" true }}
+                            {{ partial "show-card.html" $context }}
+                        {{ end }}
+                    {{ end }}
+                {{ end }}
+
+                {{ if not $hasUpcoming }}
+                    <p>No upcoming shows scheduled yet.</p>
+                    <a href="/contact"
+                       style="color: var(--color-secondary);">Contact us to book a show!</a>
+                {{ end }}
+            {{ end }}
+        </div>
     </div>
 </div>
 {{ end }}

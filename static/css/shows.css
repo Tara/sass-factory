@@ -130,30 +130,6 @@
   color: var(--color-accent);
 }
 
-.ticket-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  font-weight: 500;
-  text-align: center;
-  border-radius: 4px;
-  background: var(--gradient-gold);
-  color: var(--color-background);
-  text-decoration: none;
-  margin-top: 1rem;
-}
-
-.ticket-button .show-icon {
-  color: var(--color-background);
-}
-
-.ticket-button:hover {
-  background: var(--gradient-gold-hover);
-  color: var(--color-background);
-}
-
 .venue-info {
   display: flex;
   flex-direction: column;
@@ -175,3 +151,48 @@
     opacity: 0.75;
     font-size: 0.95em;
 }
+
+.ticket-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: center;
+    border-radius: 4px;
+    background: var(--gradient-gold);
+    color: var(--color-background);
+    text-decoration: none;
+    margin-top: 1rem;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  
+  .ticket-button .show-icon {
+    color: var(--color-background);
+  }
+  
+  .ticket-button:hover,
+  .ticket-button:focus {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+  
+  .ticket-button:active {
+    transform: translateY(0);
+    opacity: 0.8;
+  }
+  
+  /* Make sure links are clickable */
+  .ticket-button,
+  .ticket-button:link,
+  .ticket-button:visited {
+    color: var(--color-background);
+    text-decoration: none;
+  }
+  
+  /* Override any inherited pointer-events */
+  .show-card .ticket-button {
+    pointer-events: auto;
+  }

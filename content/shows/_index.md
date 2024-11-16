@@ -28,6 +28,12 @@ shows:
       date: 2024-01-21T15:00:00
       venue: "The Marsh"
       image: "images/shows/sketchfest2024.png"
+    - title: "SF Sketchfest 2025"
+      date: 2025-01-17T21:00:00
+      venue: "Eclectic Box"
+      address: "446 Valencia Street, San Francisco, CA 94103"
+      ticketLink: "https://www.eventbrite.com/e/sketch-improv-showcase-tickets-1082876676289?aff=oddtdtcreator"
+      image: "images/shows/sfsketchfest2025.png"
   # recurring:
   #   - title: "Monthly Showcase"
   #     day: "Last Friday"
