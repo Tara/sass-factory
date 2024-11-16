@@ -3,30 +3,39 @@
 
 {{/* Handle empty or invalid addresses gracefully */}}
 {{ if not $address }}
-    <span class="address">{{ $address }}</span>
+    <span class="address empty-address">No address provided</span>
 {{ else }}
+    {{ $address := trim $address " " }}
     {{/* Split by commas first */}}
     {{ $parts := split $address "," }}
     
     {{ if eq (len $parts) 1 }}
         {{/* No commas - display as is */}}
-        <span class="address">{{ $address }}</span>
+        <span class="address single-line">{{ $address }}</span>
     {{ else }}
         {{/* First part is always street */}}
         {{ $street := index $parts 0 | strings.TrimSpace }}
         
-        {{/* Rest could be "City, State Zip" or "City State Zip" */}}
+        {{/* Initialize location variable */}}
         {{ $location := "" }}
+        
         {{ if eq (len $parts) 2 }}
+            {{/* Handle "Street, City State Zip" format */}}
             {{ $location = index $parts 1 | strings.TrimSpace }}
-        {{ else }}
+        {{ else if eq (len $parts) 3 }}
             {{/* Handle "Street, City, State Zip" format */}}
             {{ $city := index $parts 1 | strings.TrimSpace }}
             {{ $stateZip := index $parts 2 | strings.TrimSpace }}
             {{ $location = printf "%s, %s" $city $stateZip }}
+        {{ else }}
+            {{/* Handle cases with more than 3 parts - combine all remaining parts */}}
+            {{ $remainingParts := after 1 $parts }}
+            {{ $location = delimit $remainingParts ", " }}
         {{ end }}
         
-        <span class="street">{{ $street }}</span><br>
-        <span class="city-state-zip">{{ $location }}</span>
+        <div class="address formatted">
+            <span class="street">{{ $street }}</span><br>
+            <span class="city-state-zip">{{ $location }}</span>
+        </div>
     {{ end }}
 {{ end }}
