@@ -1,8 +1,7 @@
-# Database Schema
+-- Enable UUID generation
+create extension if not exists "uuid-ossp";
 
-## Tables
-
-### Members
+-- Members table
 create table members (
   id uuid default uuid_generate_v4() primary key,
   name text not null,
@@ -10,16 +9,7 @@ create table members (
   phone text
 );
 
-### Availability
-create table availability (
-  id uuid default uuid_generate_v4() primary key,
-  member_id uuid references members(id),
-  date date not null,
-  status text check (status in ('available', 'unavailable', 'maybe')),
-  notes text
-);
-
-### Venues
+-- Venues table
 create table venues (
   id uuid default uuid_generate_v4() primary key,
   name text not null,
@@ -28,7 +18,7 @@ create table venues (
   created_at timestamp with time zone default now()
 );
 
-### Shows
+-- Shows table
 create table shows (
   id uuid default uuid_generate_v4() primary key,
   title text not null,
@@ -40,14 +30,14 @@ create table shows (
   created_at timestamp with time zone default now()
 );
 
-### Show Performers
+-- Show Performers table
 create table show_performers (
   show_id uuid references shows(id),
   member_id uuid references members(id),
   primary key (show_id, member_id)
 );
 
-### Rehearsals
+-- Rehearsals table
 create table rehearsals (
   id uuid default uuid_generate_v4() primary key,
   date timestamp with time zone not null,
@@ -56,14 +46,23 @@ create table rehearsals (
   created_at timestamp with time zone default now()
 );
 
-### Rehearsal Attendees
+-- Rehearsal Attendees table
 create table rehearsal_attendees (
   rehearsal_id uuid references rehearsals(id),
   member_id uuid references members(id),
   primary key (rehearsal_id, member_id)
 );
 
-### Member Notification Preferences
+-- Availability table
+create table availability (
+  id uuid default uuid_generate_v4() primary key,
+  member_id uuid references members(id),
+  date date not null,
+  status text check (status in ('available', 'unavailable', 'maybe')),
+  notes text
+);
+
+-- Member Notification Preferences table
 create table member_notification_preferences (
   id uuid default uuid_generate_v4() primary key,
   member_id uuid references members(id),
@@ -74,7 +73,7 @@ create table member_notification_preferences (
   created_at timestamp with time zone default now()
 );
 
-### Notification Log
+-- Notification Log table
 create table notification_log (
   id uuid default uuid_generate_v4() primary key,
   member_id uuid references members(id),
@@ -83,4 +82,4 @@ create table notification_log (
   status text check (status in ('sent', 'failed', 'pending')),
   error_message text,
   created_at timestamp with time zone default now()
-);
+); 
