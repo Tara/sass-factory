@@ -1,7 +1,20 @@
-public/
-resources/
-.hugo_build.lock
+# Hugo
+apps/hugo-site/public/
+apps/hugo-site/resources/
+apps/hugo-site/.hugo_build.lock
+
+# Node
 node_modules/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
 .DS_Store
+
+# Vercel
 .vercel
+
+# Environment variables
 .env

@@ -1,0 +1,8 @@
+{
+  "name": "hugo-site",
+  "private": true,
+  "scripts": {
+    "dev": "hugo server",
+    "build": "hugo"
+  }
+} 
