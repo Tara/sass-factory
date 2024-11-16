@@ -9,23 +9,25 @@
         {{ $t24h := time.ParseDuration "-24h" }}
         {{ $now := now.Add $t24h }}
         {{ $hasUpcoming := false }}
-        {{ range .Params.shows.upcoming }}
-            {{ $showDate := time .date }}
-            {{ if gt $showDate $now }}
-                {{ $hasUpcoming = true }}
-                {{ $context := dict 
-                    "title" .title 
-                    "date" .date 
-                    "venue" .venue 
-                    "address" .address 
-                    "price" .price 
-                    "ticketLink" .ticketLink 
-                    "image" .image 
-                    "defaultImage" $.Params.defaultImage 
-                    "showTickets" true }}
-                {{ partial "show-card.html" $context }}
+        <div class="show-grid">
+            {{ range .Params.shows.upcoming }}
+                {{ $showDate := time .date }}
+                {{ if gt $showDate $now }}
+                    {{ $hasUpcoming = true }}
+                    {{ $context := dict 
+                        "title" .title 
+                        "date" .date 
+                        "venue" .venue 
+                        "address" .address 
+                        "price" .price 
+                        "ticketLink" .ticketLink 
+                        "image" .image 
+                        "defaultImage" $.Params.defaultImage 
+                        "showTickets" true }}
+                    {{ partial "show-card.html" $context }}
+                {{ end }}
             {{ end }}
-        {{ end }}
+        </div>
         {{ if not $hasUpcoming }}
             <div class="no-shows">
                 <p>No upcoming shows scheduled. Check back soon!</p>
@@ -45,17 +47,19 @@
                 {{ $pastShows = $pastShows | append . }}
             {{ end }}
         {{ end }}
-        {{ range sort $pastShows "date" "desc" }}
-            {{ $context := dict 
-                "title" .title 
-                "date" .date 
-                "venue" .venue 
-                "address" .address 
-                "image" .image 
-                "defaultImage" $.Params.defaultImage 
-                "showTickets" false }}
-            {{ partial "show-card.html" $context }}
-        {{ end }}
+        <div class="show-grid">
+            {{ range sort $pastShows "date" "desc" }}
+                {{ $context := dict 
+                    "title" .title 
+                    "date" .date 
+                    "venue" .venue 
+                    "address" .address 
+                    "image" .image 
+                    "defaultImage" $.Params.defaultImage 
+                    "showTickets" false }}
+                {{ partial "show-card.html" $context }}
+            {{ end }}
+        </div>
         {{ if not $hasPast }}
             <div class="no-shows">
                 <p>No past shows. Check back soon!</p>

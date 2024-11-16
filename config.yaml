@@ -1,4 +1,4 @@
-baseURL: "http://localhost:1313"
+baseURL: "http://sassfactoryimprov.com"
 languageCode: "en-us"
 title: "Sass Factory"
 
@@ -25,6 +25,7 @@ markup:
   goldmark:
     renderer:
       unsafe: true
+
 params:
   teamPhoto: "/images/team-photo.jpg"
   imagekit:
