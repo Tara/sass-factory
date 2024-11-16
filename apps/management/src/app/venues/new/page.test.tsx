@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { useRouter } from 'next/navigation'
 import NewVenue from './page'
-import { supabase } from '@/lib/supabase'
+import { getSupabaseClient } from '@/lib/supabase/client'
 
 // Mock next/navigation
 jest.mock('next/navigation', () => ({
@@ -9,12 +9,12 @@ jest.mock('next/navigation', () => ({
 }))
 
 // Mock supabase client
-jest.mock('@/lib/supabase', () => ({
-  supabase: {
+jest.mock('@/lib/supabase/client', () => ({
+  getSupabaseClient: jest.fn(() => ({
     from: jest.fn(() => ({
       insert: jest.fn(),
     })),
-  },
+  })),
 }))
 
 describe('NewVenue', () => {
@@ -64,8 +64,10 @@ describe('NewVenue', () => {
 
   it('submits form successfully', async () => {
     const mockInsert = jest.fn().mockResolvedValue({ error: null })
-    ;(supabase.from as jest.Mock).mockReturnValue({
-      insert: mockInsert,
+    ;(getSupabaseClient as jest.Mock).mockReturnValue({
+      from: jest.fn(() => ({
+        insert: mockInsert,
+      })),
     })
 
     render(<NewVenue />)
@@ -98,8 +100,10 @@ describe('NewVenue', () => {
   it('handles submission errors', async () => {
     const mockError = new Error('Database error')
     const mockInsert = jest.fn().mockResolvedValue({ error: mockError })
-    ;(supabase.from as jest.Mock).mockReturnValue({
-      insert: mockInsert,
+    ;(getSupabaseClient as jest.Mock).mockReturnValue({
+      from: jest.fn(() => ({
+        insert: mockInsert,
+      })),
     })
 
     render(<NewVenue />)

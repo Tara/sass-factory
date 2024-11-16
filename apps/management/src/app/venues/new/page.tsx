@@ -2,34 +2,14 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
-
-type FormErrors = {
-  name?: string
-  email?: string
-}
+import { getSupabaseClient } from '@/lib/supabase/client'
+import { validateVenueForm, type FormErrors } from '@/lib/validation/venue'
 
 export default function NewVenue() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [formErrors, setFormErrors] = useState<FormErrors>({})
-
-  function validateForm(formData: FormData): FormErrors {
-    const errors: FormErrors = {}
-    const name = formData.get('name') as string
-    const email = formData.get('contact_email') as string
-
-    if (!name || name.trim().length === 0) {
-      errors.name = 'Name is required'
-    }
-
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      errors.email = 'Please enter a valid email address'
-    }
-
-    return errors
-  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -38,7 +18,7 @@ export default function NewVenue() {
     setFormErrors({})
 
     const formData = new FormData(e.currentTarget)
-    const errors = validateForm(formData)
+    const errors = validateVenueForm(formData)
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors)
@@ -53,7 +33,7 @@ export default function NewVenue() {
     }
 
     try {
-      const { error: supabaseError } = await supabase
+      const { error: supabaseError } = await getSupabaseClient()
         .from('venues')
         .insert([venue])
 
