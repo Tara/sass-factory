@@ -3,8 +3,11 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 
 export default async function ShowsPage() {
-  const supabase = createServerComponentClient({ cookies });
-  
+  const cookieStore = await cookies();
+  const supabase = createServerComponentClient({
+    cookies: () => cookieStore,
+  });
+    
   const { data: shows, error } = await supabase
     .from("shows")
     .select(`

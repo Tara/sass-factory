@@ -2,13 +2,21 @@ import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import PerformerStatusButton from './PerformerStatusButton';
+import AddPerformerForm from './AddPerformerForm';
+import PerformersList from './PerformersList';
 
 export default async function ShowDetailsPage({
-  params: { id },
+  params,
 }: {
   params: { id: string };
 }) {
-  const supabase = createServerComponentClient({ cookies });
+  const { id } = await params;
+  
+  const cookieStore = await cookies();
+  const supabase = createServerComponentClient({
+    cookies: () => cookieStore,
+  });
 
   const { data: show, error } = await supabase
     .from("shows")
@@ -22,6 +30,17 @@ export default async function ShowDetailsPage({
     `)
     .eq("id", id)
     .single();
+
+  const { data: performers, error: performersError } = await supabase
+    .from("show_performers")
+    .select(`
+      *,
+      performer:members(id, name, email)
+    `)
+    .eq("show_id", id);
+
+  console.log('Performers data:', performers);
+  console.log('Performers error:', performersError);
 
   if (error) {
     console.error("Error fetching show:", error);
@@ -37,6 +56,8 @@ export default async function ShowDetailsPage({
   if (!show) {
     notFound();
   }
+
+  const isPast = new Date(show.date) < new Date();
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -114,7 +135,13 @@ export default async function ShowDetailsPage({
             </button>
           )}
         </div>
+
+        <PerformersList 
+          performers={performers || []} 
+          isPast={isPast} 
+          showId={id}
+        />
       </div>
     </div>
   );
-} 
+}

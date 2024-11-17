@@ -1,6 +1,6 @@
 create type show_status as enum ('draft', 'published', 'cancelled');
 
-create table shows (
+create table if not exists shows (
     id uuid default gen_random_uuid() primary key,
     title text not null,
     description text,

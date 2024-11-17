@@ -1,9 +1,19 @@
 import { z } from "zod";
 
 export const showSchema = z.object({
-  title: z.string().min(1, "Title is required").max(255),
-  venue_id: z.string().uuid("Invalid venue ID"),
-  date: z.string().datetime("Invalid date"),
+  id: z.string().uuid().optional(),
+  name: z.string().min(1, "Name is required"),
+  date: z.string().min(1, "Date is required"),
+  venue_id: z.string().uuid(),
+  description: z.string().optional(),
+  scheduledPerformers: z.array(z.string().uuid()).optional(),
 });
 
-export type ShowFormData = z.infer<typeof showSchema>; 
+export const showPerformerSchema = z.object({
+  show_id: z.string().uuid(),
+  member_id: z.string().uuid(),
+  status: z.enum(["scheduled", "performed"]),
+});
+
+export type Show = z.infer<typeof showSchema>;
+export type ShowPerformer = z.infer<typeof showPerformerSchema>; 

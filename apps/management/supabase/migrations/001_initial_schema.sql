@@ -2,7 +2,7 @@
 create extension if not exists "uuid-ossp";
 
 -- Members table
-create table members (
+create table if not exists members (
   id uuid default uuid_generate_v4() primary key,
   name text not null,
   email text not null unique,
