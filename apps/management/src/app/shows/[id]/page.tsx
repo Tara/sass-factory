@@ -39,9 +39,6 @@ export default async function ShowDetailsPage({
     `)
     .eq("show_id", id);
 
-  console.log('Performers data:', performers);
-  console.log('Performers error:', performersError);
-
   if (error) {
     console.error("Error fetching show:", error);
     return (

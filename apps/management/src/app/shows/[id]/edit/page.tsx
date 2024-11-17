@@ -61,11 +61,7 @@ export default function EditShowPage({
         date: formattedDate,
       };
 
-      console.log('Form data:', data);
-
       const validated = showSchema.parse(data);
-      console.log('Validated data:', validated);
-
       const { data: updateData, error: supabaseError } = await supabase
         .from("shows")
         .update(validated)
