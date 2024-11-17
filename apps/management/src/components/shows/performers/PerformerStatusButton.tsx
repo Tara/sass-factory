@@ -7,45 +7,76 @@ import type { PerformerStatus } from '@/types/performer';
 
 interface PerformerStatusButtonProps {
   status: PerformerStatus;
-  performerId: string;
+  performerId?: string;
   showId: string;
+  memberId: string;
 }
 
 export function PerformerStatusButton({ 
-  status, 
-  performerId,
-  showId 
+  status: initialStatus, 
+  showId,
+  memberId 
 }: PerformerStatusButtonProps) {
-  const [currentStatus, setCurrentStatus] = useState<PerformerStatus>(status);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const supabase = createClientComponentClient();
 
   const statusStyles = {
-    INVITED: 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200',
-    CONFIRMED: 'bg-green-100 text-green-800 hover:bg-green-200',
-    DECLINED: 'bg-red-100 text-red-800 hover:bg-red-200'
+    'unconfirmed': 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200',
+    'confirmed': 'bg-green-100 text-green-800 hover:bg-green-200',
+    'performed': 'bg-blue-100 text-blue-800 hover:bg-blue-200',
+    'cancelled': 'bg-red-100 text-red-800 hover:bg-red-200',
+    'not_attending': 'bg-gray-100 text-gray-800 hover:bg-gray-200',
   };
 
-  const nextStatus: Record<PerformerStatus, PerformerStatus> = {
-    INVITED: 'CONFIRMED',
-    CONFIRMED: 'DECLINED',
-    DECLINED: 'INVITED'
+  const statusDisplay = {
+    'unconfirmed': 'Unconfirmed',
+    'confirmed': 'Confirmed',
+    'performed': 'Performed',
+    'cancelled': 'Cancelled',
+    'not_attending': 'Not Attending',
   };
 
   const handleStatusChange = async () => {
     setLoading(true);
     try {
-      const newStatus = nextStatus[currentStatus];
+      let newStatus: PerformerStatus;
       
+      // For existing entries, cycle through statuses
+      switch (initialStatus) {
+        case 'unconfirmed':
+          newStatus = 'confirmed';
+          break;
+        case 'confirmed':
+          newStatus = 'performed';
+          break;
+        case 'performed':
+          newStatus = 'not_attending';
+          break;
+        case 'not_attending':
+          newStatus = 'cancelled';
+          break;
+        case 'cancelled':
+          newStatus = 'unconfirmed';
+          break;
+        default:
+          newStatus = 'unconfirmed';
+      }
+
+      // Use upsert operation instead of separate insert/update
       const { error } = await supabase
         .from('show_performers')
-        .update({ status: newStatus })
-        .eq('id', performerId);
+        .upsert({
+          show_id: showId,
+          member_id: memberId,
+          status: newStatus
+        }, {
+          onConflict: 'show_id,member_id',
+          ignoreDuplicates: false
+        });
 
       if (error) throw error;
       
-      setCurrentStatus(newStatus);
       router.refresh();
     } catch (e) {
       console.error('Error updating status:', e);
@@ -58,11 +89,11 @@ export function PerformerStatusButton({
     <button
       onClick={handleStatusChange}
       disabled={loading}
-      className={`px-4 py-2 rounded-md transition-colors ${statusStyles[currentStatus]} ${
+      className={`px-4 py-2 rounded-md transition-colors ${statusStyles[initialStatus]} ${
         loading ? 'opacity-50 cursor-not-allowed' : ''
       }`}
     >
-      {loading ? 'Updating...' : currentStatus}
+      {loading ? 'Updating...' : statusDisplay[initialStatus]}
     </button>
   );
 }

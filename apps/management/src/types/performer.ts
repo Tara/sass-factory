@@ -1,4 +1,4 @@
-export type PerformerStatus = 'pending' | 'confirmed' | 'declined';  // Changed to match DB
+export type PerformerStatus = 'not_attending' | 'unconfirmed' | 'confirmed' | 'performed' | 'cancelled';
 
 export interface Member {
   id: string;
@@ -10,6 +10,10 @@ export interface ShowPerformer {
   id: string;
   show_id: string;
   member_id: string;
-  performer: Member;
   status: PerformerStatus;
+  performer: {
+    id: string;
+    name: string;
+    email: string;
+  };
 }

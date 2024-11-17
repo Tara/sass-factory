@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { PerformersList } from "@/components/shows/performers/PerformersList";
 import { ErrorMessage } from "@/components/layout/ErrorMessage";
 import { formatDateTime } from "@/utils/date";
+import type { Member } from "@/types/member";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -40,6 +41,11 @@ export default async function ShowDetailsPage({
     `)
     .eq("show_id", id);
 
+  const { data: members } = await supabase
+    .from("members")
+    .select("id, name, email")
+    .order("name");
+
   if (error) {
     console.error("Error fetching show:", error);
     return (
@@ -57,6 +63,9 @@ export default async function ShowDetailsPage({
   }
 
   const isPast = new Date(show.date) < new Date();
+
+  const safePerformers = performers ?? [];
+  const safeMembers = (members ?? []) as Member[];
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -114,9 +123,10 @@ export default async function ShowDetailsPage({
         </div>
 
         <PerformersList 
-          performers={performers || []} 
+          performers={safePerformers} 
+          members={safeMembers}
           isPast={isPast} 
-          showId={id}
+          showId={id} 
         />
       </div>
     </div>
