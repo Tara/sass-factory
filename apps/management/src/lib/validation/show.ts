@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const showSchema = z.object({
   id: z.string().uuid().optional(),
-  name: z.string().min(1, "Name is required"),
+  title: z.string().min(1, "Title is required"),
   date: z.string().min(1, "Date is required"),
   venue_id: z.string().uuid(),
   description: z.string().optional(),

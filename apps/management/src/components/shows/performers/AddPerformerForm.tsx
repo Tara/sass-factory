@@ -2,20 +2,14 @@
 
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useState, useEffect } from "react";
+import type { Member } from '@/types/performer';
 
-type Member = {
-  id: string;
-  name: string;
-  email: string;
-};
-
-export default function AddPerformerForm({ 
-  showId, 
-  onComplete 
-}: { 
+interface AddPerformerFormProps {
   showId: string;
   onComplete?: () => void;
-}) {
+}
+
+export function AddPerformerForm({ showId, onComplete }: AddPerformerFormProps) {
   const [members, setMembers] = useState<Member[]>([]);
   const [selectedMemberId, setSelectedMemberId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -26,7 +20,6 @@ export default function AddPerformerForm({
   useEffect(() => {
     const fetchAvailableMembers = async () => {
       try {
-        // First get all existing performers for this show
         const { data: existingPerformers } = await supabase
           .from("show_performers")
           .select("member_id")
@@ -36,7 +29,6 @@ export default function AddPerformerForm({
           existingPerformers?.map(p => p.member_id) || []
         );
 
-        // Then get all members except those already added
         const { data: allMembers, error } = await supabase
           .from("members")
           .select("id, name, email")
@@ -44,7 +36,6 @@ export default function AddPerformerForm({
 
         if (error) throw error;
 
-        // Filter out members who are already performers
         const availableMembers = allMembers.filter(
           member => !existingMemberIds.has(member.id)
         );
@@ -72,14 +63,14 @@ export default function AddPerformerForm({
         .insert({
           show_id: showId,
           member_id: selectedMemberId,
-          status: 'pending'
+          status: 'pending'  // Changed from 'INVITED' to 'pending' to match DB constraint
         });
 
       if (insertError) throw insertError;
 
       setSelectedMemberId("");
       onComplete?.();
-      window.location.reload(); // Refresh to show updated list
+      window.location.reload();
     } catch (err) {
       console.error("Error adding performer:", err);
       setError(err instanceof Error ? err.message : "Failed to add performer");
@@ -89,37 +80,45 @@ export default function AddPerformerForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <select
-          value={selectedMemberId}
-          onChange={(e) => setSelectedMemberId(e.target.value)}
-          className="w-full px-3 py-2 border rounded-md shadow-sm text-sm"
-          required
-        >
-          <option value="">Select a performer</option>
-          {members.map((member) => (
-            <option key={member.id} value={member.id}>
-              {member.name || member.email}
-            </option>
-          ))}
-        </select>
-      </div>
-      {error && (
-        <div className="text-red-500 text-sm">{error}</div>
-      )}
-      {members.length === 0 && !error && (
-        <div className="text-gray-500 text-sm">
-          All members have been added to this show
+    <div className="mt-6">
+      <h3 className="text-lg font-medium mb-4">Add Performer</h3>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <select
+            value={selectedMemberId}
+            onChange={(e) => setSelectedMemberId(e.target.value)}
+            className="w-full px-3 py-2 border rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+            required
+          >
+            <option value="">Select a performer</option>
+            {members.map((member) => (
+              <option key={member.id} value={member.id}>
+                {member.name || member.email}
+              </option>
+            ))}
+          </select>
         </div>
-      )}
-      <button
-        type="submit"
-        disabled={isLoading || !selectedMemberId || members.length === 0}
-        className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50 text-sm"
-      >
-        {isLoading ? "Adding..." : "Add Performer"}
-      </button>
-    </form>
+        
+        {error && (
+          <div className="text-sm bg-red-50 text-red-600 p-3 rounded">
+            {error}
+          </div>
+        )}
+        
+        {members.length === 0 && !error && (
+          <div className="text-gray-500 text-sm">
+            All members have been added to this show
+          </div>
+        )}
+        
+        <button
+          type="submit"
+          disabled={isLoading || !selectedMemberId || members.length === 0}
+          className="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 disabled:opacity-50 text-sm"
+        >
+          {isLoading ? "Adding..." : "Add Performer"}
+        </button>
+      </form>
+    </div>
   );
-} 
+}
