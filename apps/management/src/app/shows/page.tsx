@@ -13,8 +13,7 @@ export default async function ShowsPage() {
         id,
         name
       )
-    `)
-    .order("date", { ascending: true });
+    `);
 
   if (error) {
     console.error("Error fetching shows:", error.message, error.details, error.hint);
@@ -50,6 +49,44 @@ export default async function ShowsPage() {
     );
   }
 
+  // Get today at 12:01 AM local time
+  const today = new Date();
+  today.setHours(0, 1, 0, 0);
+
+  // Split shows into upcoming and past
+  const upcomingShows = shows
+    .filter(show => new Date(show.date) >= today)
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()); // Ascending order
+
+  const pastShows = shows
+    .filter(show => new Date(show.date) < today)
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()); // Descending order
+
+  const ShowCard = ({ show }: { show: typeof shows[0] }) => (
+    <div
+      key={show.id}
+      className="bg-white border p-4 rounded-lg shadow hover:shadow-md transition-shadow"
+    >
+      <div className="flex justify-between items-start">
+        <div>
+          <h2 className="text-xl font-semibold">{show.title}</h2>
+          <p className="text-gray-600">
+            {new Date(show.date).toLocaleString()}
+          </p>
+          <p className="text-gray-600">
+            Venue: {show.venue?.name || 'Unknown Venue'}
+          </p>
+        </div>
+      </div>
+      <Link
+        href={`/shows/${show.id}`}
+        className="text-blue-500 hover:underline mt-2 inline-block"
+      >
+        View Details →
+      </Link>
+    </div>
+  );
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
@@ -62,40 +99,27 @@ export default async function ShowsPage() {
         </Link>
       </div>
 
-      <div className="grid gap-4">
-        {shows.map((show) => (
-          <div
-            key={show.id}
-            className="border p-4 rounded-lg shadow hover:shadow-md transition-shadow"
-          >
-            <div className="flex justify-between items-start">
-              <div>
-                <h2 className="text-xl font-semibold">{show.title}</h2>
-                <p className="text-gray-600">
-                  {new Date(show.date).toLocaleString()}
-                </p>
-                <p className="text-gray-600">
-                  Venue: {show.venue?.name || 'Unknown Venue'}
-                </p>
-              </div>
-              <span className={`
-                px-2 py-1 rounded text-sm
-                ${show.status === 'published' ? 'bg-green-100 text-green-800' : ''}
-                ${show.status === 'draft' ? 'bg-gray-100 text-gray-800' : ''}
-                ${show.status === 'cancelled' ? 'bg-red-100 text-red-800' : ''}
-              `}>
-                {show.status}
-              </span>
-            </div>
-            <Link
-              href={`/shows/${show.id}`}
-              className="text-blue-500 hover:underline mt-2 inline-block"
-            >
-              View Details →
-            </Link>
+      {upcomingShows.length > 0 && (
+        <>
+          <h2 className="text-xl font-semibold mb-4">Upcoming Shows</h2>
+          <div className="grid gap-4 mb-8">
+            {upcomingShows.map(show => (
+              <ShowCard key={show.id} show={show} />
+            ))}
           </div>
-        ))}
-      </div>
+        </>
+      )}
+
+      {pastShows.length > 0 && (
+        <>
+          <h2 className="text-xl font-semibold mb-4">Past Shows</h2>
+          <div className="grid gap-4">
+            {pastShows.map(show => (
+              <ShowCard key={show.id} show={show} />
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 } 
