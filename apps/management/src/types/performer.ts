@@ -1,4 +1,10 @@
-export type PerformerStatus = 'not_attending' | 'unconfirmed' | 'confirmed' | 'performed' | 'cancelled';
+export enum PerformerStatus {
+  Unconfirmed = 'unconfirmed',
+  Confirmed = 'confirmed',
+  Performed = 'performed',
+  Cancelled = 'cancelled',
+  NotAttending = 'not_attending',
+}
 
 export interface Member {
   id: string;

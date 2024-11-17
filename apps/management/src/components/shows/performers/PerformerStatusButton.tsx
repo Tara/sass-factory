@@ -2,8 +2,7 @@
 
 import { useState } from 'react';
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { useRouter } from 'next/navigation';
-import type { PerformerStatus } from '@/types/performer';
+import { PerformerStatus } from '@/types/performer';
 
 interface PerformerStatusButtonProps {
   status: PerformerStatus;
@@ -18,17 +17,24 @@ export function PerformerStatusButton({
   memberId 
 }: PerformerStatusButtonProps) {
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
+  const [currentStatus, setCurrentStatus] = useState(initialStatus);
   const supabase = createClientComponentClient();
 
   const statusStyles = {
-    'unconfirmed': 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200',
-    'confirmed': 'bg-green-100 text-green-800 hover:bg-green-200',
-    'performed': 'bg-blue-100 text-blue-800 hover:bg-blue-200',
-    'cancelled': 'bg-red-100 text-red-800 hover:bg-red-200',
-    'not_attending': 'bg-gray-100 text-gray-800 hover:bg-gray-200',
+    [PerformerStatus.Unconfirmed]: 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200',
+    [PerformerStatus.Confirmed]: 'bg-green-100 text-green-800 hover:bg-green-200',
+    [PerformerStatus.Performed]: 'bg-blue-100 text-blue-800 hover:bg-blue-200',
+    [PerformerStatus.Cancelled]: 'bg-red-100 text-red-800 hover:bg-red-200',
+    [PerformerStatus.NotAttending]: 'bg-gray-100 text-gray-800 hover:bg-gray-200',
   };
 
+  const statusTransition: Record<PerformerStatus, PerformerStatus> = {
+    [PerformerStatus.Unconfirmed]: PerformerStatus.Confirmed,
+    [PerformerStatus.Confirmed]: PerformerStatus.Performed,
+    [PerformerStatus.Performed]: PerformerStatus.NotAttending,
+    [PerformerStatus.NotAttending]: PerformerStatus.Cancelled,
+    [PerformerStatus.Cancelled]: PerformerStatus.Unconfirmed,
+  };
   const statusDisplay = {
     'unconfirmed': 'Unconfirmed',
     'confirmed': 'Confirmed',
@@ -38,30 +44,10 @@ export function PerformerStatusButton({
   };
 
   const handleStatusChange = async () => {
+    if (loading) return; // Prevent re-entry
     setLoading(true);
     try {
-      let newStatus: PerformerStatus;
-      
-      // For existing entries, cycle through statuses
-      switch (initialStatus) {
-        case 'unconfirmed':
-          newStatus = 'confirmed';
-          break;
-        case 'confirmed':
-          newStatus = 'performed';
-          break;
-        case 'performed':
-          newStatus = 'not_attending';
-          break;
-        case 'not_attending':
-          newStatus = 'cancelled';
-          break;
-        case 'cancelled':
-          newStatus = 'unconfirmed';
-          break;
-        default:
-          newStatus = 'unconfirmed';
-      }
+      const newStatus = statusTransition[currentStatus];
 
       // Use upsert operation instead of separate insert/update
       const { error } = await supabase
@@ -76,8 +62,9 @@ export function PerformerStatusButton({
         });
 
       if (error) throw error;
-      
-      router.refresh();
+
+      // Update the local state
+      setCurrentStatus(newStatus);
     } catch (e) {
       console.error('Error updating status:', e);
     } finally {
@@ -89,11 +76,11 @@ export function PerformerStatusButton({
     <button
       onClick={handleStatusChange}
       disabled={loading}
-      className={`px-4 py-2 rounded-md transition-colors ${statusStyles[initialStatus]} ${
-        loading ? 'opacity-50 cursor-not-allowed' : ''
+      className={`px-4 py-2 rounded-md transition-colors ${statusStyles[currentStatus]} ${
+        loading ? 'opacity-50' : ''
       }`}
     >
-      {loading ? 'Updating...' : statusDisplay[initialStatus]}
+      {loading ? 'Updating...' : statusDisplay[currentStatus]}
     </button>
   );
 }
