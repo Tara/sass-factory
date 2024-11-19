@@ -30,6 +30,7 @@ React/Next.js:
 * Use Shadcn UI for components.
 * Implement responsive design with Tailwind CSS.
 * Use Zod for validation.
+* Use Radix UI for icons.
 * Use dynamic loading for non-critical components.
 * Use server actions for all data mutations.
 * Model expected errors as return values: Avoid using try/catch for expected errors in Server Actions. Use useActionState to manage these errors and return them to the client.
