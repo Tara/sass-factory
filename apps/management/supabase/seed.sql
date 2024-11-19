@@ -3,69 +3,42 @@ TRUNCATE venues, shows, members, show_members CASCADE;
 
 -- Seed venues
 WITH inserted_venues AS (
-  INSERT INTO venues (name, address, image_url, contact_email) VALUES
-    ('The Comedy Store', '123 Laugh Street, City', 'https://example.com/comedy-store.jpg', 'booking@comedystore.com'),
-    ('Improv Theater', '456 Jest Avenue, Town', 'https://example.com/improv-theater.jpg', 'contact@improvtheater.com'),
-    ('The Funny Factory', '789 Humor Lane, Village', 'https://example.com/funny-factory.jpg', 'info@funnyfactory.com')
+  INSERT INTO venues (id, name, address, image_url, contact_email) VALUES
+    ('123e4567-e89b-12d3-a456-426614174000'::uuid, 'The Comedy Store', '8433 Sunset Blvd, Los Angeles, CA 90069', 'https://example.com/comedy-store.jpg', 'bookings@comedystore.com'),
+    ('987fcdeb-51a2-3d4b-8c9e-426614174001'::uuid, 'Laugh Factory', '8001 Sunset Blvd, Los Angeles, CA 90046', 'https://example.com/laugh-factory.jpg', 'events@laughfactory.com')
   RETURNING *
 ),
 
 -- Seed members
 inserted_members AS (
-  INSERT INTO members (name, email, photo_url) VALUES
-    ('Alice Smith', 'alice@example.com', 'https://example.com/alice.jpg'),
-    ('Bob Johnson', 'bob@example.com', 'https://example.com/bob.jpg'),
-    ('Charlie Brown', 'charlie@example.com', 'https://example.com/charlie.jpg'),
-    ('Diana Ross', 'diana@example.com', 'https://example.com/diana.jpg')
+  INSERT INTO members (id, name, email, photo_url) VALUES
+    ('550e8400-e29b-41d4-a716-446655440000'::uuid, 'John Smith', 'john@example.com', 'https://example.com/john.jpg'),
+    ('6ba7b810-9dad-11d1-80b4-446655440001'::uuid, 'Jane Doe', 'jane@example.com', 'https://example.com/jane.jpg')
   RETURNING *
 ),
 
 -- Seed shows
 inserted_shows AS (
-  INSERT INTO shows (venue_id, date, ticket_link, image_url, price, status)
+  INSERT INTO shows (id, venue_id, date, name, ticket_link, price, status)
   SELECT 
-    venue_id,
-    date_value,
+    id::uuid,
+    venue_id::uuid,
+    date::timestamp with time zone,
+    name,
     ticket_link,
-    image_url,
     price,
-    status
+    status::show_status
   FROM (VALUES
-    ((SELECT id FROM inserted_venues OFFSET 0 LIMIT 1), NOW() - INTERVAL '2 weeks', 'https://tickets.com/past-show', 'https://example.com/show1.jpg', 15.00, 'completed'::show_status),
-    ((SELECT id FROM inserted_venues OFFSET 1 LIMIT 1), NOW() - INTERVAL '2 days', 'https://tickets.com/recent-show', NULL, 20.00, 'performed'::show_status),
-    ((SELECT id FROM inserted_venues OFFSET 2 LIMIT 1), NOW() + INTERVAL '2 weeks', 'https://tickets.com/future-show', 'https://example.com/show3.jpg', 25.00, 'scheduled'::show_status),
-    ((SELECT id FROM inserted_venues OFFSET 0 LIMIT 1), NOW() + INTERVAL '1 month', 'https://tickets.com/far-future-show', NULL, 30.00, 'scheduled'::show_status)
-  ) AS t(venue_id, date_value, ticket_link, image_url, price, status)
+    ('7c9e6679-7425-40de-944b-e07fc1f90ae7', '123e4567-e89b-12d3-a456-426614174000', '2024-04-01 20:00:00+00'::timestamp with time zone, 'Comedy Night Live', 'https://tickets.com/comedy-night', 25.00, 'scheduled'::show_status),
+    ('8c9e6679-7425-40de-944b-e07fc1f90ae8', '987fcdeb-51a2-3d4b-8c9e-426614174001', '2024-04-15 19:30:00+00'::timestamp with time zone, 'Laugh Out Loud', 'https://tickets.com/lol-show', 30.00, 'scheduled'::show_status)
+  ) AS t(id, venue_id, date, name, ticket_link, price, status)
   RETURNING *
 )
 
 -- Seed show_members
 INSERT INTO show_members (show_id, member_id, status)
-SELECT 
-  s.id,
-  m.id,
-  status
-FROM (VALUES
-  (0, 0, 'performed'::member_status),
-  (0, 1, 'performed'::member_status),
-  (0, 2, 'no_show'::member_status),
-  (0, 3, 'performed'::member_status),
-  (1, 0, 'performed'::member_status),
-  (1, 1, 'no_show'::member_status),
-  (1, 2, 'performed'::member_status),
-  (1, 3, 'performed'::member_status),
-  (2, 0, 'confirmed'::member_status),
-  (2, 1, 'not_attending'::member_status),
-  (2, 2, 'confirmed'::member_status),
-  (2, 3, 'unconfirmed'::member_status),
-  (3, 0, 'unconfirmed'::member_status),
-  (3, 1, 'unconfirmed'::member_status),
-  (3, 2, 'unconfirmed'::member_status),
-  (3, 3, 'unconfirmed'::member_status)
-) AS t(show_offset, member_offset, status)
-CROSS JOIN LATERAL (
-  SELECT id FROM inserted_shows OFFSET t.show_offset LIMIT 1
-) s
-CROSS JOIN LATERAL (
-  SELECT id FROM inserted_members OFFSET t.member_offset LIMIT 1
-) m; 
+VALUES
+  ('7c9e6679-7425-40de-944b-e07fc1f90ae7'::uuid, '550e8400-e29b-41d4-a716-446655440000'::uuid, 'confirmed'::member_status),
+  ('7c9e6679-7425-40de-944b-e07fc1f90ae7'::uuid, '6ba7b810-9dad-11d1-80b4-446655440001'::uuid, 'unconfirmed'::member_status),
+  ('8c9e6679-7425-40de-944b-e07fc1f90ae8'::uuid, '550e8400-e29b-41d4-a716-446655440000'::uuid, 'confirmed'::member_status),
+  ('8c9e6679-7425-40de-944b-e07fc1f90ae8'::uuid, '6ba7b810-9dad-11d1-80b4-446655440001'::uuid, 'confirmed'::member_status); 

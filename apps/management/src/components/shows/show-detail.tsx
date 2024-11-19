@@ -54,7 +54,7 @@ export function ShowDetail({ id }: ShowDetailProps) {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Show Details</CardTitle>
+          <CardTitle>{show.name}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4">
@@ -67,10 +67,25 @@ export function ShowDetail({ id }: ShowDetailProps) {
               <p>{show.venue.name}</p>
               <p className="text-sm text-muted-foreground">{show.venue.address}</p>
             </div>
-            <div>
-              <h3 className="font-semibold">Price</h3>
-              <p>${show.price}</p>
-            </div>
+            {show.price && (
+              <div>
+                <h3 className="font-semibold">Price</h3>
+                <p>${show.price}</p>
+              </div>
+            )}
+            {show.ticket_link && (
+              <div>
+                <h3 className="font-semibold">Tickets</h3>
+                <a 
+                  href={show.ticket_link} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline"
+                >
+                  Buy Tickets
+                </a>
+              </div>
+            )}
             <div>
               <h3 className="font-semibold">Status</h3>
               <Badge variant={getStatusVariant(show.status)}>{show.status}</Badge>

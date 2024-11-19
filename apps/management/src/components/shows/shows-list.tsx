@@ -21,9 +21,12 @@ export function ShowsList() {
         <Link key={show.id} href={`/shows/${show.id}`}>
           <Card className="hover:bg-accent transition-colors">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {formatDate(show.date)}
-              </CardTitle>
+              <div>
+                <CardTitle className="text-base">{show.name}</CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  {formatDate(show.date)}
+                </p>
+              </div>
               <Badge variant={getStatusVariant(show.status)}>{show.status}</Badge>
             </CardHeader>
             <CardContent>
@@ -32,10 +35,12 @@ export function ShowsList() {
                   <GlobeIcon className="h-4 w-4 opacity-70" />
                   <span className="text-sm">{show.venue.name}</span>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <IdCardIcon className="h-4 w-4 opacity-70" />
-                  <span className="text-sm">${show.price}</span>
-                </div>
+                {show.price && (
+                  <div className="flex items-center space-x-2">
+                    <IdCardIcon className="h-4 w-4 opacity-70" />
+                    <span className="text-sm">${show.price}</span>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
