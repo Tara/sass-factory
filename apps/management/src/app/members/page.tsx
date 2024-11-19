@@ -165,17 +165,17 @@ export default function MembersPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Photo</TableHead>
+              <TableHead className="pl-4">Photo</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Joined</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="pr-4 text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredMembers.map((member) => (
               <TableRow key={member.id}>
-                <TableCell>
+                <TableCell className="pl-4">
                   <img 
                     src={member.photo_url} 
                     alt={member.name} 
@@ -185,7 +185,7 @@ export default function MembersPage() {
                 <TableCell className="font-medium">{member.name}</TableCell>
                 <TableCell>{member.email}</TableCell>
                 <TableCell>{formatDate(member.created_at)}</TableCell>
-                <TableCell className="text-right">
+                <TableCell className="pr-4 text-right">
                   <Button
                     variant="destructive"
                     size="sm"
