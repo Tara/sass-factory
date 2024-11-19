@@ -3,37 +3,36 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "NODE_ENV=development next dev",
-    "build": "NODE_ENV=production next build",
-    "start": "NODE_ENV=production next start",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
     "lint": "next lint",
-    "test": "jest",
-    "test:watch": "jest --watch"
+    "db:push": "supabase db push --linked",
+    "db:reset": "supabase db reset --linked",
+    "db:types": "supabase gen types typescript --linked  > src/types/supabase.ts",
+    "db:new": "supabase migration new"    
   },
   "dependencies": {
-    "@supabase/auth-helpers-nextjs": "^0.8.7",
-    "@supabase/supabase-js": "^2.46.1",
+    "@radix-ui/react-slot": "^1.1.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
     "lucide-react": "^0.460.0",
-    "next": "^15.0.3",
-    "postcss": "^8",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "supabase": "^1.219.2",
-    "tailwindcss": "^3.4.1",
-    "typescript": "^5",
-    "zod": "^3.22.4"
+    "next": "15.0.3",
+    "react": "^18",
+    "react-dom": "^18",
+    "shadcn-ui": "^0.2.3",
+    "tailwind-merge": "^2.5.4",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^6.1.4",
-    "@testing-library/react": "^14.0.0",
-    "@testing-library/user-event": "^14.5.1",
-    "@types/jest": "^29.5.11",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "autoprefixer": "^10.4.20",
     "eslint": "^8",
-    "eslint-config-next": "14.1.0",
-    "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0"
+    "eslint-config-next": "15.0.3",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.15",
+    "typescript": "^5"
   }
 }
