@@ -5,7 +5,10 @@ TRUNCATE venues, shows, members, show_members CASCADE;
 WITH inserted_venues AS (
   INSERT INTO venues (id, name, address, image_url, contact_email) VALUES
     ('123e4567-e89b-12d3-a456-426614174000'::uuid, 'The Comedy Store', '8433 Sunset Blvd, Los Angeles, CA 90069', 'https://example.com/comedy-store.jpg', 'bookings@comedystore.com'),
-    ('987fcdeb-51a2-3d4b-8c9e-426614174001'::uuid, 'Laugh Factory', '8001 Sunset Blvd, Los Angeles, CA 90046', 'https://example.com/laugh-factory.jpg', 'events@laughfactory.com')
+    ('987fcdeb-51a2-3d4b-8c9e-426614174001'::uuid, 'Laugh Factory', '8001 Sunset Blvd, Los Angeles, CA 90046', 'https://example.com/laugh-factory.jpg', 'events@laughfactory.com'),
+    ('a1b2c3d4-e5f6-4a5b-8c9d-426614174002'::uuid, 'UCB Theatre', '5919 Franklin Ave, Los Angeles, CA 90028', 'https://example.com/ucb.jpg', 'franklin@ucbtheatre.com'),
+    ('b2c3d4e5-f6a7-5b6c-9d0e-426614174003'::uuid, 'The Second City', '6616 Hollywood Blvd, Los Angeles, CA 90028', 'https://example.com/second-city.jpg', 'hollywood@secondcity.com'),
+    ('c3d4e5f6-a7b8-6c7d-0e1f-426614174004'::uuid, 'iO West', '6366 Hollywood Blvd, Los Angeles, CA 90028', 'https://example.com/io-west.jpg', 'shows@iowest.com')
   RETURNING *
 ),
 
@@ -13,11 +16,16 @@ WITH inserted_venues AS (
 inserted_members AS (
   INSERT INTO members (id, name, email, photo_url) VALUES
     ('550e8400-e29b-41d4-a716-446655440000'::uuid, 'John Smith', 'john@example.com', 'https://example.com/john.jpg'),
-    ('6ba7b810-9dad-11d1-80b4-446655440001'::uuid, 'Jane Doe', 'jane@example.com', 'https://example.com/jane.jpg')
+    ('6ba7b810-9dad-11d1-80b4-446655440001'::uuid, 'Jane Doe', 'jane@example.com', 'https://example.com/jane.jpg'),
+    ('7cb7b810-9dad-11d1-80b4-446655440002'::uuid, 'Mike Johnson', 'mike@example.com', 'https://example.com/mike.jpg'),
+    ('8dc7b810-9dad-11d1-80b4-446655440003'::uuid, 'Sarah Williams', 'sarah@example.com', 'https://example.com/sarah.jpg'),
+    ('9ed7b810-9dad-11d1-80b4-446655440004'::uuid, 'Tom Brown', 'tom@example.com', 'https://example.com/tom.jpg'),
+    ('af07b810-9dad-11d1-80b4-446655440005'::uuid, 'Lisa Garcia', 'lisa@example.com', 'https://example.com/lisa.jpg'),
+    ('bf17b810-9dad-11d1-80b4-446655440006'::uuid, 'David Lee', 'david@example.com', 'https://example.com/david.jpg')
   RETURNING *
 ),
 
--- Seed shows
+-- Seed shows with various statuses
 inserted_shows AS (
   INSERT INTO shows (id, venue_id, date, name, ticket_link, price, status)
   SELECT 
@@ -29,16 +37,59 @@ inserted_shows AS (
     price,
     status::show_status
   FROM (VALUES
-    ('7c9e6679-7425-40de-944b-e07fc1f90ae7', '123e4567-e89b-12d3-a456-426614174000', '2024-04-01 20:00:00+00'::timestamp with time zone, 'Comedy Night Live', 'https://tickets.com/comedy-night', 25.00, 'scheduled'::show_status),
-    ('8c9e6679-7425-40de-944b-e07fc1f90ae8', '987fcdeb-51a2-3d4b-8c9e-426614174001', '2024-04-15 19:30:00+00'::timestamp with time zone, 'Laugh Out Loud', 'https://tickets.com/lol-show', 30.00, 'scheduled'::show_status)
+    -- Past shows (completed and performed)
+    ('7c9e6679-7425-40de-944b-e07fc1f90ae1', '123e4567-e89b-12d3-a456-426614174000', '2024-09-15 20:00:00+00', 'Fall Comedy Night', 'https://tickets.com/fall-comedy', 25.00, 'completed'),
+    ('7c9e6679-7425-40de-944b-e07fc1f90ae2', '987fcdeb-51a2-3d4b-8c9e-426614174001', '2024-10-01 19:30:00+00', 'October Showcase', 'https://tickets.com/oct-show', 30.00, 'performed'),
+    
+    -- Current/Upcoming shows (scheduled - November/December 2024)
+    ('7c9e6679-7425-40de-944b-e07fc1f90ae3', 'a1b2c3d4-e5f6-4a5b-8c9d-426614174002', '2024-11-30 20:00:00+00', 'Thanksgiving Special', 'https://tickets.com/thanksgiving', 35.00, 'scheduled'),
+    ('7c9e6679-7425-40de-944b-e07fc1f90ae4', 'b2c3d4e5-f6a7-5b6c-9d0e-426614174003', '2024-12-31 22:30:00+00', 'New Years Eve Spectacular', 'https://tickets.com/nye2024', 75.00, 'scheduled'),
+    
+    -- 2025 Shows
+    ('7c9e6679-7425-40de-944b-e07fc1f90ae5', 'c3d4e5f6-a7b8-6c7d-0e1f-426614174004', '2025-02-14 20:00:00+00', 'Valentine''s Day Special', 'https://tickets.com/vday2025', 45.00, 'scheduled'),
+    ('7c9e6679-7425-40de-944b-e07fc1f90ae6', '123e4567-e89b-12d3-a456-426614174000', '2025-04-01 20:00:00+00', 'April Fools Extravaganza', 'https://tickets.com/april2025', 40.00, 'scheduled'),
+    
+    -- Far Future Shows (Late 2025)
+    ('7c9e6679-7425-40de-944b-e07fc1f90ae7', '987fcdeb-51a2-3d4b-8c9e-426614174001', '2025-07-04 19:00:00+00', 'Independence Day Show', NULL, 50.00, 'scheduled'),
+    ('7c9e6679-7425-40de-944b-e07fc1f90ae8', 'a1b2c3d4-e5f6-4a5b-8c9d-426614174002', '2025-10-31 21:00:00+00', 'Halloween Spooktacular 2025', NULL, NULL, 'scheduled'),
+    ('7c9e6679-7425-40de-944b-e07fc1f90ae9', 'b2c3d4e5-f6a7-5b6c-9d0e-426614174003', '2025-12-31 22:30:00+00', 'NYE 2026 Countdown', NULL, 80.00, 'scheduled')
   ) AS t(id, venue_id, date, name, ticket_link, price, status)
   RETURNING *
 )
 
--- Seed show_members
+-- Seed show_members with various statuses
 INSERT INTO show_members (show_id, member_id, status)
 VALUES
-  ('7c9e6679-7425-40de-944b-e07fc1f90ae7'::uuid, '550e8400-e29b-41d4-a716-446655440000'::uuid, 'confirmed'::member_status),
-  ('7c9e6679-7425-40de-944b-e07fc1f90ae7'::uuid, '6ba7b810-9dad-11d1-80b4-446655440001'::uuid, 'unconfirmed'::member_status),
-  ('8c9e6679-7425-40de-944b-e07fc1f90ae8'::uuid, '550e8400-e29b-41d4-a716-446655440000'::uuid, 'confirmed'::member_status),
-  ('8c9e6679-7425-40de-944b-e07fc1f90ae8'::uuid, '6ba7b810-9dad-11d1-80b4-446655440001'::uuid, 'confirmed'::member_status); 
+  -- Past shows (September/October 2024)
+  ('7c9e6679-7425-40de-944b-e07fc1f90ae1', '550e8400-e29b-41d4-a716-446655440000', 'performed'),
+  ('7c9e6679-7425-40de-944b-e07fc1f90ae1', '6ba7b810-9dad-11d1-80b4-446655440001', 'performed'),
+  ('7c9e6679-7425-40de-944b-e07fc1f90ae1', '7cb7b810-9dad-11d1-80b4-446655440002', 'no_show'),
+  
+  ('7c9e6679-7425-40de-944b-e07fc1f90ae2', '8dc7b810-9dad-11d1-80b4-446655440003', 'performed'),
+  ('7c9e6679-7425-40de-944b-e07fc1f90ae2', '9ed7b810-9dad-11d1-80b4-446655440004', 'performed'),
+  
+  -- Upcoming shows (November/December 2024)
+  ('7c9e6679-7425-40de-944b-e07fc1f90ae3', '550e8400-e29b-41d4-a716-446655440000', 'confirmed'),
+  ('7c9e6679-7425-40de-944b-e07fc1f90ae3', 'af07b810-9dad-11d1-80b4-446655440005', 'not_attending'),
+  ('7c9e6679-7425-40de-944b-e07fc1f90ae3', 'bf17b810-9dad-11d1-80b4-446655440006', 'confirmed'),
+  
+  ('7c9e6679-7425-40de-944b-e07fc1f90ae4', '6ba7b810-9dad-11d1-80b4-446655440001', 'confirmed'),
+  ('7c9e6679-7425-40de-944b-e07fc1f90ae4', '7cb7b810-9dad-11d1-80b4-446655440002', 'unconfirmed'),
+  
+  -- 2025 Shows (Early)
+  ('7c9e6679-7425-40de-944b-e07fc1f90ae5', '8dc7b810-9dad-11d1-80b4-446655440003', 'confirmed'),
+  ('7c9e6679-7425-40de-944b-e07fc1f90ae5', '9ed7b810-9dad-11d1-80b4-446655440004', 'unconfirmed'),
+  
+  ('7c9e6679-7425-40de-944b-e07fc1f90ae6', 'af07b810-9dad-11d1-80b4-446655440005', 'confirmed'),
+  ('7c9e6679-7425-40de-944b-e07fc1f90ae6', 'bf17b810-9dad-11d1-80b4-446655440006', 'unconfirmed'),
+  
+  -- Far Future Shows (Late 2025)
+  ('7c9e6679-7425-40de-944b-e07fc1f90ae7', '550e8400-e29b-41d4-a716-446655440000', 'unconfirmed'),
+  ('7c9e6679-7425-40de-944b-e07fc1f90ae7', '6ba7b810-9dad-11d1-80b4-446655440001', 'unconfirmed'),
+  
+  ('7c9e6679-7425-40de-944b-e07fc1f90ae8', '7cb7b810-9dad-11d1-80b4-446655440002', 'unconfirmed'),
+  ('7c9e6679-7425-40de-944b-e07fc1f90ae8', '8dc7b810-9dad-11d1-80b4-446655440003', 'confirmed'),
+  
+  ('7c9e6679-7425-40de-944b-e07fc1f90ae9', '9ed7b810-9dad-11d1-80b4-446655440004', 'unconfirmed'),
+  ('7c9e6679-7425-40de-944b-e07fc1f90ae9', 'af07b810-9dad-11d1-80b4-446655440005', 'unconfirmed');
+  
