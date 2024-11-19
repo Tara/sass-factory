@@ -12,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { Trash2 } from "lucide-react"
 
 function formatDate(date: string | null): string {
   if (!date) return 'N/A'
@@ -50,7 +51,7 @@ export function MembersList({ members, onDelete }: MembersListProps) {
             <TableHead>Name</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Joined</TableHead>
-            <TableHead className="pr-4 text-right">Actions</TableHead>
+            <TableHead className="w-[100px]">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -62,14 +63,14 @@ export function MembersList({ members, onDelete }: MembersListProps) {
               <TableCell className="font-medium">{member.name}</TableCell>
               <TableCell>{member.email}</TableCell>
               <TableCell>{formatDate(member.created_at)}</TableCell>
-              <TableCell className="pr-4 text-right">
+              <TableCell>
                 <Button
-                  variant="destructive"
-                  size="sm"
+                  variant="ghost"
+                  size="icon"
                   onClick={() => handleDelete(member.id)}
                 >
-                  Delete
-                </Button>
+                  <Trash2 className="h-4 w-4" />
+                </Button>                
               </TableCell>
             </TableRow>
           ))}
