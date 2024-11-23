@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { supabase } from '../supabase/client'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import type { Database } from '@/types/supabase'
 
 export type Member = {
   id: string
@@ -9,6 +10,13 @@ export type Member = {
   created_at: string | null
   updated_at: string | null
 }
+
+// Create a single instance of the Supabase client
+const supabase = createClientComponentClient<Database>({
+  options: {
+    persistSession: false // This prevents cookie-related errors
+  }
+})
 
 async function fetchMembers() {
   const { data, error } = await supabase

@@ -6,14 +6,13 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { PlusIcon } from '@radix-ui/react-icons'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import type { Database } from '@/types/supabase'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { supabase } from '@/lib/supabase/client'
 
 type Venue = Database['public']['Tables']['venues']['Row']
 
 function VenueSelect() {
-  const supabase = createClientComponentClient<Database>()
   const { data: venues } = useQuery<Venue[]>({
     queryKey: ['venues'],
     queryFn: async () => {
@@ -47,7 +46,6 @@ export function AddShowDialog() {
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const formRef = useRef<HTMLFormElement>(null)
-  const supabase = createClientComponentClient<Database>()
   const queryClient = useQueryClient()
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {

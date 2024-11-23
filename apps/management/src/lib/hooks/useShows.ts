@@ -1,14 +1,26 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import type { Database } from '@/types/supabase'
 
 type Show = Database['public']['Tables']['shows']['Row'] & {
   venue: Database['public']['Tables']['venues']['Row']
+  name: string
 }
 
-export function useShows() {
-  const supabase = createClientComponentClient<Database>()
+type UpdateAttendanceParams = {
+  showId: string
+  memberId: string
+  status: Database['public']['Enums']['member_status']
+}
 
+// Create a single instance of the Supabase client
+const supabase = createClientComponentClient<Database>({
+  options: {
+    persistSession: false // This prevents cookie-related errors
+  }
+})
+
+export function useShows() {
   return useQuery({
     queryKey: ['shows'],
     queryFn: async () => {
@@ -27,9 +39,9 @@ export function useShows() {
 }
 
 export function useShow(id: string) {
-  const supabase = createClientComponentClient<Database>()
+  const queryClient = useQueryClient()
 
-  return useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['shows', id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -55,4 +67,26 @@ export function useShow(id: string) {
       }
     }
   })
+
+  const updateAttendance = useMutation({
+    mutationFn: async ({ showId, memberId, status }: UpdateAttendanceParams) => {
+      const { error } = await supabase
+        .from('show_members')
+        .update({ status })
+        .eq('show_id', showId)
+        .eq('member_id', memberId)
+
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['shows', id] })
+    }
+  })
+
+  return {
+    data,
+    isLoading,
+    error,
+    updateAttendance: updateAttendance.mutate
+  }
 } 

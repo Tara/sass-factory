@@ -7,6 +7,7 @@ import { GlobeIcon, IdCardIcon } from '@radix-ui/react-icons'
 import Link from 'next/link'
 import { formatDate } from '@/lib/utils'
 import type { Database } from '@/types/supabase'
+import { getShowStatusVariant } from "@/lib/utils"
 
 type ShowStatus = Database['public']['Enums']['show_status']
 
@@ -27,7 +28,7 @@ export function ShowsList() {
                   {formatDate(show.date)}
                 </p>
               </div>
-              <Badge variant={getStatusVariant(show.status)}>{show.status}</Badge>
+              <Badge variant={getShowStatusVariant(show.status)}>{show.status}</Badge>
             </CardHeader>
             <CardContent>
               <div className="flex flex-col space-y-2">
@@ -48,17 +49,4 @@ export function ShowsList() {
       ))}
     </div>
   )
-}
-
-function getStatusVariant(status: ShowStatus) {
-  switch (status) {
-    case 'scheduled':
-      return 'default' as const
-    case 'performed':
-      return 'secondary' as const
-    case 'completed':
-      return 'outline' as const
-    default:
-      return 'default' as const
-  }
 } 

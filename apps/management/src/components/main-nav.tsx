@@ -10,12 +10,12 @@ const navItems = [
     label: "Dashboard"
   },
   {
-    href: "/venues",
-    label: "Venues"
-  },
-  {
     href: "/shows",
     label: "Shows"
+  },
+  {
+    href: "/venues",
+    label: "Venues"
   },
   {
     href: "/members",

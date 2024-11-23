@@ -6,52 +6,44 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { formatDate } from '@/lib/utils'
 import type { Database } from '@/types/supabase'
+import { ShowAttendance } from "./show-attendance"
+import { useMembers } from "@/lib/hooks/useMembers"
+import { getShowStatusVariant, getAttendanceVariant } from "@/lib/utils"
 
 type ShowStatus = Database['public']['Enums']['show_status']
 type MemberStatus = Database['public']['Enums']['member_status']
+
+type Show = Database['public']['Tables']['shows']['Row'] & {
+  venue: Database['public']['Tables']['venues']['Row']
+  name: string
+  show_members: Array<{
+    member: Database['public']['Tables']['members']['Row']
+    status: MemberStatus
+  }>
+}
 
 interface ShowDetailProps {
   id: string
 }
 
-function getStatusVariant(status: ShowStatus) {
-  switch (status) {
-    case 'scheduled':
-      return 'default' as const
-    case 'performed':
-      return 'secondary' as const
-    case 'completed':
-      return 'outline' as const
-    default:
-      return 'default' as const
-  }
-}
-
-function getAttendanceVariant(status: MemberStatus) {
-  switch (status) {
-    case 'confirmed':
-      return 'outline' as const
-    case 'unconfirmed':
-      return 'default' as const
-    case 'not_attending':
-      return 'destructive' as const
-    case 'performed':
-      return 'secondary' as const
-    case 'no_show':
-      return 'destructive' as const
-    default:
-      return 'default' as const
-  }
-}
-
 export function ShowDetail({ id }: ShowDetailProps) {
-  const { data: show, isLoading } = useShow(id)
+  const { data: show, isLoading, updateAttendance } = useShow(id)
+  const { members } = useMembers()
 
   if (isLoading) return <div>Loading...</div>
   if (!show) return <div>Show not found</div>
 
+  const showMembers = show.show_members.map(sm => ({
+    member: sm.member,
+    status: sm.status
+  }))
+
+  async function handleUpdateAttendance(memberId: string, status: MemberStatus) {
+    updateAttendance({ showId: id, memberId, status })
+  }
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <Card>
         <CardHeader>
           <CardTitle>{show.name}</CardTitle>
@@ -88,7 +80,7 @@ export function ShowDetail({ id }: ShowDetailProps) {
             )}
             <div>
               <h3 className="font-semibold">Status</h3>
-              <Badge variant={getStatusVariant(show.status)}>{show.status}</Badge>
+              <Badge variant={getShowStatusVariant(show.status)}>{show.status}</Badge>
             </div>
           </div>
         </CardContent>
@@ -99,32 +91,11 @@ export function ShowDetail({ id }: ShowDetailProps) {
           <CardTitle>Member Attendance</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4">
-            {show.show_members.map((showMember) => (
-              <div
-                key={showMember.id}
-                className="flex items-center justify-between"
-              >
-                <div className="flex items-center space-x-4">
-                  <Avatar>
-                    <AvatarImage src={showMember.member.photo_url} />
-                    <AvatarFallback>
-                      {showMember.member.name.substring(0, 2)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-medium">{showMember.member.name}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {showMember.member.email}
-                    </p>
-                  </div>
-                </div>
-                <Badge variant={getAttendanceVariant(showMember.status)}>
-                  {showMember.status}
-                </Badge>
-              </div>
-            ))}
-          </div>
+          <ShowAttendance
+            showMembers={showMembers}
+            showDate={show.date}
+            onUpdateAttendance={handleUpdateAttendance}
+          />
         </CardContent>
       </Card>
     </div>

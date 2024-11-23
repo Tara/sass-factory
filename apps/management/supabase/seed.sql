@@ -4,24 +4,24 @@ TRUNCATE venues, shows, members, show_members CASCADE;
 -- Seed venues
 WITH inserted_venues AS (
   INSERT INTO venues (id, name, address, image_url, contact_email) VALUES
-    ('123e4567-e89b-12d3-a456-426614174000'::uuid, 'The Comedy Store', '8433 Sunset Blvd, Los Angeles, CA 90069', 'https://example.com/comedy-store.jpg', 'bookings@comedystore.com'),
-    ('987fcdeb-51a2-3d4b-8c9e-426614174001'::uuid, 'Laugh Factory', '8001 Sunset Blvd, Los Angeles, CA 90046', 'https://example.com/laugh-factory.jpg', 'events@laughfactory.com'),
-    ('a1b2c3d4-e5f6-4a5b-8c9d-426614174002'::uuid, 'UCB Theatre', '5919 Franklin Ave, Los Angeles, CA 90028', 'https://example.com/ucb.jpg', 'franklin@ucbtheatre.com'),
-    ('b2c3d4e5-f6a7-5b6c-9d0e-426614174003'::uuid, 'The Second City', '6616 Hollywood Blvd, Los Angeles, CA 90028', 'https://example.com/second-city.jpg', 'hollywood@secondcity.com'),
-    ('c3d4e5f6-a7b8-6c7d-0e1f-426614174004'::uuid, 'iO West', '6366 Hollywood Blvd, Los Angeles, CA 90028', 'https://example.com/io-west.jpg', 'shows@iowest.com')
+    ('123e4567-e89b-12d3-a456-426614174000'::uuid, 'The Comedy Store', '8433 Sunset Blvd, Los Angeles, CA 90069', 'https://picsum.photos/seed/comedy-store/800/600', 'bookings@comedystore.com'),
+    ('987fcdeb-51a2-3d4b-8c9e-426614174001'::uuid, 'Laugh Factory', '8001 Sunset Blvd, Los Angeles, CA 90046', 'https://picsum.photos/seed/laugh-factory/800/600', 'events@laughfactory.com'),
+    ('a1b2c3d4-e5f6-4a5b-8c9d-426614174002'::uuid, 'UCB Theatre', '5919 Franklin Ave, Los Angeles, CA 90028', 'https://picsum.photos/seed/ucb-theatre/800/600', 'franklin@ucbtheatre.com'),
+    ('b2c3d4e5-f6a7-5b6c-9d0e-426614174003'::uuid, 'The Second City', '6616 Hollywood Blvd, Los Angeles, CA 90028', 'https://picsum.photos/seed/second-city/800/600', 'hollywood@secondcity.com'),
+    ('c3d4e5f6-a7b8-6c7d-0e1f-426614174004'::uuid, 'iO West', '6366 Hollywood Blvd, Los Angeles, CA 90028', 'https://picsum.photos/seed/io-west/800/600', 'shows@iowest.com')
   RETURNING *
 ),
 
 -- Seed members
 inserted_members AS (
   INSERT INTO members (id, name, email, photo_url) VALUES
-    ('550e8400-e29b-41d4-a716-446655440000'::uuid, 'John Smith', 'john@example.com', 'https://example.com/john.jpg'),
-    ('6ba7b810-9dad-11d1-80b4-446655440001'::uuid, 'Jane Doe', 'jane@example.com', 'https://example.com/jane.jpg'),
-    ('7cb7b810-9dad-11d1-80b4-446655440002'::uuid, 'Mike Johnson', 'mike@example.com', 'https://example.com/mike.jpg'),
-    ('8dc7b810-9dad-11d1-80b4-446655440003'::uuid, 'Sarah Williams', 'sarah@example.com', 'https://example.com/sarah.jpg'),
-    ('9ed7b810-9dad-11d1-80b4-446655440004'::uuid, 'Tom Brown', 'tom@example.com', 'https://example.com/tom.jpg'),
-    ('af07b810-9dad-11d1-80b4-446655440005'::uuid, 'Lisa Garcia', 'lisa@example.com', 'https://example.com/lisa.jpg'),
-    ('bf17b810-9dad-11d1-80b4-446655440006'::uuid, 'David Lee', 'david@example.com', 'https://example.com/david.jpg')
+    ('550e8400-e29b-41d4-a716-446655440000'::uuid, 'John Smith', 'john@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=john-smith'),
+    ('6ba7b810-9dad-11d1-80b4-446655440001'::uuid, 'Jane Doe', 'jane@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=jane-doe'),
+    ('7cb7b810-9dad-11d1-80b4-446655440002'::uuid, 'Mike Johnson', 'mike@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=mike-johnson'),
+    ('8dc7b810-9dad-11d1-80b4-446655440003'::uuid, 'Sarah Williams', 'sarah@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=sarah-williams'),
+    ('9ed7b810-9dad-11d1-80b4-446655440004'::uuid, 'Tom Brown', 'tom@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=tom-brown'),
+    ('af07b810-9dad-11d1-80b4-446655440005'::uuid, 'Lisa Garcia', 'lisa@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=lisa-garcia'),
+    ('bf17b810-9dad-11d1-80b4-446655440006'::uuid, 'David Lee', 'david@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=david-lee')
   RETURNING *
 ),
 
@@ -92,4 +92,3 @@ VALUES
   
   ('7c9e6679-7425-40de-944b-e07fc1f90ae9', '9ed7b810-9dad-11d1-80b4-446655440004', 'unconfirmed'),
   ('7c9e6679-7425-40de-944b-e07fc1f90ae9', 'af07b810-9dad-11d1-80b4-446655440005', 'unconfirmed');
-  
