@@ -1,10 +1,29 @@
 import type { Database } from '@/types/supabase'
+import type { Member } from './members'
 
-export type Show = Database['public']['Tables']['shows']['Row'] & {
-  venue: Database['public']['Tables']['venues']['Row']
+export type AttendanceStatus = Database['public']['Enums']['attendance_status']
+
+export interface ShowMember {
+  member: Member
+  status: AttendanceStatus
+}
+
+type BaseVenue = Database['public']['Tables']['venues']['Row']
+export type Venue = BaseVenue & {
+  address: string
+}
+
+type BaseShow = Database['public']['Tables']['shows']['Row']
+export type Show = BaseShow & {
+  venue: Venue
+  show_members: ShowMember[]
+}
+
+export interface NewShow {
   name: string
-  show_members: Array<{
-    member: Database['public']['Tables']['members']['Row']
-    status: Database['public']['Enums']['member_status']
-  }>
+  date: string
+  venue_id: string
+  status: 'scheduled' | 'performed' | 'completed'
+  price?: number
+  ticket_link?: string
 } 

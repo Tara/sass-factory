@@ -4,16 +4,13 @@ import { useShow } from '@/lib/hooks/useShows'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CustomBadge } from '@/components/ui/custom-badge'
 import { formatDate, getGoogleMapsSearchUrl } from '@/lib/utils'
-import type { Database } from '@/types/supabase'
 import { ShowAttendance } from "./show-attendance"
 import { getShowStatusVariant } from "@/lib/utils"
-import { MapPin, Calendar, Ticket, DollarSign } from 'lucide-react'
+import { MapPin, Calendar, Ticket, DollarSign, Pencil } from 'lucide-react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { EditShow } from './edit-show-dialog'
-import { Pencil } from 'lucide-react'
-
-type AttendanceStatus = Database['public']['Enums']['attendance_status']
+import type { Show, ShowMember, AttendanceStatus } from '@/lib/types/shows'
 
 interface ShowDetailProps {
   id: string
@@ -29,10 +26,22 @@ export function ShowDetail({ id }: ShowDetailProps) {
   )
   if (!show) return <div>Show not found</div>
 
-  const showMembers = show.show_members.map(sm => ({
-    member: sm.member,
-    status: sm.status
-  }))
+  const transformedShow: Show = {
+    ...show,
+    show_members: show.show_members.map(sm => ({
+      member: {
+        ...sm.member,
+        member_status: sm.member.member_status as 'active' | 'inactive'
+      },
+      status: sm.status
+    })),
+    venue: {
+      ...show.venue,
+      address: show.venue.address || '',
+    }
+  }
+
+  const showMembers = transformedShow.show_members
 
   async function handleUpdateAttendance(memberId: string, status: AttendanceStatus) {
     updateAttendance({ showId: id, memberId, status })
@@ -47,7 +56,7 @@ export function ShowDetail({ id }: ShowDetailProps) {
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Show Details</h1>
         <EditShow 
-          show={show} 
+          show={transformedShow} 
           trigger={
             <Button variant="outline" size="sm" className="flex items-center gap-2">
               <Pencil className="h-4 w-4" />
