@@ -1,6 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { getDashboardStats } from "@/lib/services/dashboard"
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const stats = await getDashboardStats()
+
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Dashboard</h1>
@@ -13,9 +16,9 @@ export default function DashboardPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">12</div>
+            <div className="text-2xl font-bold">{stats.totalShows}</div>
             <p className="text-xs text-muted-foreground">
-              +2 from last month
+              +{stats.showsLastMonth} from last month
             </p>
           </CardContent>
         </Card>
@@ -27,9 +30,9 @@ export default function DashboardPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">8</div>
+            <div className="text-2xl font-bold">{stats.activeMembers}</div>
             <p className="text-xs text-muted-foreground">
-              +1 new this month
+              +{stats.newMembersThisMonth} new this month
             </p>
           </CardContent>
         </Card>
@@ -41,7 +44,7 @@ export default function DashboardPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">4</div>
+            <div className="text-2xl font-bold">{stats.venues}</div>
           </CardContent>
         </Card>
 
@@ -52,10 +55,12 @@ export default function DashboardPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3</div>
-            <p className="text-xs text-muted-foreground">
-              Next show in 5 days
-            </p>
+            <div className="text-2xl font-bold">{stats.upcomingShows}</div>
+            {stats.nextShowDays !== null && (
+              <p className="text-xs text-muted-foreground">
+                Next show in {stats.nextShowDays} days
+              </p>
+            )}
           </CardContent>
         </Card>
       </div>
