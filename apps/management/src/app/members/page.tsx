@@ -4,19 +4,40 @@ import { useMembers, type Member } from '@/lib/hooks/useMembers'
 import { MembersList } from '@/components/members/members-list'
 import { AddMemberDialog } from '@/components/members/add-member-dialog'
 import { Input } from "@/components/ui/input"
+import { Search } from 'lucide-react'
 import { useState } from 'react'
+import type { Database } from '@/types/supabase'
+
+type MemberRow = Database['public']['Tables']['members']['Row']
 
 export default function MembersPage() {
   const { members, loading, error, addMember, deleteMember } = useMembers()
   const [searchTerm, setSearchTerm] = useState('')
 
-  const filteredMembers = members.filter(member =>
-    member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    member.email.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  // Type guard to ensure we have a valid member and not an error
+  const isValidMember = (member: unknown): member is MemberRow => {
+    if (!member || typeof member !== 'object') return false
+    return 'name' in member && 'email' in member
+  }
 
-  if (loading) return <div>Loading...</div>
-  if (error) return <div>Error: {error.message}</div>
+  const filteredMembers = members
+    .filter(isValidMember)
+    .filter(member =>
+      member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      member.email.toLowerCase().includes(searchTerm.toLowerCase())
+    ) as Member[] // Safe to cast after filtering
+
+  if (loading) return (
+    <div className="flex items-center justify-center min-h-[400px]">
+      <div className="animate-pulse text-lg text-muted-foreground">Loading members...</div>
+    </div>
+  )
+  
+  if (error) return (
+    <div className="flex items-center justify-center min-h-[400px]">
+      <div className="text-destructive">Error: {error.message}</div>
+    </div>
+  )
 
   return (
     <div className="container mx-auto py-10">
@@ -26,12 +47,15 @@ export default function MembersPage() {
       </div>
       
       <div className="mb-4">
-        <Input
-          placeholder="Search members..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="max-w-sm"
-        />
+        <div className="relative max-w-sm">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search members..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-9"
+          />
+        </div>
       </div>
 
       <MembersList 
