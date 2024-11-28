@@ -27,7 +27,7 @@ interface ShowDetailProps {
 }
 
 export function ShowDetail({ id }: ShowDetailProps) {
-  const { data: show, isLoading, updateAttendance } = useShow(id)
+  const { data: show, isLoading, updateAttendance, batchUpdateAttendance } = useShow(id)
   const { members } = useMembers()
 
   if (isLoading) return <div>Loading...</div>
@@ -40,6 +40,10 @@ export function ShowDetail({ id }: ShowDetailProps) {
 
   async function handleUpdateAttendance(memberId: string, status: MemberStatus) {
     updateAttendance({ showId: id, memberId, status })
+  }
+
+  async function handleBatchUpdateAttendance(updates: Array<{ memberId: string, status: MemberStatus }>) {
+    batchUpdateAttendance({ showId: id, updates })
   }
 
   return (
@@ -95,6 +99,7 @@ export function ShowDetail({ id }: ShowDetailProps) {
             showMembers={showMembers}
             showDate={show.date}
             onUpdateAttendance={handleUpdateAttendance}
+            onBatchUpdateAttendance={handleBatchUpdateAttendance}
           />
         </CardContent>
       </Card>

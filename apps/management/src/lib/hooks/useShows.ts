@@ -7,18 +7,24 @@ type Show = Database['public']['Tables']['shows']['Row'] & {
   name: string
 }
 
+type MemberStatus = Database['public']['Enums']['member_status']
+
 type UpdateAttendanceParams = {
   showId: string
   memberId: string
-  status: Database['public']['Enums']['member_status']
+  status: MemberStatus
+}
+
+type BatchUpdateAttendanceParams = {
+  showId: string
+  updates: Array<{
+    memberId: string
+    status: MemberStatus
+  }>
 }
 
 // Create a single instance of the Supabase client
-const supabase = createClientComponentClient<Database>({
-  options: {
-    persistSession: false // This prevents cookie-related errors
-  }
-})
+const supabase = createClientComponentClient<Database>()
 
 export function useShows() {
   return useQuery({
@@ -33,7 +39,7 @@ export function useShows() {
         .order('date', { ascending: true })
 
       if (error) throw error
-      return data as Show[]
+      return (data || []) as Show[]
     }
   })
 }
@@ -58,12 +64,16 @@ export function useShow(id: string) {
         .single()
 
       if (error) throw error
-      return data as Show & {
-        show_members: Array<
-          Database['public']['Tables']['show_members']['Row'] & {
-            member: Database['public']['Tables']['members']['Row']
-          }
-        >
+      return data as unknown as Show & {
+        show_members: Array<{
+          id: string
+          show_id: string
+          member_id: string
+          status: MemberStatus
+          created_at: string | null
+          updated_at: string | null
+          member: Database['public']['Tables']['members']['Row']
+        }>
       }
     }
   })
@@ -72,7 +82,7 @@ export function useShow(id: string) {
     mutationFn: async ({ showId, memberId, status }: UpdateAttendanceParams) => {
       const { error } = await supabase
         .from('show_members')
-        .update({ status })
+        .update({ status: status as Database['public']['Enums']['member_status'] })
         .eq('show_id', showId)
         .eq('member_id', memberId)
 
@@ -83,10 +93,29 @@ export function useShow(id: string) {
     }
   })
 
+  const batchUpdateAttendance = useMutation({
+    mutationFn: async ({ showId, updates }: BatchUpdateAttendanceParams) => {
+      // Use Promise.all to perform all updates in parallel
+      await Promise.all(
+        updates.map(({ memberId, status }) =>
+          supabase
+            .from('show_members')
+            .update({ status: status as Database['public']['Enums']['member_status'] })
+            .eq('show_id', showId)
+            .eq('member_id', memberId)
+        )
+      )
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['shows', id] })
+    }
+  })
+
   return {
     data,
     isLoading,
     error,
-    updateAttendance: updateAttendance.mutate
+    updateAttendance: updateAttendance.mutate,
+    batchUpdateAttendance: batchUpdateAttendance.mutate
   }
 } 
