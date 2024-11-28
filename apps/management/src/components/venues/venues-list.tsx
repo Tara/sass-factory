@@ -19,6 +19,7 @@ import { useState } from "react"
 import Image from 'next/image'
 import { format } from 'date-fns'
 import { VenueFormDialog } from './venue-form-dialog'
+import { getGoogleMapsSearchUrl } from '@/lib/utils'
 
 interface VenuesListProps {
   venues: Venue[]
@@ -80,10 +81,28 @@ export function VenuesList({ venues, onDelete, onEdit }: VenuesListProps) {
             <CardContent className="p-4">
               <div className="flex items-start justify-between">
                 <div className="space-y-1.5">
-                  <div className="flex items-center text-sm text-muted-foreground">
+                  <a
+                    href={getGoogleMapsSearchUrl(venue.name, venue.address)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center text-sm text-muted-foreground hover:text-primary transition-colors"
+                  >
                     <MapPin className="mr-1 h-4 w-4 shrink-0" />
                     <span className="line-clamp-1">{venue.address}</span>
-                  </div>
+                  </a>
+                  {venue.venue_url && (
+                    <a
+                      href={venue.venue_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center text-sm text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      <ExternalLink className="mr-1 h-4 w-4 shrink-0" />
+                      <span className="line-clamp-1">
+                        {venue.venue_url.replace(/^https?:\/\//, '').replace(/\/$/, '')}
+                      </span>
+                    </a>
+                  )}
                   {venue.contact_email && (
                     <div className="flex items-center text-sm text-muted-foreground">
                       <Mail className="mr-1 h-4 w-4 shrink-0" />

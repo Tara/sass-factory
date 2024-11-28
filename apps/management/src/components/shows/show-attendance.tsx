@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import type { Database } from '@/types/supabase'
-import type { AttendanceStatus } from '@/types/supabase'
+import type { AttendanceStatus } from '@/lib/types/shows'
 import { getAttendanceVariant, getAvailableAttendanceStatuses, formatAttendanceStatus } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Check, X } from "lucide-react"

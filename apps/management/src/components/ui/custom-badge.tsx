@@ -3,7 +3,6 @@
 import * as React from "react"
 import { Badge } from "./badge"
 import { cn } from "@/lib/utils"
-import type { AttendanceStatus } from "@/types/supabase"
 
 export type BadgeVariant = 'default' | 'success' | 'destructive'
 
