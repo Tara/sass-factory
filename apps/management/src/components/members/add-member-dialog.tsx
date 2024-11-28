@@ -1,42 +1,78 @@
 'use client'
 
 import { useState } from 'react'
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { format } from "date-fns"
+import { Calendar as CalendarIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Calendar } from "@/components/ui/calendar"
 import { toast } from "@/hooks/use-toast"
 import { 
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 
-type AddMemberFormData = {
-  name: string
-  email: string
-  photo_url: string
-}
+const FormSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email address"),
+  photo_url: z.string().optional(),
+  join_date: z.date({
+    required_error: "Join date is required",
+  }),
+  member_status: z.enum(['active', 'inactive']).default('active')
+})
+
+type FormValues = z.infer<typeof FormSchema>
 
 interface AddMemberDialogProps {
-  onAdd: (member: AddMemberFormData) => void
+  onAdd: (member: FormValues & { join_date: string }) => void
 }
 
 export function AddMemberDialog({ onAdd }: AddMemberDialogProps) {
-  const [open, setOpen] = useState(false)
-  const [formData, setFormData] = useState<AddMemberFormData>({
-    name: '',
-    email: '',
-    photo_url: ''
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [calendarOpen, setCalendarOpen] = useState(false)
+  
+  const form = useForm<FormValues>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      photo_url: '',
+      join_date: new Date(),
+      member_status: 'active'
+    }
   })
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  function onSubmit(data: FormValues) {
     try {
-      onAdd(formData)
-      setOpen(false)
-      setFormData({ name: '', email: '', photo_url: '' })
+      const memberData = {
+        ...data,
+        photo_url: data.photo_url || `https://api.dicebear.com/9.x/bottts/svg?seed=${data.email}`,
+        join_date: format(data.join_date, 'yyyy-MM-dd')
+      }
+      onAdd(memberData)
+      setDialogOpen(false)
+      form.reset()
       toast({
         title: "Success",
         description: "Member added successfully",
@@ -51,45 +87,100 @@ export function AddMemberDialog({ onAdd }: AddMemberDialogProps) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
         <Button>Add Member</Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Add New Member</DialogTitle>
+          <DialogDescription>
+            Enter the details of the new team member below.
+          </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
-            <Input
-              id="name"
-              value={formData.name}
-              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-              required
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-              required
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input type="email" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="photo">Photo URL (optional)</Label>
-            <Input
-              id="photo"
-              value={formData.photo_url}
-              onChange={(e) => setFormData(prev => ({ ...prev, photo_url: e.target.value }))}
+            <FormField
+              control={form.control}
+              name="photo_url"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Photo URL (optional)</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <Button type="submit" className="w-full">Add Member</Button>
-        </form>
+            <FormField
+              control={form.control}
+              name="join_date"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Join Date</FormLabel>
+                  <Popover modal={true} open={calendarOpen} onOpenChange={setCalendarOpen}>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className="w-full justify-start text-left font-normal"
+                        >
+                          {field.value ? (
+                            format(field.value, "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={(date) => {
+                          field.onChange(date)
+                          setCalendarOpen(false)
+                        }}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit" className="w-full">Add Member</Button>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   )
-} 
+}

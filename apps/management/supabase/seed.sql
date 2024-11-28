@@ -14,14 +14,14 @@ WITH inserted_venues AS (
 
 -- Seed members
 inserted_members AS (
-  INSERT INTO members (id, name, email, photo_url) VALUES
-    ('550e8400-e29b-41d4-a716-446655440000'::uuid, 'John Smith', 'john@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=john-smith'),
-    ('6ba7b810-9dad-11d1-80b4-446655440001'::uuid, 'Jane Doe', 'jane@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=jane-doe'),
-    ('7cb7b810-9dad-11d1-80b4-446655440002'::uuid, 'Mike Johnson', 'mike@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=mike-johnson'),
-    ('8dc7b810-9dad-11d1-80b4-446655440003'::uuid, 'Sarah Williams', 'sarah@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=sarah-williams'),
-    ('9ed7b810-9dad-11d1-80b4-446655440004'::uuid, 'Tom Brown', 'tom@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=tom-brown'),
-    ('af07b810-9dad-11d1-80b4-446655440005'::uuid, 'Lisa Garcia', 'lisa@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=lisa-garcia'),
-    ('bf17b810-9dad-11d1-80b4-446655440006'::uuid, 'David Lee', 'david@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=david-lee')
+  INSERT INTO members (id, name, email, photo_url, join_date) VALUES
+    ('550e8400-e29b-41d4-a716-446655440000'::uuid, 'John Smith', 'john@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=john-smith', '2023-03-15'),
+    ('6ba7b810-9dad-11d1-80b4-446655440001'::uuid, 'Jane Doe', 'jane@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=jane-doe', '2023-06-22'),
+    ('7cb7b810-9dad-11d1-80b4-446655440002'::uuid, 'Mike Johnson', 'mike@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=mike-johnson', '2023-09-01'),
+    ('8dc7b810-9dad-11d1-80b4-446655440003'::uuid, 'Sarah Williams', 'sarah@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=sarah-williams', '2023-11-30'),
+    ('9ed7b810-9dad-11d1-80b4-446655440004'::uuid, 'Tom Brown', 'tom@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=tom-brown', '2024-01-15'),
+    ('af07b810-9dad-11d1-80b4-446655440005'::uuid, 'Lisa Garcia', 'lisa@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=lisa-garcia', '2024-03-28'),
+    ('bf17b810-9dad-11d1-80b4-446655440006'::uuid, 'David Lee', 'david@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=david-lee', '2024-07-04')
   RETURNING *
 ),
 

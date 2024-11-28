@@ -14,6 +14,7 @@ export type Database = {
           created_at: string | null
           email: string
           id: string
+          join_date: string
           member_status: Database["public"]["Enums"]["member_status"]
           name: string
           photo_url: string
@@ -23,6 +24,7 @@ export type Database = {
           created_at?: string | null
           email: string
           id?: string
+          join_date: string
           member_status?: Database["public"]["Enums"]["member_status"]
           name: string
           photo_url: string
@@ -32,6 +34,7 @@ export type Database = {
           created_at?: string | null
           email?: string
           id?: string
+          join_date?: string
           member_status?: Database["public"]["Enums"]["member_status"]
           name?: string
           photo_url?: string

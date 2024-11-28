@@ -115,7 +115,7 @@ export function MembersList({ members, onDelete, isLoading }: MembersListProps) 
             <TableHead className="w-[50px] px-6">Photo</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Email</TableHead>
-            <TableHead>Joined</TableHead>
+            <TableHead>Join Date</TableHead>
             <TableHead className="w-[100px]">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -139,7 +139,7 @@ export function MembersList({ members, onDelete, isLoading }: MembersListProps) 
               </TableCell>
               <TableCell>
                 <span className="text-muted-foreground">
-                  {formatDate(member.created_at)}
+                  {formatDate(member.join_date)}
                 </span>
               </TableCell>
               <TableCell>
@@ -164,7 +164,6 @@ export function MembersList({ members, onDelete, isLoading }: MembersListProps) 
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>
                       <AlertDialogAction
-                        variant="destructive"
                         onClick={() => handleDelete(member.id)}
                       >
                         Remove Member

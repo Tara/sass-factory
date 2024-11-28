@@ -38,6 +38,7 @@ CREATE TABLE members (
     email TEXT NOT NULL UNIQUE,
     photo_url TEXT NOT NULL,
     member_status member_status NOT NULL DEFAULT 'active',
+    join_date DATE NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
