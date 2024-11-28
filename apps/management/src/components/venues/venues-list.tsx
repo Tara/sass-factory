@@ -1,4 +1,4 @@
-import { Venue } from '@/lib/hooks/useVenues'
+import type { Venue } from '@/lib/types/venues'
 import { useShows } from '@/lib/hooks/useShows'
 import { Button } from "@/components/ui/button"
 import {

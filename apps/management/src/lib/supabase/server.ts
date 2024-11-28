@@ -1,34 +1,37 @@
-import { createServerClient } from '@supabase/ssr'
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
-import type { CookieOptions } from '@supabase/ssr'
-import { Database } from '@/types/supabase'
+import type { Database } from '@/lib/types/supabase'
 
-export async function createClient() {
-  const cookieStore = await cookies()
+export const createServerClient = () => 
+  createServerComponentClient<Database>({
+    cookies,
+  })
 
-  return createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value
-        },
-        set(name: string, value: string, options: CookieOptions) {
-          try {
-            cookieStore.set(name, value, options)
-          } catch (error) {
-            console.warn('Could not set cookie', error)
-          }
-        },
-        remove(name: string, options: CookieOptions) {
-          try {
-            cookieStore.set(name, '', { ...options, maxAge: 0 })
-          } catch (error) {
-            console.warn('Could not remove cookie', error)
-          }
-        },
-      },
+export const getSession = async () => {
+  const supabase = createServerClient()
+  try {
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.getSession()
+
+    if (error) throw error
+
+    if (!session) return null
+
+    // Check if user is admin
+    const { data: adminData } = await supabase
+      .from('admin_users')
+      .select('user_id')
+      .eq('user_id', session.user.id)
+      .single()
+
+    return {
+      user: session.user,
+      isAdmin: !!adminData
     }
-  )
+  } catch (error) {
+    console.error('Error:', error)
+    return null
+  }
 } 
