@@ -1,6 +1,4 @@
 {
-  // "buildCommand": "cd apps/hugo-site && hugo --gc --minify",
-  // "outputDirectory": "apps/hugo-site/public",
   "framework": "hugo",
    "build": {
         "env": {
