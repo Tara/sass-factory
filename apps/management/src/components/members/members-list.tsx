@@ -111,14 +111,14 @@ export function MembersList({ members, onDelete, onToggleStatus, isLoading, isIn
   }
 
   return (
-    <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+    <div className="rounded-lg border bg-card text-card-foreground shadow-sm overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow className="hover:bg-transparent">
             <TableHead className="w-[50px] px-6">Photo</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Join Date</TableHead>
+            <TableHead className="w-[200px]">Name</TableHead>
+            <TableHead className="hidden md:table-cell w-[250px]">Email</TableHead>
+            <TableHead className="hidden lg:table-cell w-[150px]">Join Date</TableHead>
             <TableHead className="w-[100px]">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -135,20 +135,25 @@ export function MembersList({ members, onDelete, onToggleStatus, isLoading, isIn
                 <MemberAvatar photoUrl={member.photo_url} name={member.name} />
               </TableCell>
               <TableCell>
-                <div className="font-medium">
-                  {member.name}
-                  {isInactive && (
-                    <span className="ml-2 text-sm text-muted-foreground">(Inactive)</span>
-                  )}
+                <div className="space-y-1">
+                  <div className="font-medium">
+                    {member.name}
+                    {isInactive && (
+                      <span className="ml-2 text-sm text-muted-foreground">(Inactive)</span>
+                    )}
+                  </div>
+                  <div className="md:hidden text-sm text-muted-foreground">
+                    {member.email}
+                  </div>
                 </div>
               </TableCell>
-              <TableCell>
+              <TableCell className="hidden md:table-cell">
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Mail className="h-4 w-4" />
                   <span>{member.email}</span>
                 </div>
               </TableCell>
-              <TableCell>
+              <TableCell className="hidden lg:table-cell">
                 <span className="text-muted-foreground">
                   {formatDate(member.join_date)}
                 </span>
@@ -160,7 +165,7 @@ export function MembersList({ members, onDelete, onToggleStatus, isLoading, isIn
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="opacity-0 group-hover:opacity-100"
+                        className="opacity-100 md:opacity-0 md:group-hover:opacity-100"
                       >
                         <Trash2 className="h-4 w-4 text-destructive" />
                         <span className="sr-only">Delete member</span>
@@ -187,7 +192,7 @@ export function MembersList({ members, onDelete, onToggleStatus, isLoading, isIn
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="opacity-0 group-hover:opacity-100"
+                    className="opacity-100 md:opacity-0 md:group-hover:opacity-100"
                     onClick={() => onToggleStatus(member.id, member.member_status)}
                   >
                     {member.member_status === 'active' ? (
