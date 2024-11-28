@@ -82,7 +82,7 @@ export function useShow(id: string) {
     mutationFn: async ({ showId, memberId, status }: UpdateAttendanceParams) => {
       const { error } = await supabase
         .from('show_members')
-        .update({ status: status as Database['public']['Enums']['member_status'] })
+        .update({ status: status as Database['public']['Enums']['attendance_status'] })
         .eq('show_id', showId)
         .eq('member_id', memberId)
 
