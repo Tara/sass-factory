@@ -22,7 +22,6 @@ interface ShowDetailProps {
 
 export function ShowDetail({ id }: ShowDetailProps) {
   const { data: show, isLoading, updateAttendance, batchUpdateAttendance } = useShow(id)
-  const { members } = useMembers()
 
   if (isLoading) return (
     <div className="flex items-center justify-center min-h-[400px]">

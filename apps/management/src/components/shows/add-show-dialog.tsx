@@ -2,15 +2,14 @@
 
 import { useState } from 'react'
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm, ControllerRenderProps, FieldValues } from "react-hook-form"
+import { useForm, ControllerRenderProps } from "react-hook-form"
 import { z } from "zod"
 import { format } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
+import { Calendar as CalendarIcon, Plus } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Calendar } from "@/components/ui/calendar"
 import { Input } from '@/components/ui/input'
-import { PlusIcon } from '@radix-ui/react-icons'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase/client'
 import type { Show } from '@/lib/types/shows'
@@ -122,7 +121,7 @@ export function AddShowDialog() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
-          <PlusIcon className="h-4 w-4 mr-2" />
+          <Plus className="h-4 w-4 mr-2" />
           Add Show
         </Button>
       </DialogTrigger>
