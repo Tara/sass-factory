@@ -19,13 +19,21 @@ create table availability (
   notes text
 );
 
+### Venues
+create table venues (
+  id uuid default uuid_generate_v4() primary key,
+  name text not null,
+  address text,
+  contact_email text,
+  created_at timestamp with time zone default now()
+);
+
 ### Shows
 create table shows (
   id uuid default uuid_generate_v4() primary key,
   title text not null,
   date timestamp with time zone not null,
-  venue text not null,
-  address text,
+  venue_id uuid references venues(id),
   ticket_link text,
   price text,
   image_path text,

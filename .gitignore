@@ -3,8 +3,24 @@ apps/hugo-site/public/
 apps/hugo-site/resources/
 apps/hugo-site/.hugo_build.lock
 
+# Next.js
+apps/management/.next/
+apps/management/out/
+apps/management/public/
+apps/management/build/
+
 # Node
 node_modules/
+package-lock.json
+**/package-lock.json
+.npm
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
 
 # IDE
 .vscode/
@@ -17,4 +33,9 @@ node_modules/
 .vercel
 
 # Environment variables
-.env
+.env*
+!.env.example
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
