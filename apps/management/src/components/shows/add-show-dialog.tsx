@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { useForm, ControllerRenderProps, FieldValues } from "react-hook-form"
 import { z } from "zod"
 import { format } from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
@@ -43,7 +43,7 @@ const FormSchema = z.object({
 
 type FormValues = z.infer<typeof FormSchema>
 
-function VenueSelect({ field }: { field: any }) {
+function VenueSelect({ field }: { field: ControllerRenderProps<FormValues, "venue_id"> }) {
   const { data: venues } = useQuery<Venue[]>({
     queryKey: ['venues'],
     queryFn: async () => {

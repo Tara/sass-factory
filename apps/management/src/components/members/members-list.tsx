@@ -2,7 +2,7 @@
 
 import { toast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
-import { Member } from "@/lib/hooks/useMembers"
+import { Member } from "@/lib/types/members"
 import { MemberAvatar } from "./member-avatar"
 import {
   Table,
@@ -48,7 +48,7 @@ export function MembersList({ members, onDelete, onToggleStatus, isLoading, isIn
         title: "Member removed",
         description: "The member has been successfully removed from the team.",
       })
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to remove member. Please try again.",

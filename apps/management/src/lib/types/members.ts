@@ -10,4 +10,12 @@ export type Member = Database['public']['Tables']['members']['Row'] & {
     show: Database['public']['Tables']['shows']['Row']
     status: Database['public']['Enums']['member_status']
   }>
+}
+
+export interface NewMember {
+  name: string
+  email: string
+  join_date: string
+  member_status: 'active' | 'inactive'
+  photo_url?: string
 } 

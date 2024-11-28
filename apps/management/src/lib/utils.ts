@@ -5,7 +5,6 @@ import { type CustomBadgeVariant } from "@/components/ui/custom-badge"
 
 type MemberStatus = Database['public']['Enums']['member_status']
 type ShowStatus = Database['public']['Enums']['show_status']
-type BadgeVariant = "default" | "secondary" | "destructive" | "outline"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))

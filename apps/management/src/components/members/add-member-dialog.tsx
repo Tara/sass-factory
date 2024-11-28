@@ -67,12 +67,13 @@ export function AddMemberDialog({ onAdd, trigger }: AddMemberDialogProps) {
   })
 
   function onSubmit(data: FormValues) {
+    const memberData = {
+      ...data,
+      photo_url: data.photo_url || `https://api.dicebear.com/9.x/bottts/svg?seed=${data.email}`,
+      join_date: format(data.join_date, 'yyyy-MM-dd')
+    }
+
     try {
-      const memberData = {
-        ...data,
-        photo_url: data.photo_url || `https://api.dicebear.com/9.x/bottts/svg?seed=${data.email}`,
-        join_date: format(data.join_date, 'yyyy-MM-dd')
-      }
       onAdd(memberData)
       setDialogOpen(false)
       form.reset()
@@ -80,10 +81,11 @@ export function AddMemberDialog({ onAdd, trigger }: AddMemberDialogProps) {
         title: "Success",
         description: "Member added successfully",
       })
-    } catch (error) {
+    } catch (err) {
+      const error = err as Error
       toast({
         title: "Error",
-        description: "Failed to add member",
+        description: error.message || "Failed to add member",
         variant: "destructive",
       })
     }

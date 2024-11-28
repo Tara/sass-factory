@@ -1,24 +1,16 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import type { Database } from '@/types/supabase'
-import type { Member } from '@/lib/types/members'
+import type { Member, NewMember } from '@/lib/types/members'
 
 // Create a single instance of the Supabase client
 const supabase = createClientComponentClient<Database>()
-
-export interface NewMember {
-  name: string
-  email: string
-  join_date: string
-  member_status: 'active' | 'inactive'
-  photo_url?: string
-}
 
 function getDefaultAvatar(name: string) {
   return `https://api.dicebear.com/9.x/bottts/svg?seed=${encodeURIComponent(name)}`
 }
 
-async function fetchMembers() {
+async function fetchMembers(): Promise<Member[]> {
   const { data, error } = await supabase
     .from('members')
     .select('*')
@@ -26,7 +18,7 @@ async function fetchMembers() {
     .order('join_date', { ascending: false })
 
   if (error) throw error
-  return data
+  return data as Member[]
 }
 
 async function deleteMember(id: string) {
@@ -54,7 +46,7 @@ async function toggleMemberStatus(id: string, currentStatus: 'active' | 'inactiv
 export function useMembers() {
   const queryClient = useQueryClient()
 
-  const { data: members = [], isLoading, error } = useQuery({
+  const { data: members = [], isLoading, error } = useQuery<Member[]>({
     queryKey: ['members'],
     queryFn: fetchMembers
   })
