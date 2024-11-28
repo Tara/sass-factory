@@ -24,7 +24,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Mail, Trash2, UserX2, UserCheck, UserX } from 'lucide-react'
+import { Mail, Trash2, UserX2, UserCheck } from 'lucide-react'
 import { cn } from "@/lib/utils"
 
 function formatDate(date: string | null): string {

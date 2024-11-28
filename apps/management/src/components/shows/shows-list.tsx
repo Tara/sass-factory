@@ -24,16 +24,16 @@ export function ShowsList() {
 
   // Filter and sort logic
   const now = new Date()
-  const filteredShows = shows?.filter(show => 
+  const filteredShows: Show[] = shows?.filter(show => 
     show.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     show.venue.name.toLowerCase().includes(searchTerm.toLowerCase())
   ) || []
 
-  const futureShows = filteredShows
+  const futureShows: Show[] = filteredShows
     .filter(show => new Date(show.date) >= now)
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
   
-  const pastShows = filteredShows
+  const pastShows: Show[] = filteredShows
     .filter(show => new Date(show.date) < now)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 

@@ -15,17 +15,17 @@ import { Check, X } from "lucide-react"
 import { CustomBadge } from "@/components/ui/custom-badge"
 
 type Member = Database['public']['Tables']['members']['Row']
-type MemberStatus = Database['public']['Enums']['member_status']
+type AttendanceStatus = Database['public']['Enums']['attendance_status']
 type ShowMember = {
   member: Member
-  status: MemberStatus
+  status: AttendanceStatus
 }
 
 interface ShowAttendanceProps {
   showMembers: ShowMember[]
-  showDate: string
-  onUpdateAttendance: (memberId: string, status: MemberStatus) => Promise<void>
-  onBatchUpdateAttendance?: (updates: Array<{ memberId: string, status: MemberStatus }>) => Promise<void>
+  showDate: string | Date
+  onUpdateAttendance: (memberId: string, status: AttendanceStatus) => Promise<void>
+  onBatchUpdateAttendance: (updates: Array<{ memberId: string, status: AttendanceStatus }>) => Promise<void>
 }
 
 export function ShowAttendance({ 
@@ -48,7 +48,7 @@ export function ShowAttendance({
           .filter(({ status }) => status === 'unconfirmed')
           .map(({ member }) => ({
             memberId: member.id,
-            status: 'confirmed'
+            status: 'confirmed' as const
           }))
       )
     }
@@ -59,7 +59,7 @@ export function ShowAttendance({
           .filter(({ status }) => status === 'unconfirmed')
           .map(({ member }) => ({
             memberId: member.id,
-            status: 'not_attending'
+            status: 'not_attending' as const
           }))
       )
     }
@@ -103,7 +103,7 @@ export function ShowAttendance({
                 <Avatar>
                   <AvatarImage src={member.photo_url || undefined} />
                   <AvatarFallback>
-                    {member.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                    {member.name.split(' ').map((n: string) => n[0]).join('').toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <span>{member.name}</span>
@@ -111,7 +111,7 @@ export function ShowAttendance({
               
               <Select
                 defaultValue={status}
-                onValueChange={(value: MemberStatus) => onUpdateAttendance(member.id, value)}
+                onValueChange={(value: AttendanceStatus) => onUpdateAttendance(member.id, value)}
               >
                 <SelectTrigger className="w-[140px]">
                   <SelectValue>

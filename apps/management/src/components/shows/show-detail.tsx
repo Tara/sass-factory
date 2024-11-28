@@ -2,16 +2,14 @@
 
 import { useShow } from '@/lib/hooks/useShows'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { CustomBadge } from '@/components/ui/custom-badge'
 import { formatDate, getGoogleMapsSearchUrl } from '@/lib/utils'
 import type { Database } from '@/types/supabase'
 import { ShowAttendance } from "./show-attendance"
 import { useMembers } from "@/lib/hooks/useMembers"
-import { getShowStatusVariant, getAttendanceVariant } from "@/lib/utils"
+import { getShowStatusVariant } from "@/lib/utils"
 import { MapPin, Calendar, Ticket, DollarSign } from 'lucide-react'
 import Image from 'next/image'
-import type { Show } from '@/lib/types/shows'
 import { Button } from '@/components/ui/button'
 import { EditShow } from './edit-show-dialog'
 import { Pencil } from 'lucide-react'

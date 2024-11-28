@@ -1,34 +1,32 @@
 'use client'
 
-import { useMembers, type Member } from '@/lib/hooks/useMembers'
+import { useMembers } from '@/lib/hooks/useMembers'
 import { MembersList } from '@/components/members/members-list'
 import { AddMemberDialog } from '@/components/members/add-member-dialog'
 import { Input } from "@/components/ui/input"
 import { Search, Plus } from 'lucide-react'
 import { useState } from 'react'
-import type { Database } from '@/types/supabase'
 import { Button } from '@/components/ui/button'
-
-type MemberRow = Database['public']['Tables']['members']['Row']
+import type { Member } from '@/lib/types/members'
 
 export default function MembersPage() {
   const { members, loading, error, addMember, deleteMember, toggleStatus } = useMembers()
   const [searchTerm, setSearchTerm] = useState('')
 
-  // Improved type guard with more specific types
   const isValidMember = (member: unknown): member is Member => {
     if (!member || typeof member !== 'object') return false
-    const m = member as any
+    const m = member as Partial<Member>
     return (
       typeof m.id === 'string' &&
       typeof m.name === 'string' &&
       typeof m.email === 'string' &&
+      (m.created_at === null || typeof m.created_at === 'string') &&
       typeof m.member_status === 'string'
     )
   }
 
   // First cast to unknown, then filter and cast to Member[]
-  const validMembers = (members as unknown[]).filter(isValidMember)
+  const validMembers = (members ?? []).filter(isValidMember)
   
   const filteredMembers = validMembers.filter(member =>
     member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
