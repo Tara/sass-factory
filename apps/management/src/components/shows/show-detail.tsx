@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button'
 import { EditShow } from './edit-show-dialog'
 import { Pencil } from 'lucide-react'
 
-type MemberStatus = Database['public']['Enums']['member_status']
+type AttendanceStatus = Database['public']['Enums']['attendance_status']
 
 interface ShowDetailProps {
   id: string
@@ -38,11 +38,11 @@ export function ShowDetail({ id }: ShowDetailProps) {
     status: sm.status
   }))
 
-  async function handleUpdateAttendance(memberId: string, status: MemberStatus) {
+  async function handleUpdateAttendance(memberId: string, status: AttendanceStatus) {
     updateAttendance({ showId: id, memberId, status })
   }
 
-  async function handleBatchUpdateAttendance(updates: Array<{ memberId: string, status: MemberStatus }>) {
+  async function handleBatchUpdateAttendance(updates: Array<{ memberId: string, status: AttendanceStatus }>) {
     batchUpdateAttendance({ showId: id, updates })
   }
 

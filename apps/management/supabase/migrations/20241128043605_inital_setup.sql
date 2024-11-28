@@ -3,7 +3,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Create enum types
 CREATE TYPE show_status AS ENUM ('scheduled', 'performed', 'completed');
-CREATE TYPE member_status AS ENUM ('unconfirmed', 'confirmed', 'not_attending', 'performed', 'no_show');
+CREATE TYPE attendance_status AS ENUM ('unconfirmed', 'confirmed', 'not_attending', 'performed', 'no_show');
 
 -- Create venues table
 CREATE TABLE venues (
@@ -45,7 +45,7 @@ CREATE TABLE show_members (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     show_id UUID REFERENCES shows(id) ON DELETE CASCADE,
     member_id UUID REFERENCES members(id) ON DELETE CASCADE,
-    status member_status NOT NULL DEFAULT 'unconfirmed',
+    status attendance_status NOT NULL DEFAULT 'unconfirmed',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(show_id, member_id)
@@ -85,7 +85,7 @@ CREATE TRIGGER update_show_members_updated_at
 CREATE OR REPLACE FUNCTION create_show_members() RETURNS TRIGGER AS $$
 BEGIN
   INSERT INTO show_members (show_id, member_id, status)
-  SELECT NEW.id, members.id, 'unconfirmed'::member_status
+  SELECT NEW.id, members.id, 'unconfirmed'::attendance_status
   FROM members
   WHERE NOT EXISTS (
     SELECT 1 

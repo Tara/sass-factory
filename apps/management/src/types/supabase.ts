@@ -7,31 +7,6 @@ export type Json =
   | Json[]
 
 export type Database = {
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          operationName?: string
-          query?: string
-          variables?: Json
-          extensions?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       members: {
@@ -67,7 +42,7 @@ export type Database = {
           id: string
           member_id: string | null
           show_id: string | null
-          status: Database["public"]["Enums"]["member_status"]
+          status: Database["public"]["Enums"]["attendance_status"]
           updated_at: string | null
         }
         Insert: {
@@ -75,7 +50,7 @@ export type Database = {
           id?: string
           member_id?: string | null
           show_id?: string | null
-          status?: Database["public"]["Enums"]["member_status"]
+          status?: Database["public"]["Enums"]["attendance_status"]
           updated_at?: string | null
         }
         Update: {
@@ -83,7 +58,7 @@ export type Database = {
           id?: string
           member_id?: string | null
           show_id?: string | null
-          status?: Database["public"]["Enums"]["member_status"]
+          status?: Database["public"]["Enums"]["attendance_status"]
           updated_at?: string | null
         }
         Relationships: [
@@ -109,9 +84,10 @@ export type Database = {
           date: string
           id: string
           image_url: string | null
-          price: number
+          name: string
+          price: number | null
           status: Database["public"]["Enums"]["show_status"]
-          ticket_link: string
+          ticket_link: string | null
           updated_at: string | null
           venue_id: string | null
         }
@@ -120,9 +96,10 @@ export type Database = {
           date: string
           id?: string
           image_url?: string | null
-          price: number
+          name: string
+          price?: number | null
           status?: Database["public"]["Enums"]["show_status"]
-          ticket_link: string
+          ticket_link?: string | null
           updated_at?: string | null
           venue_id?: string | null
         }
@@ -131,9 +108,10 @@ export type Database = {
           date?: string
           id?: string
           image_url?: string | null
-          price?: number
+          name?: string
+          price?: number | null
           status?: Database["public"]["Enums"]["show_status"]
-          ticket_link?: string
+          ticket_link?: string | null
           updated_at?: string | null
           venue_id?: string | null
         }
@@ -150,28 +128,28 @@ export type Database = {
       venues: {
         Row: {
           address: string
-          contact_email: string
+          contact_email: string | null
           created_at: string | null
           id: string
-          image_url: string
+          image_url: string | null
           name: string
           updated_at: string | null
         }
         Insert: {
           address: string
-          contact_email: string
+          contact_email?: string | null
           created_at?: string | null
           id?: string
-          image_url: string
+          image_url?: string | null
           name: string
           updated_at?: string | null
         }
         Update: {
           address?: string
-          contact_email?: string
+          contact_email?: string | null
           created_at?: string | null
           id?: string
-          image_url?: string
+          image_url?: string | null
           name?: string
           updated_at?: string | null
         }
@@ -185,7 +163,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      member_status:
+      attendance_status:
         | "unconfirmed"
         | "confirmed"
         | "not_attending"
