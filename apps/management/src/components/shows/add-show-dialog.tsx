@@ -9,8 +9,9 @@ import { PlusIcon } from '@radix-ui/react-icons'
 import type { Database } from '@/types/supabase'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase/client'
+import type { Show } from '@/lib/types/shows'
 
-type Venue = Database['public']['Tables']['venues']['Row']
+type Venue = Show['venue']
 
 function VenueSelect() {
   const { data: venues } = useQuery<Venue[]>({
@@ -53,7 +54,7 @@ export function AddShowDialog() {
     setIsLoading(true)
 
     const formData = new FormData(event.currentTarget)
-    const name = formData.get('name') as string
+    const showName = formData.get('name') as string
     const date = formData.get('date') as string
     const time = formData.get('time') as string
     const venue_id = formData.get('venue_id') as string
@@ -72,14 +73,15 @@ export function AddShowDialog() {
 
       const { error } = await supabase
         .from('shows')
-        .insert({
-          name,
+        .insert([{
+          name: showName,
           date: dateTime,
           venue_id,
-          price: price ? parseFloat(price) : null,
-          ticket_link: ticket_link || null,
-          status: 'scheduled'
-        })
+          price: price ? parseFloat(price) : 0,
+          ticket_link: ticket_link || '',
+          status: 'scheduled' as const,
+          image_url: null
+        }])
 
       if (error) throw error
 

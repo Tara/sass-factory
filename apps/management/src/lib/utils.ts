@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 import type { Database } from '@/types/supabase'
+import { type CustomBadgeVariant } from "@/components/ui/custom-badge"
 
 type MemberStatus = Database['public']['Enums']['member_status']
 type ShowStatus = Database['public']['Enums']['show_status']
@@ -15,32 +16,32 @@ export function formatDate(date: string | null): string {
   return new Date(date).toLocaleDateString()
 }
 
-export function getShowStatusVariant(status: ShowStatus): BadgeVariant {
+export function getShowStatusVariant(status: ShowStatus): CustomBadgeVariant {
   switch (status) {
-    case 'scheduled':
-      return 'default'
-    case 'performed':
-      return 'secondary'
     case 'completed':
-      return 'outline'
+      return 'success'
+    case 'scheduled':
+      return 'warning'
+    case 'performed':
+      return 'info'
     default:
       return 'default'
   }
 }
 
-export function getAttendanceVariant(status: MemberStatus): BadgeVariant {
+export function getAttendanceVariant(status: MemberStatus): CustomBadgeVariant {
   switch (status) {
     case 'confirmed':
-      return 'secondary'
+      return 'success'
     case 'not_attending':
-      return 'destructive'
+      return 'warning'
     case 'performed':
-      return 'secondary'
+      return 'success'
     case 'no_show':
-      return 'destructive'
+      return 'warning'
     case 'unconfirmed':
     default:
-      return 'default'
+      return 'muted'
   }
 }
 
@@ -60,4 +61,9 @@ export function getAvailableAttendanceStatuses(currentStatus: MemberStatus, show
 
 export function formatAttendanceStatus(status: MemberStatus): string {
   return status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')
+}
+
+export function getGoogleMapsSearchUrl(venueName: string, address: string) {
+  const searchQuery = encodeURIComponent(`${venueName} ${address}`)
+  return `https://www.google.com/maps/search/?api=1&query=${searchQuery}`
 }

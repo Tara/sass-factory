@@ -1,6 +1,5 @@
 "use client"
 
-import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   Select,
@@ -13,6 +12,7 @@ import type { Database } from '@/types/supabase'
 import { getAttendanceVariant, getAvailableAttendanceStatuses, formatAttendanceStatus } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Check, X } from "lucide-react"
+import { CustomBadge } from "@/components/ui/custom-badge"
 
 type Member = Database['public']['Tables']['members']['Row']
 type MemberStatus = Database['public']['Enums']['member_status']
@@ -115,17 +115,17 @@ export function ShowAttendance({
               >
                 <SelectTrigger className="w-[140px]">
                   <SelectValue>
-                    <Badge variant={getAttendanceVariant(status)}>
+                    <CustomBadge variant={getAttendanceVariant(status)}>
                       {formatAttendanceStatus(status)}
-                    </Badge>
+                    </CustomBadge>
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {availableStatuses.map((statusOption) => (
                     <SelectItem key={statusOption} value={statusOption}>
-                      <Badge variant={getAttendanceVariant(statusOption)}>
+                      <CustomBadge variant={getAttendanceVariant(statusOption)}>
                         {formatAttendanceStatus(statusOption)}
-                      </Badge>
+                      </CustomBadge>
                     </SelectItem>
                   ))}
                 </SelectContent>

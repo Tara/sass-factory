@@ -3,24 +3,15 @@
 import { useShow } from '@/lib/hooks/useShows'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
+import { CustomBadge } from '@/components/ui/custom-badge'
 import { formatDate } from '@/lib/utils'
 import type { Database } from '@/types/supabase'
 import { ShowAttendance } from "./show-attendance"
 import { useMembers } from "@/lib/hooks/useMembers"
 import { getShowStatusVariant, getAttendanceVariant } from "@/lib/utils"
+import type { Show } from '@/lib/types/shows'
 
-type ShowStatus = Database['public']['Enums']['show_status']
 type MemberStatus = Database['public']['Enums']['member_status']
-
-type Show = Database['public']['Tables']['shows']['Row'] & {
-  venue: Database['public']['Tables']['venues']['Row']
-  name: string
-  show_members: Array<{
-    member: Database['public']['Tables']['members']['Row']
-    status: MemberStatus
-  }>
-}
 
 interface ShowDetailProps {
   id: string
@@ -84,7 +75,7 @@ export function ShowDetail({ id }: ShowDetailProps) {
             )}
             <div>
               <h3 className="font-semibold">Status</h3>
-              <Badge variant={getShowStatusVariant(show.status)}>{show.status}</Badge>
+              <CustomBadge variant={getShowStatusVariant(show.status)}>{show.status}</CustomBadge>
             </div>
           </div>
         </CardContent>
