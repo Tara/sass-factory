@@ -1,25 +1,34 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import type { Database } from '@/types/supabase'
+import type { Database, AttendanceStatus } from '@/types/supabase'
 
 type Show = Database['public']['Tables']['shows']['Row'] & {
   venue: Database['public']['Tables']['venues']['Row']
   name: string
+  show_members: Array<{
+    id: string
+    show_id: string
+    member_id: string
+    status: AttendanceStatus
+    created_at: string | null
+    updated_at: string | null
+    member: Database['public']['Tables']['members']['Row']
+  }>
 }
 
 type MemberStatus = Database['public']['Enums']['member_status']
 
-type UpdateAttendanceParams = {
+interface UpdateAttendanceParams {
   showId: string
   memberId: string
-  status: MemberStatus
+  status: AttendanceStatus
 }
 
-type BatchUpdateAttendanceParams = {
+interface BatchUpdateParams {
   showId: string
   updates: Array<{
     memberId: string
-    status: MemberStatus
+    status: AttendanceStatus
   }>
 }
 
@@ -69,7 +78,7 @@ export function useShow(id: string) {
           id: string
           show_id: string
           member_id: string
-          status: MemberStatus
+          status: AttendanceStatus
           created_at: string | null
           updated_at: string | null
           member: Database['public']['Tables']['members']['Row']
@@ -94,13 +103,12 @@ export function useShow(id: string) {
   })
 
   const batchUpdateAttendance = useMutation({
-    mutationFn: async ({ showId, updates }: BatchUpdateAttendanceParams) => {
-      // Use Promise.all to perform all updates in parallel
+    mutationFn: async ({ showId, updates }: BatchUpdateParams) => {
       await Promise.all(
         updates.map(({ memberId, status }) =>
           supabase
             .from('show_members')
-            .update({ status: status as Database['public']['Enums']['member_status'] })
+            .update({ status: status as Database['public']['Enums']['attendance_status'] })
             .eq('show_id', showId)
             .eq('member_id', memberId)
         )
