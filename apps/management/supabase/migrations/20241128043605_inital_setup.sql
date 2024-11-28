@@ -4,6 +4,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- Create enum types
 CREATE TYPE show_status AS ENUM ('scheduled', 'performed', 'completed');
 CREATE TYPE attendance_status AS ENUM ('unconfirmed', 'confirmed', 'not_attending', 'performed', 'no_show');
+CREATE TYPE member_status AS ENUM ('active', 'inactive');
 
 -- Create venues table
 CREATE TABLE venues (
@@ -36,6 +37,7 @@ CREATE TABLE members (
     name TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
     photo_url TEXT NOT NULL,
+    member_status member_status NOT NULL DEFAULT 'active',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
