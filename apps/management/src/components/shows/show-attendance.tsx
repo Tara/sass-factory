@@ -9,13 +9,13 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import type { Database } from '@/types/supabase'
+import type { AttendanceStatus } from '@/types/supabase'
 import { getAttendanceVariant, getAvailableAttendanceStatuses, formatAttendanceStatus } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Check, X } from "lucide-react"
 import { CustomBadge } from "@/components/ui/custom-badge"
 
 type Member = Database['public']['Tables']['members']['Row']
-type AttendanceStatus = Database['public']['Enums']['attendance_status']
 type ShowMember = {
   member: Member
   status: AttendanceStatus

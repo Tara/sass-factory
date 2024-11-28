@@ -280,3 +280,5 @@ export type CompositeTypes<
   : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
     ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
+
+export type AttendanceStatus = 'unconfirmed' | 'confirmed' | 'not_attending' | 'performed' | 'no_show'

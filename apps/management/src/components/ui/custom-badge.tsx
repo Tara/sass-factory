@@ -3,6 +3,9 @@
 import * as React from "react"
 import { Badge } from "./badge"
 import { cn } from "@/lib/utils"
+import type { AttendanceStatus } from "@/types/supabase"
+
+export type BadgeVariant = 'default' | 'success' | 'destructive'
 
 export type CustomBadgeVariant = 
   | "success"  // for completed shows
@@ -11,17 +14,18 @@ export type CustomBadgeVariant =
   | "default"  // fallback
   | "muted"    // for past shows
 
-interface CustomBadgeProps {
-  variant?: CustomBadgeVariant
+interface CustomBadgeProps extends React.HTMLAttributes<HTMLDivElement> {
+  variant?: BadgeVariant | CustomBadgeVariant
   className?: string
   children: React.ReactNode
 }
 
-const variantStyles: Record<CustomBadgeVariant, string> = {
+const variantStyles: Record<BadgeVariant | CustomBadgeVariant, string> = {
+  default: "bg-zinc-900/90 hover:bg-zinc-900 text-white",
   success: "bg-green-500/90 hover:bg-green-500 text-white",
+  destructive: "bg-red-500/90 hover:bg-red-500 text-white",
   warning: "bg-yellow-500/90 hover:bg-yellow-500 text-white",
   info: "bg-blue-500/90 hover:bg-blue-500 text-white",
-  default: "bg-zinc-900/90 hover:bg-zinc-900 text-white",
   muted: "bg-zinc-500/90 hover:bg-zinc-500 text-white"
 }
 
