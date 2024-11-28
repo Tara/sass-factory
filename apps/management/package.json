@@ -10,7 +10,10 @@
     "db:push": "supabase db push --linked",
     "db:reset": "supabase db reset --linked",
     "db:types": "supabase gen types typescript --linked  > src/types/supabase.ts",
-    "db:new": "supabase migration new"
+    "db:new": "supabase migration new",
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit --watch",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.16.8",
@@ -53,8 +56,15 @@
     "autoprefixer": "^10.4.20",
     "eslint": "^8.57.0",
     "eslint-config-next": "^14.1.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.2.10",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.15",
     "typescript": "^5"
+  },
+  "lint-staged": {
+    "**/*.{ts,tsx}": [
+      "tsc --noEmit"
+    ]
   }
 }
