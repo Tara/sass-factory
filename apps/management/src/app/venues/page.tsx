@@ -63,8 +63,8 @@ export default function VenuesPage() {
         <VenueFormDialog
           onSubmit={handleAddVenue}
           trigger={
-            <Button size="lg">
-              <Plus className="mr-2 h-4 w-4" />
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
               Add Venue
             </Button>
           }
@@ -112,7 +112,7 @@ export default function VenuesPage() {
               onSubmit={handleAddVenue}
               trigger={
                 <Button>
-                  <Plus className="mr-2 h-4 w-4" />
+                  <Plus className="h-4 w-4 mr-2" />
                   Add Venue
                 </Button>
               }

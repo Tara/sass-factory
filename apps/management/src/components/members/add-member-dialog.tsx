@@ -32,6 +32,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
+type NewMember = Omit<FormValues, 'join_date'> & { join_date: string }
+
 const FormSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email address"),
@@ -45,10 +47,11 @@ const FormSchema = z.object({
 type FormValues = z.infer<typeof FormSchema>
 
 interface AddMemberDialogProps {
-  onAdd: (member: Omit<FormValues, 'join_date'> & { join_date: string }) => void
+  onAdd: (member: NewMember) => void
+  trigger: React.ReactNode
 }
 
-export function AddMemberDialog({ onAdd }: AddMemberDialogProps) {
+export function AddMemberDialog({ onAdd, trigger }: AddMemberDialogProps) {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [calendarOpen, setCalendarOpen] = useState(false)
   
@@ -89,7 +92,7 @@ export function AddMemberDialog({ onAdd }: AddMemberDialogProps) {
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
-        <Button>Add Member</Button>
+        {trigger}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

@@ -4,9 +4,10 @@ import { useMembers, type Member } from '@/lib/hooks/useMembers'
 import { MembersList } from '@/components/members/members-list'
 import { AddMemberDialog } from '@/components/members/add-member-dialog'
 import { Input } from "@/components/ui/input"
-import { Search } from 'lucide-react'
+import { Search, Plus } from 'lucide-react'
 import { useState } from 'react'
 import type { Database } from '@/types/supabase'
+import { Button } from '@/components/ui/button'
 
 type MemberRow = Database['public']['Tables']['members']['Row']
 
@@ -58,7 +59,12 @@ export default function MembersPage() {
             Manage and track your members
           </p>
         </div>
-        <AddMemberDialog onAdd={addMember} />
+        <AddMemberDialog onAdd={addMember} trigger={
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Member
+          </Button>
+        } />
       </div>
       
       <div className="relative max-w-sm">
