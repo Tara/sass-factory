@@ -23,7 +23,6 @@ export default async function ShowPage({ params }: ShowPageProps) {
         </Link>
       </div>
       
-      <h1 className="text-3xl font-bold mb-8">Show Details</h1>
       <ShowDetail id={id} />
     </div>
   )
