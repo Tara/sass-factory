@@ -24,21 +24,28 @@ export function AddVenueDialog({ onAdd }: AddVenueDialogProps) {
   const [address, setAddress] = useState('')
   const [imageUrl, setImageUrl] = useState('')
   const [contactEmail, setContactEmail] = useState('')
+  const [venueUrl, setVenueUrl] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      await onAdd({
+      const venueData: Omit<Venue, 'id' | 'created_at' | 'updated_at'> = {
         name,
         address,
         image_url: imageUrl || null,
-        contact_email: contactEmail || null
-      })
+        contact_email: contactEmail || null,
+        venue_url: venueUrl || null
+      }
+      
+      console.log('Adding new venue:', venueData)
+      
+      await onAdd(venueData)
       setOpen(false)
       setName('')
       setAddress('')
       setImageUrl('')
       setContactEmail('')
+      setVenueUrl('')
     } catch (error) {
       console.error('Failed to add venue:', error)
     }
@@ -91,6 +98,16 @@ export function AddVenueDialog({ onAdd }: AddVenueDialogProps) {
               type="email"
               value={contactEmail}
               onChange={(e) => setContactEmail(e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="venueUrl">Website URL (optional)</Label>
+            <Input
+              id="venueUrl"
+              type="url"
+              value={venueUrl}
+              onChange={(e) => setVenueUrl(e.target.value)}
+              placeholder="https://example.com"
             />
           </div>
           <Button type="submit" className="w-full">

@@ -140,6 +140,7 @@ export type Database = {
           image_url: string | null
           name: string
           updated_at: string | null
+          venue_url: string | null
         }
         Insert: {
           address: string
@@ -149,6 +150,7 @@ export type Database = {
           image_url?: string | null
           name: string
           updated_at?: string | null
+          venue_url?: string | null
         }
         Update: {
           address?: string
@@ -158,6 +160,7 @@ export type Database = {
           image_url?: string | null
           name?: string
           updated_at?: string | null
+          venue_url?: string | null
         }
         Relationships: []
       }
@@ -280,5 +283,3 @@ export type CompositeTypes<
   : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
     ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
-
-export type AttendanceStatus = 'unconfirmed' | 'confirmed' | 'not_attending' | 'performed' | 'no_show'

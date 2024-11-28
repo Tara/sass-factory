@@ -115,7 +115,12 @@ export function VenuesList({ venues, onDelete, onEdit }: VenuesListProps) {
                         </DropdownMenuItem>
                       }
                     />
-                    <DropdownMenuItem>
+                    <DropdownMenuItem 
+                      onClick={() => {
+                        if (venue.venue_url) window.open(venue.venue_url, '_blank')
+                      }}
+                      disabled={!venue.venue_url}
+                    >
                       <ExternalLink className="mr-2 h-4 w-4" />
                       View website
                     </DropdownMenuItem>

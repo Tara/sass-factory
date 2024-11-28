@@ -11,6 +11,7 @@ CREATE TABLE venues (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name TEXT NOT NULL,
     address TEXT NOT NULL,
+    venue_url TEXT,
     image_url TEXT,
     contact_email TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,

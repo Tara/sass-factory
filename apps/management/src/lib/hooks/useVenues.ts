@@ -7,6 +7,7 @@ export interface Venue {
   address: string
   image_url: string | null
   contact_email: string | null
+  venue_url: string | null
   created_at: string | null
   updated_at: string | null
 }
@@ -15,6 +16,7 @@ type VenueUpdateData = {
   address?: string
   image_url?: string | null
   contact_email?: string | null
+  venue_url?: string | null
 }
 
 export function useVenues() {
@@ -47,7 +49,8 @@ export function useVenues() {
           name: venue.name,
           address: venue.address,
           image_url: venue.image_url,
-          contact_email: venue.contact_email
+          contact_email: venue.contact_email,
+          venue_url: venue.venue_url
         })
         .select()
         .single()
@@ -67,6 +70,7 @@ export function useVenues() {
       if (venue.address !== undefined) updateData.address = venue.address
       if (venue.image_url !== undefined) updateData.image_url = venue.image_url
       if (venue.contact_email !== undefined) updateData.contact_email = venue.contact_email
+      if (venue.venue_url !== undefined) updateData.venue_url = venue.venue_url
 
       const { data, error } = await supabase
         .from('venues')

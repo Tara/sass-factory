@@ -21,7 +21,8 @@ export default function VenuesPage() {
       name: venue.name,
       address: venue.address,
       contact_email: venue.contact_email ?? null,
-      image_url: venue.image_url ?? null
+      image_url: venue.image_url ?? null,
+      venue_url: venue.venue_url ?? null
     })
   }
 
@@ -29,7 +30,8 @@ export default function VenuesPage() {
     await editVenue(id, {
       address: venue.address,
       contact_email: venue.contact_email,
-      image_url: venue.image_url
+      image_url: venue.image_url,
+      venue_url: venue.venue_url
     })
   }
 

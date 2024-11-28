@@ -3,25 +3,29 @@ TRUNCATE venues, shows, members, show_members CASCADE;
 
 -- Seed venues
 WITH inserted_venues AS (
-  INSERT INTO venues (id, name, address, image_url, contact_email) VALUES
-    ('123e4567-e89b-12d3-a456-426614174000'::uuid, 'The Comedy Store', '8433 Sunset Blvd, Los Angeles, CA 90069', 'https://picsum.photos/seed/comedy-store/800/600', 'bookings@comedystore.com'),
-    ('987fcdeb-51a2-3d4b-8c9e-426614174001'::uuid, 'Laugh Factory', '8001 Sunset Blvd, Los Angeles, CA 90046', 'https://picsum.photos/seed/laugh-factory/800/600', 'events@laughfactory.com'),
-    ('a1b2c3d4-e5f6-4a5b-8c9d-426614174002'::uuid, 'UCB Theatre', '5919 Franklin Ave, Los Angeles, CA 90028', 'https://picsum.photos/seed/ucb-theatre/800/600', 'franklin@ucbtheatre.com'),
-    ('b2c3d4e5-f6a7-5b6c-9d0e-426614174003'::uuid, 'The Second City', '6616 Hollywood Blvd, Los Angeles, CA 90028', 'https://picsum.photos/seed/second-city/800/600', 'hollywood@secondcity.com'),
-    ('c3d4e5f6-a7b8-6c7d-0e1f-426614174004'::uuid, 'iO West', '6366 Hollywood Blvd, Los Angeles, CA 90028', 'https://picsum.photos/seed/io-west/800/600', 'shows@iowest.com')
+  INSERT INTO venues (id, name, address, venue_url, image_url, contact_email) VALUES
+    ('123e4567-e89b-12d3-a456-426614174000'::uuid, 'The Comedy Store', '8433 Sunset Blvd, Los Angeles, CA 90069', 'https://thecomedystore.com', 'https://picsum.photos/seed/comedy-store/800/600', 'bookings@comedystore.com'),
+    ('987fcdeb-51a2-3d4b-8c9e-426614174001'::uuid, 'Laugh Factory', '8001 Sunset Blvd, Los Angeles, CA 90046', 'https://laughfactory.com', 'https://picsum.photos/seed/laugh-factory/800/600', 'events@laughfactory.com'),
+    ('a1b2c3d4-e5f6-4a5b-8c9d-426614174002'::uuid, 'UCB Theatre', '5919 Franklin Ave, Los Angeles, CA 90028', 'https://ucbcomedy.com', 'https://picsum.photos/seed/ucb-theatre/800/600', 'franklin@ucbtheatre.com'),
+    ('b2c3d4e5-f6a7-5b6c-9d0e-426614174003'::uuid, 'The Second City', '6616 Hollywood Blvd, Los Angeles, CA 90028', 'https://secondcity.com', 'https://picsum.photos/seed/second-city/800/600', 'hollywood@secondcity.com'),
+    ('c3d4e5f6-a7b8-6c7d-0e1f-426614174004'::uuid, 'iO West', '6366 Hollywood Blvd, Los Angeles, CA 90028', 'https://ioimprov.com/west', 'https://picsum.photos/seed/io-west/800/600', 'shows@iowest.com')
   RETURNING *
 ),
 
--- Seed members
+-- Seed members (including inactive members)
 inserted_members AS (
-  INSERT INTO members (id, name, email, photo_url, join_date) VALUES
-    ('550e8400-e29b-41d4-a716-446655440000'::uuid, 'John Smith', 'john@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=john-smith', '2023-03-15'),
-    ('6ba7b810-9dad-11d1-80b4-446655440001'::uuid, 'Jane Doe', 'jane@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=jane-doe', '2023-06-22'),
-    ('7cb7b810-9dad-11d1-80b4-446655440002'::uuid, 'Mike Johnson', 'mike@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=mike-johnson', '2023-09-01'),
-    ('8dc7b810-9dad-11d1-80b4-446655440003'::uuid, 'Sarah Williams', 'sarah@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=sarah-williams', '2023-11-30'),
-    ('9ed7b810-9dad-11d1-80b4-446655440004'::uuid, 'Tom Brown', 'tom@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=tom-brown', '2024-01-15'),
-    ('af07b810-9dad-11d1-80b4-446655440005'::uuid, 'Lisa Garcia', 'lisa@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=lisa-garcia', '2024-03-28'),
-    ('bf17b810-9dad-11d1-80b4-446655440006'::uuid, 'David Lee', 'david@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=david-lee', '2024-07-04')
+  INSERT INTO members (id, name, email, photo_url, join_date, member_status) VALUES
+    ('550e8400-e29b-41d4-a716-446655440000'::uuid, 'John Smith', 'john@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=john-smith', '2023-03-15', 'active'),
+    ('6ba7b810-9dad-11d1-80b4-446655440001'::uuid, 'Jane Doe', 'jane@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=jane-doe', '2023-06-22', 'active'),
+    ('7cb7b810-9dad-11d1-80b4-446655440002'::uuid, 'Mike Johnson', 'mike@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=mike-johnson', '2023-09-01', 'active'),
+    ('8dc7b810-9dad-11d1-80b4-446655440003'::uuid, 'Sarah Williams', 'sarah@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=sarah-williams', '2023-11-30', 'active'),
+    ('9ed7b810-9dad-11d1-80b4-446655440004'::uuid, 'Tom Brown', 'tom@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=tom-brown', '2024-01-15', 'active'),
+    ('af07b810-9dad-11d1-80b4-446655440005'::uuid, 'Lisa Garcia', 'lisa@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=lisa-garcia', '2024-03-28', 'active'),
+    ('bf17b810-9dad-11d1-80b4-446655440006'::uuid, 'David Lee', 'david@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=david-lee', '2024-07-04', 'active'),
+    -- New inactive members
+    ('cf27b810-9dad-11d1-80b4-446655440007'::uuid, 'Alex Rivera', 'alex@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=alex-rivera', '2023-04-01', 'inactive'),
+    ('df37b810-9dad-11d1-80b4-446655440008'::uuid, 'Emma Wilson', 'emma@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=emma-wilson', '2023-08-15', 'inactive'),
+    ('ef47b810-9dad-11d1-80b4-446655440009'::uuid, 'Chris Taylor', 'chris@example.com', 'https://api.dicebear.com/9.x/bottts/svg?seed=chris-taylor', '2024-02-01', 'inactive')
   RETURNING *
 ),
 
