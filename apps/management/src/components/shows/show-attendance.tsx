@@ -38,13 +38,18 @@ export function ShowAttendance({
 
   if (!showMembers?.length) return <div>No members assigned to this show</div>
 
+  // Sort members alphabetically by name
+  const sortedMembers = [...showMembers].sort((a, b) => 
+    (a.member.name ?? '').localeCompare(b.member.name ?? '')
+  )
+
   // Quick action buttons for batch updates
   const QuickActions = () => {
     if (isPast || !onBatchUpdateAttendance) return null
 
     const markAllConfirmed = () => {
       onBatchUpdateAttendance(
-        showMembers
+        sortedMembers
           .filter(({ status }) => status === 'unconfirmed')
           .map(({ member }) => ({
             memberId: member.id,
@@ -55,7 +60,7 @@ export function ShowAttendance({
 
     const markAllNotAttending = () => {
       onBatchUpdateAttendance(
-        showMembers
+        sortedMembers
           .filter(({ status }) => status === 'unconfirmed')
           .map(({ member }) => ({
             memberId: member.id,
@@ -92,7 +97,7 @@ export function ShowAttendance({
     <div className="space-y-4">
       <QuickActions />
       <div className="divide-y">
-        {showMembers.map(({ member, status }) => {
+        {sortedMembers.map(({ member, status }) => {
           if (!member?.name) return null
           
           const availableStatuses = getAvailableAttendanceStatuses(status, showDate)
