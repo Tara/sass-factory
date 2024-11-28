@@ -31,8 +31,8 @@ export function AddVenueDialog({ onAdd }: AddVenueDialogProps) {
       await onAdd({
         name,
         address,
-        ...(imageUrl && { image_url: imageUrl }),
-        ...(contactEmail && { contact_email: contactEmail })
+        image_url: imageUrl || null,
+        contact_email: contactEmail || null
       })
       setOpen(false)
       setName('')
