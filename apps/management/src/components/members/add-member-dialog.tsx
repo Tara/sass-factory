@@ -45,7 +45,7 @@ const FormSchema = z.object({
 type FormValues = z.infer<typeof FormSchema>
 
 interface AddMemberDialogProps {
-  onAdd: (member: FormValues & { join_date: string }) => void
+  onAdd: (member: Omit<FormValues, 'join_date'> & { join_date: string }) => void
 }
 
 export function AddMemberDialog({ onAdd }: AddMemberDialogProps) {
