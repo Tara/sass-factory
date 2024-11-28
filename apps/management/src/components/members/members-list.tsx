@@ -24,7 +24,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Mail, Trash2, UserX2 } from 'lucide-react'
+import { Mail, Trash2, UserX2, UserCheck, UserX } from 'lucide-react'
+import { cn } from "@/lib/utils"
 
 function formatDate(date: string | null): string {
   if (!date) return 'N/A'
@@ -34,10 +35,12 @@ function formatDate(date: string | null): string {
 interface MembersListProps {
   members: Member[]
   onDelete: (id: string) => void
+  onToggleStatus: (id: string, status: 'active' | 'inactive') => void
   isLoading?: boolean
+  isInactive?: boolean
 }
 
-export function MembersList({ members, onDelete, isLoading }: MembersListProps) {
+export function MembersList({ members, onDelete, onToggleStatus, isLoading, isInactive }: MembersListProps) {
   const handleDelete = async (id: string) => {
     try {
       onDelete(id)
@@ -123,13 +126,21 @@ export function MembersList({ members, onDelete, isLoading }: MembersListProps) 
           {members.map((member) => (
             <TableRow 
               key={member.id}
-              className="group transition-colors hover:bg-muted/50"
+              className={cn(
+                "group transition-colors hover:bg-muted/50",
+                isInactive && "bg-muted/30"
+              )}
             >
               <TableCell className="px-6">
                 <MemberAvatar photoUrl={member.photo_url} name={member.name} />
               </TableCell>
               <TableCell>
-                <div className="font-medium">{member.name}</div>
+                <div className="font-medium">
+                  {member.name}
+                  {isInactive && (
+                    <span className="ml-2 text-sm text-muted-foreground">(Inactive)</span>
+                  )}
+                </div>
               </TableCell>
               <TableCell>
                 <div className="flex items-center gap-2 text-muted-foreground">
@@ -143,34 +154,52 @@ export function MembersList({ members, onDelete, isLoading }: MembersListProps) 
                 </span>
               </TableCell>
               <TableCell>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="opacity-0 group-hover:opacity-100"
-                    >
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                      <span className="sr-only">Delete member</span>
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Remove team member?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This will permanently remove {member.name} from your team. This action cannot be undone.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() => handleDelete(member.id)}
+                <div className="flex items-center gap-2">
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="opacity-0 group-hover:opacity-100"
                       >
-                        Remove Member
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                        <span className="sr-only">Delete member</span>
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Remove team member?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This will permanently remove {member.name} from your team. This action cannot be undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => handleDelete(member.id)}
+                        >
+                          Remove Member
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                  
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="opacity-0 group-hover:opacity-100"
+                    onClick={() => onToggleStatus(member.id, member.member_status)}
+                  >
+                    {member.member_status === 'active' ? (
+                      <UserX2 className="h-4 w-4 text-muted-foreground" />
+                    ) : (
+                      <UserCheck className="h-4 w-4 text-muted-foreground" />
+                    )}
+                    <span className="sr-only">
+                      {member.member_status === 'active' ? 'Deactivate' : 'Activate'} member
+                    </span>
+                  </Button>
+                </div>
               </TableCell>
             </TableRow>
           ))}

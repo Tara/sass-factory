@@ -11,7 +11,7 @@ import type { Database } from '@/types/supabase'
 type MemberRow = Database['public']['Tables']['members']['Row']
 
 export default function MembersPage() {
-  const { members, loading, error, addMember, deleteMember } = useMembers()
+  const { members, loading, error, addMember, deleteMember, toggleStatus } = useMembers()
   const [searchTerm, setSearchTerm] = useState('')
 
   // Improved type guard with more specific types
@@ -21,17 +21,21 @@ export default function MembersPage() {
     return (
       typeof m.id === 'string' &&
       typeof m.name === 'string' &&
-      typeof m.email === 'string'
+      typeof m.email === 'string' &&
+      typeof m.member_status === 'string'
     )
   }
 
   // First cast to unknown, then filter and cast to Member[]
-  const filteredMembers = (members as unknown[])
-    .filter(isValidMember)
-    .filter(member =>
-      member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      member.email.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+  const validMembers = (members as unknown[]).filter(isValidMember)
+  
+  const filteredMembers = validMembers.filter(member =>
+    member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    member.email.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
+  const activeMembers = filteredMembers.filter(member => member.member_status === 'active')
+  const inactiveMembers = filteredMembers.filter(member => member.member_status === 'inactive')
 
   if (loading) return (
     <div className="container py-8 flex items-center justify-center min-h-[400px]">
@@ -67,10 +71,28 @@ export default function MembersPage() {
         />
       </div>
 
-      <MembersList 
-        members={filteredMembers} 
-        onDelete={deleteMember} 
-      />
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Active Members</h2>
+          <MembersList 
+            members={activeMembers} 
+            onDelete={deleteMember}
+            onToggleStatus={(id, status) => toggleStatus({ id, status })}
+          />
+        </div>
+
+        {inactiveMembers.length > 0 && (
+          <div>
+            <h2 className="text-xl font-semibold mb-4">Inactive Members</h2>
+            <MembersList 
+              members={inactiveMembers} 
+              onDelete={deleteMember}
+              onToggleStatus={(id, status) => toggleStatus({ id, status })}
+              isInactive
+            />
+          </div>
+        )}
+      </div>
     </div>
   )
 } 

@@ -16,7 +16,17 @@ export interface Member {
 // Create a single instance of the Supabase client
 const supabase = createClientComponentClient<Database>()
 
-type NewMember = Pick<Member, 'name' | 'email' | 'photo_url' | 'member_status' | 'join_date'>
+export interface NewMember {
+  name: string
+  email: string
+  join_date: string
+  member_status: 'active' | 'inactive'
+  photo_url?: string
+}
+
+function getDefaultAvatar(name: string) {
+  return `https://api.dicebear.com/9.x/bottts/svg?seed=${encodeURIComponent(name)}`
+}
 
 async function fetchMembers() {
   const { data, error } = await supabase
@@ -32,7 +42,10 @@ async function fetchMembers() {
 async function addMember(member: NewMember) {
   const { data, error } = await supabase
     .from('members')
-    .insert(member)
+    .insert([{
+      ...member,
+      photo_url: member.photo_url || getDefaultAvatar(member.name)
+    }])
     .select()
     .single()
 
@@ -49,6 +62,19 @@ async function deleteMember(id: string) {
   if (error) throw error
 }
 
+async function toggleMemberStatus(id: string, currentStatus: 'active' | 'inactive') {
+  const newStatus = currentStatus === 'active' ? 'inactive' : 'active'
+  const { data, error } = await supabase
+    .from('members')
+    .update({ member_status: newStatus })
+    .eq('id', id)
+    .select()
+    .single()
+
+  if (error) throw error
+  return data
+}
+
 export function useMembers() {
   const queryClient = useQueryClient()
 
@@ -58,7 +84,19 @@ export function useMembers() {
   })
 
   const addMemberMutation = useMutation({
-    mutationFn: addMember,
+    mutationFn: async (member: NewMember) => {
+      const { data, error } = await supabase
+        .from('members')
+        .insert([{
+          ...member,
+          photo_url: member.photo_url || getDefaultAvatar(member.name)
+        }])
+        .select()
+        .single()
+
+      if (error) throw error
+      return data
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['members'] })
     }
@@ -71,11 +109,20 @@ export function useMembers() {
     }
   })
 
+  const toggleStatusMutation = useMutation({
+    mutationFn: ({ id, status }: { id: string, status: 'active' | 'inactive' }) => 
+      toggleMemberStatus(id, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['members'] })
+    }
+  })
+
   return {
     members,
     loading: isLoading,
     error: error as Error | null,
     addMember: addMemberMutation.mutate,
-    deleteMember: deleteMemberMutation.mutate
+    deleteMember: deleteMemberMutation.mutate,
+    toggleStatus: toggleStatusMutation.mutate
   }
 } 
