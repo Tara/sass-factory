@@ -6,7 +6,6 @@ import { CustomBadge } from '@/components/ui/custom-badge'
 import { formatDate, getGoogleMapsSearchUrl } from '@/lib/utils'
 import type { Database } from '@/types/supabase'
 import { ShowAttendance } from "./show-attendance"
-import { useMembers } from "@/lib/hooks/useMembers"
 import { getShowStatusVariant } from "@/lib/utils"
 import { MapPin, Calendar, Ticket, DollarSign } from 'lucide-react'
 import Image from 'next/image'

@@ -11,6 +11,12 @@ export interface Venue {
   updated_at: string | null
 }
 
+type VenueUpdateData = {
+  address?: string
+  image_url?: string | null
+  contact_email?: string | null
+}
+
 export function useVenues() {
   const [venues, setVenues] = useState<Venue[]>([])
   const [loading, setLoading] = useState(true)
@@ -57,7 +63,7 @@ export function useVenues() {
 
   const editVenue = useCallback(async (id: string, venue: Partial<Omit<Venue, 'id' | 'name' | 'created_at' | 'updated_at'>>) => {
     try {
-      const updateData: Record<string, any> = {}
+      const updateData: VenueUpdateData = {}
       if (venue.address !== undefined) updateData.address = venue.address
       if (venue.image_url !== undefined) updateData.image_url = venue.image_url
       if (venue.contact_email !== undefined) updateData.contact_email = venue.contact_email
