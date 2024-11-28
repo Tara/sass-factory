@@ -14,48 +14,57 @@ export default function MembersPage() {
   const { members, loading, error, addMember, deleteMember } = useMembers()
   const [searchTerm, setSearchTerm] = useState('')
 
-  // Type guard to ensure we have a valid member and not an error
-  const isValidMember = (member: unknown): member is MemberRow => {
+  // Improved type guard with more specific types
+  const isValidMember = (member: unknown): member is Member => {
     if (!member || typeof member !== 'object') return false
-    return 'name' in member && 'email' in member
+    const m = member as any
+    return (
+      typeof m.id === 'string' &&
+      typeof m.name === 'string' &&
+      typeof m.email === 'string'
+    )
   }
 
-  const filteredMembers = members
+  // First cast to unknown, then filter and cast to Member[]
+  const filteredMembers = (members as unknown[])
     .filter(isValidMember)
     .filter(member =>
       member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       member.email.toLowerCase().includes(searchTerm.toLowerCase())
-    ) as Member[] // Safe to cast after filtering
+    )
 
   if (loading) return (
-    <div className="flex items-center justify-center min-h-[400px]">
+    <div className="container py-8 flex items-center justify-center min-h-[400px]">
       <div className="animate-pulse text-lg text-muted-foreground">Loading members...</div>
     </div>
   )
   
   if (error) return (
-    <div className="flex items-center justify-center min-h-[400px]">
+    <div className="container py-8 flex items-center justify-center min-h-[400px]">
       <div className="text-destructive">Error: {error.message}</div>
     </div>
   )
 
   return (
-    <div className="container mx-auto py-10">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">Members</h1>
+    <div className="container py-8 space-y-8">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Members</h1>
+          <p className="text-muted-foreground mt-2">
+            Manage and track your members
+          </p>
+        </div>
         <AddMemberDialog onAdd={addMember} />
       </div>
       
-      <div className="mb-4">
-        <div className="relative max-w-sm">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search members..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9"
-          />
-        </div>
+      <div className="relative max-w-sm">
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          placeholder="Search members..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="pl-9"
+        />
       </div>
 
       <MembersList 

@@ -8,11 +8,30 @@ import { Button } from "@/components/ui/button"
 import { MapPin, Plus, Search } from 'lucide-react'
 import { useState } from 'react'
 import { VenuesMap } from '@/components/venues/venues-map'
+import type { Venue } from '@/lib/hooks/useVenues'
 
 export default function VenuesPage() {
   const { venues, loading, error, addVenue, editVenue, deleteVenue } = useVenues()
   const [searchTerm, setSearchTerm] = useState('')
   const [showMap, setShowMap] = useState(false)
+
+  const handleAddVenue = async (venue: Partial<Venue>) => {
+    if (!venue.name || !venue.address) return
+    await addVenue({
+      name: venue.name,
+      address: venue.address,
+      contact_email: venue.contact_email ?? null,
+      image_url: venue.image_url ?? null
+    })
+  }
+
+  const handleEditVenue = async (id: string, venue: Partial<Venue>) => {
+    await editVenue(id, {
+      address: venue.address,
+      contact_email: venue.contact_email,
+      image_url: venue.image_url
+    })
+  }
 
   const filteredVenues = venues.filter(venue =>
     venue.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -21,20 +40,19 @@ export default function VenuesPage() {
   )
 
   if (loading) return (
-    <div className="flex items-center justify-center
-min-h-[400px]">
+    <div className="container py-8 flex items-center justify-center min-h-[400px]">
       <div className="animate-pulse text-lg text-muted-foreground">Loading venues...</div>
     </div>
   )
 
   if (error) return (
-    <div className="flex items-center justify-center min-h-[400px]">
+    <div className="container py-8 flex items-center justify-center min-h-[400px]">
       <div className="text-destructive">Error: {error.message}</div>
     </div>
   )
 
   return (
-    <div className="space-y-8">
+    <div className="container py-8 space-y-8">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Venues</h1>
@@ -43,7 +61,7 @@ min-h-[400px]">
           </p>
         </div>
         <VenueFormDialog
-          onSubmit={addVenue}
+          onSubmit={handleAddVenue}
           trigger={
             <Button size="lg">
               <Plus className="mr-2 h-4 w-4" />
@@ -91,7 +109,7 @@ min-h-[400px]">
           </div>
           {!searchTerm && (
             <VenueFormDialog
-              onSubmit={addVenue}
+              onSubmit={handleAddVenue}
               trigger={
                 <Button>
                   <Plus className="mr-2 h-4 w-4" />
@@ -105,7 +123,7 @@ min-h-[400px]">
         <VenuesList 
           venues={filteredVenues} 
           onDelete={deleteVenue}
-          onEdit={editVenue}
+          onEdit={handleEditVenue}
         />
       )}
     </div>
