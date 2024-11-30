@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Calendar } from "@/components/ui/calendar"
 import { Input } from '@/components/ui/input'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { supabase } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 import type { Show } from '@/lib/types/shows'
 import {
   Form,
@@ -46,6 +46,7 @@ function VenueSelect({ field }: { field: ControllerRenderProps<FormValues, "venu
   const { data: venues } = useQuery<Venue[]>({
     queryKey: ['venues'],
     queryFn: async () => {
+      const supabase = createClient()
       const { data, error } = await supabase
         .from('venues')
         .select('*')
@@ -95,6 +96,7 @@ export function AddShowDialog() {
       const showDate = new Date(data.date)
       showDate.setHours(hours, minutes)
 
+      const supabase = createClient()
       const { error } = await supabase
         .from('shows')
         .insert([{

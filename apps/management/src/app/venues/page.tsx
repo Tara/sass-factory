@@ -1,131 +1,98 @@
 'use client'
 
+import { useState } from 'react'
+import { Input } from '@/components/ui/input'
 import { useVenues } from '@/lib/hooks/useVenues'
 import { VenuesList } from '@/components/venues/venues-list'
-import { VenueFormDialog } from '@/components/venues/venue-form-dialog'
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { MapPin, Plus, Search } from 'lucide-react'
-import { useState } from 'react'
-import { VenuesMap } from '@/components/venues/venues-map'
-import type { Venue } from '@/lib/hooks/useVenues'
+import { AddVenueDialog } from '@/components/venues/add-venue-dialog'
+import { Button } from '@/components/ui/button'
+import { Plus } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
+import { useQueryClient } from '@tanstack/react-query'
+import type { Venue } from '@/lib/types/venues'
 
 export default function VenuesPage() {
-  const { venues, loading, error, addVenue, editVenue, deleteVenue } = useVenues()
   const [searchTerm, setSearchTerm] = useState('')
-  const [showMap, setShowMap] = useState(false)
+  const { data: venues, isLoading, error } = useVenues()
+  const queryClient = useQueryClient()
 
-  const handleAddVenue = async (venue: Partial<Venue>) => {
-    if (!venue.name || !venue.address) return
-    await addVenue({
-      name: venue.name,
-      address: venue.address,
-      contact_email: venue.contact_email ?? null,
-      image_url: venue.image_url ?? null,
-      venue_url: venue.venue_url ?? null
-    })
+  const handleDelete = async (id: string) => {
+    const supabase = createClient()
+    const { error } = await supabase
+      .from('venues')
+      .delete()
+      .eq('id', id)
+
+    if (error) throw error
+    queryClient.invalidateQueries({ queryKey: ['venues'] })
   }
 
-  const handleEditVenue = async (id: string, venue: Partial<Venue>) => {
-    await editVenue(id, {
-      address: venue.address,
-      contact_email: venue.contact_email,
-      image_url: venue.image_url,
-      venue_url: venue.venue_url
-    })
+  const handleEdit = async (id: string, venue: Partial<Venue>) => {
+    const supabase = createClient()
+    const { error } = await supabase
+      .from('venues')
+      .update(venue)
+      .eq('id', id)
+
+    if (error) throw error
+    queryClient.invalidateQueries({ queryKey: ['venues'] })
   }
 
-  const filteredVenues = venues.filter(venue =>
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <p>Loading venues...</p>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <p className="text-red-500">Error loading venues</p>
+      </div>
+    )
+  }
+
+  const filteredVenues = venues?.filter(venue =>
     venue.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     venue.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (venue.contact_email?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false)
-  )
-
-  if (loading) return (
-    <div className="container py-8 flex items-center justify-center min-h-[400px]">
-      <div className="animate-pulse text-lg text-muted-foreground">Loading venues...</div>
-    </div>
-  )
-
-  if (error) return (
-    <div className="container py-8 flex items-center justify-center min-h-[400px]">
-      <div className="text-destructive">Error: {error.message}</div>
-    </div>
-  )
+  ) ?? []
 
   return (
-    <div className="container py-8 space-y-8">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Venues</h1>
-          <p className="text-muted-foreground mt-2">
-            Manage and track your performance venues
-          </p>
-        </div>
-        <VenueFormDialog
-          onSubmit={handleAddVenue}
-          trigger={
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Venue
-            </Button>
-          }
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold">Venues</h1>
+        <AddVenueDialog />
+      </div>
+
+      <div className="max-w-sm">
+        <Input
+          type="search"
+          placeholder="Search venues..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
-      <div className="flex items-center gap-4">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search venues..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9"
-          />
-        </div>
-        <Button variant="outline" size="icon" onClick={() => setShowMap(!showMap)}>
-          <MapPin className="h-4 w-4" />
-          <span className="sr-only">Toggle map view</span>
-        </Button>
-      </div>
-
-      {showMap && (
-        <div className="mt-4 rounded-lg overflow-hidden border">
-          <VenuesMap venues={filteredVenues} />
-        </div>
-      )}
-
       {filteredVenues.length === 0 ? (
-        <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 rounded-lg border border-dashed p-8 text-center">
-          <div className="rounded-full bg-primary/10 p-3">
-            <MapPin className="h-6 w-6 text-primary" />
-          </div>
-          <div className="max-w-md space-y-1">
-            <h3 className="text-lg font-semibold">No venues found</h3>
-            <p className="text-sm text-muted-foreground">
-              {searchTerm ? 
-                "We couldn't find any venues matching your search. Try different keywords." :
-                "Get started by adding your first venue."
-              }
-            </p>
-          </div>
-          {!searchTerm && (
-            <VenueFormDialog
-              onSubmit={handleAddVenue}
-              trigger={
-                <Button>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Venue
-                </Button>
-              }
-            />
-          )}
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">No venues found</p>
+          <Button variant="outline" className="mt-4" asChild>
+            <AddVenueDialog>
+              <div className="flex items-center">
+                <Plus className="mr-2 h-4 w-4" />
+                Add Your First Venue
+              </div>
+            </AddVenueDialog>
+          </Button>
         </div>
       ) : (
         <VenuesList 
-          venues={filteredVenues} 
-          onDelete={deleteVenue}
-          onEdit={handleEditVenue}
+          venues={filteredVenues}
+          onDelete={handleDelete}
+          onEdit={handleEdit}
         />
       )}
     </div>

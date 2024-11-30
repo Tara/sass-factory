@@ -27,6 +27,8 @@ import { updateShow } from '@/lib/actions/shows'
 import { toast } from 'sonner'
 import type { Show } from '@/lib/types/shows'
 import { useRouter } from 'next/navigation'
+import type { Venue } from '@/lib/types/venues'
+import { useQuery } from '@tanstack/react-query'
 
 interface EditShowProps {
   show: Show
@@ -35,7 +37,7 @@ interface EditShowProps {
 
 export function EditShow({ show, trigger }: EditShowProps) {
   const [open, setOpen] = useState(false)
-  const { venues } = useVenues()
+  const { data: venues = [] } = useVenues()
   const router = useRouter()
   
   const form = useForm<ShowFormValues>({
@@ -120,7 +122,7 @@ export function EditShow({ show, trigger }: EditShowProps) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {venues?.map((venue) => (
+                      {venues.map((venue: Venue) => (
                         <SelectItem key={venue.id} value={venue.id}>
                           {venue.name}
                         </SelectItem>

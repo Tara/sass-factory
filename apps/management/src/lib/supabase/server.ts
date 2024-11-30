@@ -1,10 +1,9 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
-import type { CookieOptions } from '@supabase/ssr'
-import { Database } from '@/types/supabase'
+import type { Database } from '@/types/supabase'
 
-export async function createClient() {
-  const cookieStore = await cookies()
+export function createClient() {
+  const cookieStore = cookies()
 
   return createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -14,21 +13,50 @@ export async function createClient() {
         get(name: string) {
           return cookieStore.get(name)?.value
         },
-        set(name: string, value: string, options: CookieOptions) {
+        set(name: string, value: string, options: any) {
           try {
-            cookieStore.set(name, value, options)
+            cookieStore.set({ name, value, ...options })
           } catch (error) {
-            console.warn('Could not set cookie', error)
+            // Handle cookie setting error
           }
         },
-        remove(name: string, options: CookieOptions) {
+        remove(name: string, options: any) {
           try {
-            cookieStore.set(name, '', { ...options, maxAge: 0 })
+            cookieStore.set({ name, value: '', ...options })
           } catch (error) {
-            console.warn('Could not remove cookie', error)
+            // Handle cookie removal error
           }
         },
       },
     }
   )
+}
+
+export async function getSession() {
+  const supabase = createClient()
+  try {
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.getSession()
+
+    if (error) throw error
+    if (!session) return null
+
+    // Check if user is admin using user_roles table
+    const { data: roleData } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', session.user.id)
+      .eq('role', 'admin')
+      .single()
+
+    return {
+      user: session.user,
+      isAdmin: !!roleData
+    }
+  } catch (error) {
+    console.error('Error:', error)
+    return null
+  }
 } 

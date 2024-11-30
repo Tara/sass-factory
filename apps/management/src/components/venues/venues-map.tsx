@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { Loader } from '@googlemaps/js-api-loader'
-import { Venue } from '@/lib/hooks/useVenues'
+import { Venue } from '@/lib/types/venues'
 
 interface VenuesMapProps {
   venues: Venue[]
