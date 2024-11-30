@@ -24,7 +24,6 @@ export default function VenuesPage() {
       .eq('id', id)
 
     if (error) throw error
-    queryClient.invalidateQueries({ queryKey: ['venues'] })
   }
 
   const handleEdit = async (id: string, venue: Partial<Venue>) => {
@@ -35,13 +34,29 @@ export default function VenuesPage() {
       .eq('id', id)
 
     if (error) throw error
-    queryClient.invalidateQueries({ queryKey: ['venues'] })
   }
 
-  if (isLoading) {
+   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[50vh]">
-        <p>Loading venues...</p>
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h1 className="text-3xl font-bold">Venues</h1>
+          <AddVenueDialog />
+        </div>
+
+        <div className="max-w-sm">
+          <Input
+            type="search"
+            placeholder="Search venues..."
+            disabled
+          />
+        </div>
+
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-[300px] animate-pulse bg-muted rounded-lg" />
+          ))}
+        </div>
       </div>
     )
   }
