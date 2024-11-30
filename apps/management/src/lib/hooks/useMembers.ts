@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import type { Database } from '@/types/supabase'
+import type { Database } from '@/lib/types/supabase'
 import type { Member, NewMember, MemberStatus } from '@/lib/types/members'
 
 // Create a single instance of the Supabase client

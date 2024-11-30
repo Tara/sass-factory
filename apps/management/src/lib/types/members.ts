@@ -1,4 +1,4 @@
-import type { Database } from '@/types/supabase'
+import type { Database } from '@/lib/types/supabase'
 
 export type MemberStatus = 'active' | 'inactive' | 'pending'
 

@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import type { Database } from '@/types/supabase'
+import type { Database } from '@/lib/types/supabase'
 import type { AttendanceStatus } from '@/lib/types/shows'
 
 type Show = Database['public']['Tables']['shows']['Row'] & {
