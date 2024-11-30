@@ -6,6 +6,7 @@ import "./globals.css";
 import { MainNav } from "@/components/main-nav";
 import { Providers } from "@/components/providers";
 import { User } from '@supabase/auth-helpers-nextjs'
+import { Toaster } from "@/components/ui/toaster"
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -43,6 +44,7 @@ export default async function RootLayout({
             </main>
           </div>
         </Providers>
+        <Toaster />
       </body>
     </html>
   );
