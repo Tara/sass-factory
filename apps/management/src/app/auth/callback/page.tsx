@@ -10,17 +10,34 @@ export default function AuthCallback() {
   useEffect(() => {
     const supabase = createClient()
     
-    // Check auth status
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      // If we have a session, redirect to home
-      if (session) {
-        router.push('/')
-        router.refresh()
-      } else {
-        // If no session, redirect to sign in
-        router.push('/auth/signin')
+    async function checkSession() {
+      const { data: { session }, error } = await supabase.auth.getSession()
+      
+      if (error) {
+        console.error('Session error:', error)
+        router.push('/auth/error')
+        return
       }
-    })
+
+      if (!session) {
+        router.push('/auth/signin')
+        return
+      }
+
+      // Check if email is confirmed
+      const { data: { user } } = await supabase.auth.getUser()
+      
+      if (!user?.email_confirmed_at) {
+        router.push('/auth/verify-email')
+        return
+      }
+
+      // If everything is good, redirect to home
+      router.push('/')
+      router.refresh()
+    }
+
+    checkSession()
   }, [router])
 
   return (
