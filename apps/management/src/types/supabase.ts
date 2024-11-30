@@ -214,7 +214,7 @@ export type Database = {
         | "not_attending"
         | "performed"
         | "no_show"
-      member_status: "active" | "inactive"
+      member_status: "active" | "inactive" | "pending"
       show_status: "scheduled" | "performed" | "completed"
       user_role: "admin" | "manager" | "member"
     }
