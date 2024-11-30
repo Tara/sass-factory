@@ -23,9 +23,10 @@ export function useAuth() {
 
       // Check if user is admin
       const { data: adminData } = await supabase
-        .from('admin_users')
+        .from('user_roles')
         .select('user_id')
         .eq('user_id', session.user.id)
+        .eq('role', 'admin')
         .single()
 
       setState({
@@ -44,9 +45,10 @@ export function useAuth() {
       if (session) {
         // Check if user is admin
         const { data: adminData } = await supabase
-          .from('admin_users')
+          .from('user_roles')
           .select('user_id')
           .eq('user_id', session.user.id)
+          .eq('role', 'admin')
           .single()
 
         setState({

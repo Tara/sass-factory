@@ -41,19 +41,19 @@ export async function getSession() {
     } = await supabase.auth.getSession()
 
     if (error) throw error
-
     if (!session) return null
 
-    // Check if user is admin
-    const { data: adminData } = await supabase
-      .from('admin_users')
-      .select('user_id')
+    // Check if user is admin using user_roles table
+    const { data: roleData } = await supabase
+      .from('user_roles')
+      .select('role')
       .eq('user_id', session.user.id)
+      .eq('role', 'admin')
       .single()
 
     return {
       user: session.user,
-      isAdmin: !!adminData
+      isAdmin: !!roleData
     }
   } catch (error) {
     console.error('Error:', error)
