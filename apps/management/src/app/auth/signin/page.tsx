@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card'
+import Link from 'next/link'
 
 export default function SignIn() {
   const router = useRouter()
@@ -67,7 +68,7 @@ export default function SignIn() {
               />
             </div>
           </CardContent>
-          <CardFooter>
+          <CardFooter className="flex flex-col gap-4">
             <Button
               type="submit"
               className="w-full"
@@ -75,6 +76,15 @@ export default function SignIn() {
             >
               {isLoading ? 'Signing in...' : 'Sign In'}
             </Button>
+            <p className="text-sm text-muted-foreground text-center">
+              Don't have an account?{' '}
+              <Link 
+                href="/auth/signup" 
+                className="text-primary hover:underline"
+              >
+                Sign up
+              </Link>
+            </p>
           </CardFooter>
         </form>
       </Card>

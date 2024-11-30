@@ -19,6 +19,7 @@ export type Database = {
           name: string
           photo_url: string
           updated_at: string | null
+          user_id: string | null
         }
         Insert: {
           created_at?: string | null
@@ -29,6 +30,7 @@ export type Database = {
           name: string
           photo_url: string
           updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
           created_at?: string | null
@@ -39,6 +41,7 @@ export type Database = {
           name?: string
           photo_url?: string
           updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -131,6 +134,30 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       venues: {
         Row: {
           address: string
@@ -169,7 +196,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          role_to_check: Database["public"]["Enums"]["user_role"]
+        }
+        Returns: boolean
+      }
+      is_staff: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
     }
     Enums: {
       attendance_status:
@@ -180,6 +216,7 @@ export type Database = {
         | "no_show"
       member_status: "active" | "inactive"
       show_status: "scheduled" | "performed" | "completed"
+      user_role: "admin" | "manager" | "member"
     }
     CompositeTypes: {
       [_ in never]: never
