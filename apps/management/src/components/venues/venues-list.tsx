@@ -25,6 +25,8 @@ interface VenuesListProps {
   venues: Venue[]
   onDelete: (id: string) => Promise<void>
   onEdit: (id: string, venue: Partial<Venue>) => Promise<void>
+  isDeleting: boolean
+  isEditing: boolean
 }
 
 export function VenuesList({ venues, onDelete, onEdit }: VenuesListProps) {

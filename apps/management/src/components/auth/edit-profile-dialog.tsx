@@ -111,8 +111,6 @@ export function EditProfileDialog({ isOpen, onClose, currentUser }: EditProfileD
     }
   }
 
-  console.log('EditProfileDialog render:', { isOpen, isLoading })
-
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent>
