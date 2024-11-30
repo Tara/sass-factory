@@ -37,7 +37,7 @@ export default async function RootLayout({
               <div className="flex h-16 items-center px-8 max-w-7xl mx-auto">
                 <MainNav isAuthenticated={isAuthenticated} />
               </div>
-            </div>
+            )}
             <main className="max-w-7xl mx-auto px-8 py-6">
               {children}
             </main>
