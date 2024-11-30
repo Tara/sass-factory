@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Search, Plus } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import type { Member } from '@/lib/types/members'
+import type { Member, MemberStatus } from '@/lib/types/members'
 
 export default function MembersPage() {
   const { members, loading, error, addMember, deleteMember, toggleStatus } = useMembers()
@@ -35,6 +35,10 @@ export default function MembersPage() {
 
   const activeMembers = filteredMembers.filter(member => member.member_status === 'active')
   const inactiveMembers = filteredMembers.filter(member => member.member_status === 'inactive')
+
+  const handleToggleStatus = (id: string, status: MemberStatus) => {
+    toggleStatus({ id, status })
+  }
 
   if (loading) return (
     <div className="container py-8 flex items-center justify-center min-h-[400px]">
@@ -81,7 +85,7 @@ export default function MembersPage() {
           <MembersList 
             members={activeMembers} 
             onDelete={deleteMember}
-            onToggleStatus={(id, status) => toggleStatus({ id, status })}
+            onToggleStatus={handleToggleStatus}
           />
         </div>
 
@@ -91,7 +95,7 @@ export default function MembersPage() {
             <MembersList 
               members={inactiveMembers} 
               onDelete={deleteMember}
-              onToggleStatus={(id, status) => toggleStatus({ id, status })}
+              onToggleStatus={handleToggleStatus}
               isInactive
             />
           </div>

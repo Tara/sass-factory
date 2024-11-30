@@ -1,7 +1,9 @@
 import type { Database } from '@/types/supabase'
 
+export type MemberStatus = 'active' | 'inactive' | 'pending'
+
 export type Member = Database['public']['Tables']['members']['Row'] & {
-  member_status: 'active' | 'inactive'
+  member_status: MemberStatus
   photo_url: string | null
   join_date: string
   created_at: string | null
@@ -16,6 +18,6 @@ export interface NewMember {
   name: string
   email: string
   join_date: string
-  member_status: 'active' | 'inactive'
+  member_status: MemberStatus
   photo_url?: string
 } 
