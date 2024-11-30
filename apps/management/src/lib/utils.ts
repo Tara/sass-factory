@@ -1,10 +1,8 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
-import type { Database } from '@/types/supabase'
+import type { Database } from '@/lib/types/supabase'
 import type { CustomBadgeVariant, BadgeVariant } from "@/components/ui/custom-badge"
 import type { AttendanceStatus } from '@/lib/types/shows'
-
-type MemberStatus = Database['public']['Enums']['member_status']
 type ShowStatus = Database['public']['Enums']['show_status']
 
 export function cn(...inputs: ClassValue[]) {

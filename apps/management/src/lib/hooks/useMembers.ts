@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import type { Database } from '@/types/supabase'
-import type { Member, NewMember } from '@/lib/types/members'
+import type { Database } from '@/lib/types/supabase'
+import type { Member, NewMember, MemberStatus } from '@/lib/types/members'
 
 // Create a single instance of the Supabase client
 const supabase = createClientComponentClient<Database>()
@@ -30,7 +30,7 @@ async function deleteMember(id: string) {
   if (error) throw error
 }
 
-async function toggleMemberStatus(id: string, currentStatus: 'active' | 'inactive') {
+async function toggleMemberStatus(id: string, currentStatus: MemberStatus) {
   const newStatus = currentStatus === 'active' ? 'inactive' : 'active'
   const { data, error } = await supabase
     .from('members')
@@ -78,7 +78,7 @@ export function useMembers() {
   })
 
   const toggleStatusMutation = useMutation({
-    mutationFn: ({ id, status }: { id: string, status: 'active' | 'inactive' }) => 
+    mutationFn: ({ id, status }: { id: string, status: MemberStatus }) => 
       toggleMemberStatus(id, status),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['members'] })

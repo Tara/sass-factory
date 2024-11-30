@@ -3,7 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { showSchema, type ShowFormValues } from '@/lib/validations/show'
 import { revalidatePath } from 'next/cache'
-import type { Database } from '@/types/supabase'
+import type { Database } from '@/lib/types/supabase'
 
 interface UpdateShowData extends ShowFormValues {
   id: string

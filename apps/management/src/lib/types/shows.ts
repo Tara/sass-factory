@@ -1,4 +1,4 @@
-import type { Database } from '@/types/supabase'
+import type { Database } from './supabase'
 import type { Member } from './members'
 
 export type AttendanceStatus = Database['public']['Enums']['attendance_status']

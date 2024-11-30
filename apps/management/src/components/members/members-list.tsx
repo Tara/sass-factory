@@ -2,7 +2,7 @@
 
 import { toast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
-import { Member } from "@/lib/types/members"
+import { Member, MemberStatus } from "@/lib/types/members"
 import { MemberAvatar } from "./member-avatar"
 import {
   Table,
@@ -35,7 +35,7 @@ function formatDate(date: string | null): string {
 interface MembersListProps {
   members: Member[]
   onDelete: (id: string) => void
-  onToggleStatus: (id: string, status: 'active' | 'inactive') => void
+  onToggleStatus: (id: string, status: MemberStatus) => void
   isLoading?: boolean
   isInactive?: boolean
 }
