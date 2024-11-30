@@ -2,6 +2,8 @@ import type { Database } from '@/lib/types/supabase'
 
 export type MemberStatus = 'active' | 'inactive' | 'pending'
 
+export type MemberStatus = 'active' | 'inactive' | 'pending'
+
 export type Member = Database['public']['Tables']['members']['Row'] & {
   member_status: MemberStatus
   photo_url: string | null
