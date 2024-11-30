@@ -8,14 +8,25 @@ export async function GET(request: Request) {
   const token_hash = requestUrl.searchParams.get('token_hash')
   const type = requestUrl.searchParams.get('type')
   
-  if (token_hash && type) {
-    const supabase = createRouteHandlerClient({ cookies })
+  if (!token_hash || !type) 
+    return NextResponse.redirect(`${requestUrl.origin}/auth/error`)
+
+  const supabase = createRouteHandlerClient({ cookies })
+  
+  try {
     // Only proceed if type is a valid email OTP type
     if (type === 'signup' || type === 'recovery' || type === 'invite' || type === 'email_change') {
-      await supabase.auth.verifyOtp({ token_hash, type: type as EmailOtpType })
+      const { error } = await supabase.auth.verifyOtp({ 
+        token_hash, 
+        type: type as EmailOtpType 
+      })
+      
+      if (error) throw error
     }
-  }
 
-  // URL to redirect to after sign in process completes
-  return NextResponse.redirect(`${requestUrl.origin}/auth/callback`)
+    // URL to redirect to after sign in process completes
+    return NextResponse.redirect(`${requestUrl.origin}/auth/callback`)
+  } catch (error) {
+    return NextResponse.redirect(`${requestUrl.origin}/auth/error`)
+  }
 } 
