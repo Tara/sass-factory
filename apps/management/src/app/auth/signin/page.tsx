@@ -1,6 +1,7 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -19,6 +20,7 @@ type SignInForm = z.infer<typeof signInSchema>
 
 export default function SignIn() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const {
     register,
     handleSubmit,
@@ -27,6 +29,36 @@ export default function SignIn() {
   } = useForm<SignInForm>({
     resolver: zodResolver(signInSchema)
   })
+
+  // Handle email verification if token is present
+  useEffect(() => {
+    const token_hash = searchParams.get('token_hash')
+    const type = searchParams.get('type')
+
+    if (token_hash && type === 'signup') {
+      const verifyEmail = async () => {
+        const supabase = createClient()
+        const { error } = await supabase.auth.verifyOtp({
+          token_hash,
+          type: 'signup'
+        })
+
+        if (error) {
+          console.error('Verification error:', error)
+          router.push('/auth/error')
+        } else {
+          // After verification, check session
+          const { data: { session } } = await supabase.auth.getSession()
+          if (session) {
+            router.push('/')
+            router.refresh()
+          }
+        }
+      }
+
+      verifyEmail()
+    }
+  }, [searchParams, router])
 
   const onSubmit = async (data: SignInForm) => {
     const supabase = createClient()
