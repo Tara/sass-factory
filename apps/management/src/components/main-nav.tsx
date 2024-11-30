@@ -4,6 +4,11 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { UserAccountNav } from "@/components/user-account-nav"
+import { Button } from "./ui/button"
+
+interface MainNavProps {
+  isAuthenticated: boolean
+}
 
 const navItems = [
   {
@@ -24,7 +29,7 @@ const navItems = [
   }
 ]
 
-export function MainNav() {
+export function MainNav({ isAuthenticated }: MainNavProps) {
   const pathname = usePathname()
 
   return (
@@ -46,7 +51,18 @@ export function MainNav() {
         ))}
       </nav>
       <div className="ml-auto">
-        <UserAccountNav />
+        {isAuthenticated ? (
+          <UserAccountNav />
+        ) : (
+          <div className="flex gap-2">
+            <Button variant="ghost" asChild>
+              <Link href="/auth/signin">Sign In</Link>
+            </Button>
+            <Button asChild>
+              <Link href="/auth/signup">Sign Up</Link>
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   )

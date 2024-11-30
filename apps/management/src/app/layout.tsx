@@ -5,6 +5,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { MainNav } from "@/components/main-nav";
 import { Providers } from "@/components/providers";
+import { User } from '@supabase/auth-helpers-nextjs'
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,20 +26,18 @@ export default async function RootLayout({
     error,
   } = await supabase.auth.getUser()
 
-  const isAuthenticated = !error && user
+  const isAuthenticated = Boolean(!error && user)
 
   return (
     <html lang="en">
       <body className={inter.className}>
         <Providers>
           <div className="min-h-screen bg-background">
-            {isAuthenticated && (
-              <div className="border-b">
-                <div className="flex h-16 items-center px-8 max-w-7xl mx-auto">
-                  <MainNav />
-                </div>
+            <div className="border-b">
+              <div className="flex h-16 items-center px-8 max-w-7xl mx-auto">
+                <MainNav isAuthenticated={isAuthenticated} />
               </div>
-            )}
+            </div>
             <main className="max-w-7xl mx-auto px-8 py-6">
               {children}
             </main>
