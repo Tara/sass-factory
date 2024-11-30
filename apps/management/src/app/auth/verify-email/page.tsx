@@ -1,13 +1,13 @@
-export default function VerifyEmail() {
+export default function VerifyEmailPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div className="max-w-md text-center">
-        <h1 className="text-2xl font-bold mb-4">Check your email</h1>
-        <p className="text-muted-foreground">
-          We've sent you an email with a link to verify your account. 
-          Please check your inbox and follow the instructions to complete your registration.
-        </p>
-      </div>
+    <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+      <h1 className="text-2xl font-bold">Check Your Email</h1>
+      <p>
+        We&apos;ve sent you a verification link. Please check your email to continue.
+      </p>
+      <p className="text-sm text-muted-foreground">
+        Can&apos;t find the email? Check your spam folder or request a new verification link.
+      </p>
     </div>
   )
 } 

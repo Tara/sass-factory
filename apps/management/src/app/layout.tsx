@@ -19,20 +19,26 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   const supabase = createServerComponentClient({ cookies })
+  
   const {
-    data: { session },
-  } = await supabase.auth.getSession()
+    data: { user },
+    error,
+  } = await supabase.auth.getUser()
+
+  const isAuthenticated = !error && user
 
   return (
     <html lang="en">
       <body className={inter.className}>
         <Providers>
           <div className="min-h-screen bg-background">
-            <div className="border-b">
-              <div className="flex h-16 items-center px-8 max-w-7xl mx-auto">
-                <MainNav />
+            {isAuthenticated && (
+              <div className="border-b">
+                <div className="flex h-16 items-center px-8 max-w-7xl mx-auto">
+                  <MainNav />
+                </div>
               </div>
-            </div>
+            )}
             <main className="max-w-7xl mx-auto px-8 py-6">
               {children}
             </main>

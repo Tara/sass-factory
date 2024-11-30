@@ -71,21 +71,6 @@ export default function SignUp() {
 
       if (signUpError) throw signUpError
 
-      // Create a member record with required fields
-      const { error: memberError } = await supabase
-        .from('members')
-        .insert([
-          {
-            email: data.email,
-            name: data.fullName,
-            join_date: new Date().toISOString(),
-            photo_url: '', // Required field, empty string as default
-            member_status: 'active' as const, // Using the correct enum value
-          },
-        ])
-
-      if (memberError) throw memberError
-
       router.push('/auth/verify-email')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred during sign up')
