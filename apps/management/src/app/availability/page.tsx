@@ -1,4 +1,4 @@
-import { Calendar } from "@/components/availability/calendar"
+import { AvailabilityCalendar } from "@/components/availability/calendar"
 import { createServerActionClient } from "@/lib/supabase/server"
 
 export default async function AvailabilityPage() {
@@ -42,7 +42,7 @@ export default async function AvailabilityPage() {
       </div>
       
       <div className="rounded-lg border bg-card">
-        <Calendar initialMemberId={memberData.id} />
+        <AvailabilityCalendar initialMemberId={memberData.id} />
       </div>
     </div>
   )
