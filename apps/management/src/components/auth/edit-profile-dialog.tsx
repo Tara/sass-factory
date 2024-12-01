@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { createBrowserClient } from "@supabase/ssr"
 import { useRouter } from "next/navigation"
 
 import {
@@ -40,7 +40,10 @@ interface EditProfileDialogProps {
 
 export function EditProfileDialog({ isOpen, onClose, currentUser }: EditProfileDialogProps) {
   const [isLoading, setIsLoading] = useState(false)
-  const supabase = createClientComponentClient()
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
   const router = useRouter()
   const { toast } = useToast()
 

@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/client'
 
 export default function ConfirmEmail() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [error, setError] = useState<string>()
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   useEffect(() => {
     const token_hash = searchParams.get('token_hash')

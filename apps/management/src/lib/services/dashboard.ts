@@ -1,5 +1,4 @@
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
-import { cookies } from "next/headers"
+import { createServerActionClient } from "@/lib/supabase/server"
 import type { Database } from "@/lib/types/supabase"
 
 interface DashboardStats {
@@ -13,7 +12,7 @@ interface DashboardStats {
 }
 
 export async function getDashboardStats(): Promise<DashboardStats> {
-  const supabase = createServerComponentClient<Database>({ cookies })
+  const supabase = createServerActionClient()
   
   const now = new Date()
   const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
