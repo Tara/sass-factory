@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
+import type { DayProps as CalendarDayProps } from 'react-day-picker'
 import {
   Select,
   SelectContent,
@@ -19,7 +20,7 @@ import { cn } from '@/lib/utils'
 import { format, isSameDay, addMonths, subMonths } from 'date-fns'
 import type { Database } from '@/lib/types/supabase'
 
-type Availability = 'available' | 'maybe' | 'unavailable'
+type Availability = 'available' | 'maybe' | 'unavailable' | 'unknown'
 type DayPeriod = 'morning' | 'evening'
 
 interface DayAvailability {
@@ -42,9 +43,14 @@ interface AvailabilityRow {
   updated_at: string | null
 }
 
-interface CalendarDayProps extends React.HTMLAttributes<HTMLButtonElement> {
+interface CustomCalendarDayProps extends Omit<CalendarDayProps, 'displayMonth'> {
   date: Date
   displayMonth?: Date
+  selected?: boolean
+  className?: string
+  onClick?: (day: Date) => void
+  onMouseEnter?: (day: Date) => void
+  onMouseLeave?: (day: Date) => void
 }
 
 export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarProps) {
@@ -125,13 +131,53 @@ export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarPr
 
   const getDayClass = (date: Date): string => {
     const { morning, evening } = getDayAvailability(date)
+    
+    if (morning === 'unknown' && evening === 'unknown') return 'bg-gray-200'
     if (morning === 'available' && evening === 'available') return 'bg-green-200'
     if (morning === 'unavailable' && evening === 'unavailable') return 'bg-red-200'
     if (morning === 'maybe' && evening === 'maybe') return 'bg-yellow-200'
+    
     if (morning === 'available' && evening === 'unavailable') return 'bg-gradient-to-b from-green-200 to-red-200'
     if (morning === 'unavailable' && evening === 'available') return 'bg-gradient-to-b from-red-200 to-green-200'
+    if (morning === 'unknown') return 'bg-gradient-to-b from-gray-200 to-green-200'
+    if (evening === 'unknown') return 'bg-gradient-to-b from-green-200 to-gray-200'
+    
     return 'bg-gradient-to-b from-yellow-200 to-green-200'
   }
+
+  const CalendarDay = React.forwardRef<HTMLButtonElement, CustomCalendarDayProps>(
+  ({ date, displayMonth, selected, onClick, onMouseEnter, onMouseLeave, className, ...props }, ref): JSX.Element => {
+    const isSelected = selectedDates.some(selectedDate => isSameDay(selectedDate, date))
+    
+    return (
+      <Button
+        ref={ref}
+        {...props}
+        onClick={(e) => {
+          e.preventDefault()
+          const newSelectedDates = isSelected
+            ? selectedDates.filter(selectedDate => !isSameDay(selectedDate, date))
+            : [...selectedDates, date]
+          setSelectedDates(newSelectedDates)
+        }}
+        onMouseEnter={() => onMouseEnter?.(date)}
+        onMouseLeave={() => onMouseLeave?.(date)}
+        className={cn(
+          className,
+          getDayClass(date),
+          'h-9 w-9 p-0 font-normal',
+          'text-gray-900',
+          'hover:bg-opacity-75',
+          isSelected && 'ring-2 ring-primary ring-offset-2',
+          !isSelected && 'aria-selected:opacity-100 aria-selected:font-medium'
+        )}
+      >
+        {format(date, 'd')}
+      </Button>
+    )
+  }
+)
+CalendarDay.displayName = 'CalendarDay'
 
   return (
     <Card className="w-full max-w-4xl mx-auto">
@@ -163,7 +209,7 @@ export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarPr
                 <SheetHeader>
                   <SheetTitle>Update Availability</SheetTitle>
                 </SheetHeader>
-                <div className="py-4">
+                <div className="py-4 space-y-4">
                   <Select
                     value={selectedPeriod}
                     onValueChange={(value: DayPeriod) => setSelectedPeriod(value)}
@@ -186,13 +232,28 @@ export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarPr
                       </SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
-                <div className="space-y-4">
+
+                  {selectedDates.length > 0 && (
+                    <div className="space-y-2">
+                      <div className="text-sm font-medium">Selected Dates:</div>
+                      <div className="max-h-24 overflow-y-auto space-y-1">
+                        {selectedDates.map((date) => (
+                          <div key={date.toISOString()} className="text-sm text-muted-foreground">
+                            {format(date, 'MMMM d, yyyy')}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   <div className="text-sm text-muted-foreground">
                     {selectedDates.length > 0
-                      ? `Set availability for ${selectedDates.length} selected ${selectedDates.length === 1 ? 'day' : 'days'}`
+                      ? `Set availability for ${selectedDates.length} selected ${
+                          selectedDates.length === 1 ? 'day' : 'days'
+                        }`
                       : 'Select dates on the calendar to update availability'}
                   </div>
+                  
                   <div className="flex flex-col gap-2">
                     <Button
                       onClick={() => handleUpdateAvailability('available')}
@@ -227,21 +288,12 @@ export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarPr
           <Calendar
             mode="multiple"
             selected={selectedDates}
-            onSelect={setSelectedDates as any}
+            onSelect={(dates) => {undefined}}
             month={month}
             onMonthChange={setMonth}
             className="rounded-md border"
             components={{
-              Day: ({ date, ...props }: CalendarDayProps) => (
-                <Button
-                  {...props}
-                  className={cn(
-                    props.className,
-                    getDayClass(date),
-                    'h-9 w-9 p-0 font-normal aria-selected:opacity-100'
-                  )}
-                />
-              ),
+              Day: CalendarDay
             }}
           />
           
@@ -249,6 +301,7 @@ export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarPr
             <Badge variant="outline" className="bg-green-200">Fully Available</Badge>
             <Badge variant="outline" className="bg-yellow-200">Maybe Available</Badge>
             <Badge variant="outline" className="bg-red-200">Unavailable</Badge>
+            <Badge variant="outline" className="bg-gray-200">Unknown</Badge>
             <Badge variant="outline" className="bg-gradient-to-b from-green-200 to-red-200">Morning Only</Badge>
             <Badge variant="outline" className="bg-gradient-to-b from-red-200 to-green-200">Evening Only</Badge>
             <Badge variant="outline" className="bg-gradient-to-b from-yellow-200 to-green-200">Partial Availability</Badge>

@@ -13,48 +13,30 @@ export type Database = {
         Row: {
           created_at: string | null
           date: string
-          evening_available: boolean
-          evening_priority:
-            | Database["public"]["Enums"]["availability_priority"]
-            | null
+          evening_availability: Database["public"]["Enums"]["availability_status"]
           id: string
           member_id: string | null
-          morning_available: boolean
-          morning_priority:
-            | Database["public"]["Enums"]["availability_priority"]
-            | null
+          morning_availability: Database["public"]["Enums"]["availability_status"]
           notes: string | null
           updated_at: string | null
         }
         Insert: {
           created_at?: string | null
           date: string
-          evening_available?: boolean
-          evening_priority?:
-            | Database["public"]["Enums"]["availability_priority"]
-            | null
+          evening_availability?: Database["public"]["Enums"]["availability_status"]
           id?: string
           member_id?: string | null
-          morning_available?: boolean
-          morning_priority?:
-            | Database["public"]["Enums"]["availability_priority"]
-            | null
+          morning_availability?: Database["public"]["Enums"]["availability_status"]
           notes?: string | null
           updated_at?: string | null
         }
         Update: {
           created_at?: string | null
           date?: string
-          evening_available?: boolean
-          evening_priority?:
-            | Database["public"]["Enums"]["availability_priority"]
-            | null
+          evening_availability?: Database["public"]["Enums"]["availability_status"]
           id?: string
           member_id?: string | null
-          morning_available?: boolean
-          morning_priority?:
-            | Database["public"]["Enums"]["availability_priority"]
-            | null
+          morning_availability?: Database["public"]["Enums"]["availability_status"]
           notes?: string | null
           updated_at?: string | null
         }
@@ -353,7 +335,7 @@ export type Database = {
         | "not_attending"
         | "performed"
         | "no_show"
-      availability_priority: "high" | "medium" | "low"
+      availability_status: "available" | "maybe" | "unavailable" | "unknown"
       member_status: "active" | "inactive" | "pending"
       show_status: "scheduled" | "performed" | "completed"
       user_role: "admin" | "manager" | "member"
