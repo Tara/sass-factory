@@ -1,18 +1,16 @@
 -- Enable UUID extension if not already enabled
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- Create enum for priority levels
-CREATE TYPE availability_priority AS ENUM ('high', 'medium', 'low');
+-- Create enum for availability status
+CREATE TYPE availability_status AS ENUM ('available', 'maybe', 'unavailable');
 
 -- Create availability table
 CREATE TABLE availability (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     member_id UUID REFERENCES members(id) ON DELETE CASCADE,
     date DATE NOT NULL,
-    morning_available BOOLEAN NOT NULL DEFAULT false,
-    morning_priority availability_priority,
-    evening_available BOOLEAN NOT NULL DEFAULT false,
-    evening_priority availability_priority,
+    morning_availability availability_status NOT NULL DEFAULT 'available',
+    evening_availability availability_status NOT NULL DEFAULT 'available',
     notes TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,

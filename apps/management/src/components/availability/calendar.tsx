@@ -1,266 +1,261 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Sun, Moon } from 'lucide-react';
-import { 
-  Dialog,
-  DialogContent, 
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { createClient } from '@/lib/supabase/client';
-import { Database } from '@/lib/types/supabase';
-import { useAuth } from '@/lib/hooks/useAuth';
-import { cn } from '@/lib/utils';
-import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday } from 'date-fns';
+import React, { useState, useEffect } from 'react'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Badge } from '@/components/ui/badge'
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import { Sun, Moon, CalendarRange, ChevronLeft, ChevronRight } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
+import { cn } from '@/lib/utils'
+import { format, isSameDay, addMonths, subMonths } from 'date-fns'
+import type { Database } from '@/lib/types/supabase'
 
-type Availability = Database['public']['Tables']['availability']['Row']
-type AvailabilityPriority = Database['public']['Enums']['availability_priority']
+type Availability = 'available' | 'maybe' | 'unavailable'
+type DayPeriod = 'morning' | 'evening'
 
-interface CalendarProps {
-  initialMemberId: string;
+interface DayAvailability {
+  morning: Availability
+  evening: Availability
 }
 
-export function AvailabilityCalendar({ initialMemberId }: CalendarProps) {
-  const { isLoading } = useAuth();
-  const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  const [selectedPeriod, setSelectedPeriod] = useState<'morning' | 'evening' | null>(null);
-  const [availability, setAvailability] = useState<Record<string, Availability>>({});
+interface AvailabilityCalendarProps {
+  initialMemberId: string
+}
+
+interface AvailabilityRow {
+  id: string
+  member_id: string | null
+  date: string
+  morning_availability: Availability
+  evening_availability: Availability
+  notes: string | null
+  created_at: string | null
+  updated_at: string | null
+}
+
+interface CalendarDayProps extends React.HTMLAttributes<HTMLButtonElement> {
+  date: Date
+  displayMonth?: Date
+}
+
+export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarProps) {
+  const [selectedDates, setSelectedDates] = useState<Date[]>([])
+  const [selectedPeriod, setSelectedPeriod] = useState<DayPeriod>('morning')
+  const [availability, setAvailability] = useState<Record<string, DayAvailability>>({})
+  const [month, setMonth] = useState<Date>(new Date())
+  const [isUpdateSheetOpen, setIsUpdateSheetOpen] = useState(false)
 
   useEffect(() => {
-    if (isLoading) return;
-
     const loadAvailability = async () => {
-      const supabase = createClient();
+      const supabase = createClient()
       const { data: availabilityData, error } = await supabase
         .from('availability')
         .select('*')
-        .eq('member_id', initialMemberId);
+        .eq('member_id', initialMemberId)
 
       if (error) {
-        console.error('Error loading availability:', error);
-        return;
+        console.error('Error loading availability:', error)
+        return
       }
 
-      const availabilityMap = availabilityData.reduce((acc, curr) => ({
+      const availabilityMap = (availabilityData as unknown as AvailabilityRow[]).reduce((acc, curr) => ({
         ...acc,
-        [curr.date]: curr,
-      }), {} as Record<string, Availability>);
+        [curr.date]: {
+          morning: curr.morning_availability,
+          evening: curr.evening_availability,
+        },
+      }), {} as Record<string, DayAvailability>)
 
-      setAvailability(availabilityMap);
-    };
-
-    loadAvailability();
-  }, [initialMemberId, isLoading]);
-
-  const handleUpdateAvailability = async (date: string, period: 'morning' | 'evening', priority: AvailabilityPriority) => {
-    const supabase = createClient();
-
-    const availabilityData = {
-      member_id: initialMemberId,
-      date,
-      [`${period}_available`]: true,
-      [`${period}_priority`]: priority,
-    };
-
-    const { data, error } = await supabase
-      .from('availability')
-      .upsert(availabilityData, {
-        onConflict: 'member_id,date',
-      });
-
-    if (error) {
-      console.error('Error updating availability:', error);
-      return;
+      setAvailability(availabilityMap)
     }
 
-    setAvailability(prev => ({
-      ...prev,
-      [date]: {
-        ...prev[date],
-        ...availabilityData,
-      },
-    }));
+    loadAvailability()
+  }, [initialMemberId])
 
-    setSelectedDate(null);
-    setSelectedPeriod(null);
-  };
+  const handleUpdateAvailability = async (availabilityStatus: Availability) => {
+    const supabase = createClient()
+    
+    for (const date of selectedDates) {
+      const dateStr = format(date, 'yyyy-MM-dd')
+      const currentAvailability = availability[dateStr] || { morning: 'available', evening: 'available' }
+      const updatedAvailability = {
+        ...currentAvailability,
+        [selectedPeriod]: availabilityStatus,
+      }
 
-  if (isLoading) {
-    return <div>Loading...</div>;
+      const { error } = await supabase
+        .from('availability')
+        .upsert({
+          member_id: initialMemberId,
+          date: dateStr,
+          morning_availability: updatedAvailability.morning,
+          evening_availability: updatedAvailability.evening,
+        }, {
+          onConflict: 'member_id,date',
+        })
+
+      if (error) {
+        console.error('Error updating availability:', error)
+        continue
+      }
+
+      setAvailability(prev => ({
+        ...prev,
+        [dateStr]: updatedAvailability,
+      }))
+    }
+
+    setSelectedDates([])
+    setIsUpdateSheetOpen(false)
   }
 
-  const firstDay = startOfMonth(currentMonth);
-  const lastDay = endOfMonth(currentMonth);
-  const days = eachDayOfInterval({ start: firstDay, end: lastDay });
+  const getDayAvailability = (date: Date): DayAvailability => {
+    const dateStr = format(date, 'yyyy-MM-dd')
+    return availability[dateStr] || { morning: 'available', evening: 'available' }
+  }
 
-  // Add padding days at start
-  const startPadding = Array.from({ length: firstDay.getDay() }, (_, i) => 
-    new Date(firstDay.getFullYear(), firstDay.getMonth(), -i)
-  ).reverse();
-
-  // Add padding days at end
-  const endPadding = Array.from(
-    { length: 6 - lastDay.getDay() },
-    (_, i) => new Date(lastDay.getFullYear(), lastDay.getMonth(), lastDay.getDate() + i + 1)
-  );
-
-  const allDays = [...startPadding, ...days, ...endPadding];
-  const weeks = Array.from(
-    { length: Math.ceil(allDays.length / 7) },
-    (_, i) => allDays.slice(i * 7, (i + 1) * 7)
-  );
-
-  const getPriorityColor = (priority: AvailabilityPriority | null) => {
-    switch (priority) {
-      case 'high': return 'bg-emerald-500/90 hover:bg-emerald-500';
-      case 'medium': return 'bg-amber-500/90 hover:bg-amber-500';
-      case 'low': return 'bg-rose-500/90 hover:bg-rose-500';
-      default: return 'bg-blue-500/90 hover:bg-blue-500';
-    }
-  };
+  const getDayClass = (date: Date): string => {
+    const { morning, evening } = getDayAvailability(date)
+    if (morning === 'available' && evening === 'available') return 'bg-green-200'
+    if (morning === 'unavailable' && evening === 'unavailable') return 'bg-red-200'
+    if (morning === 'maybe' && evening === 'maybe') return 'bg-yellow-200'
+    if (morning === 'available' && evening === 'unavailable') return 'bg-gradient-to-b from-green-200 to-red-200'
+    if (morning === 'unavailable' && evening === 'available') return 'bg-gradient-to-b from-red-200 to-green-200'
+    return 'bg-gradient-to-b from-yellow-200 to-green-200'
+  }
 
   return (
-    <Card className="p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold">
-          {format(currentMonth, 'MMMM yyyy')}
-        </h2>
-        <div className="flex gap-1">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-
-      <div className="rounded-lg border border-border overflow-hidden">
-        <div className="grid grid-cols-7 bg-muted">
-          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-            <div key={day} className="p-3 text-center text-sm font-medium text-muted-foreground">
-              {day}
-            </div>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-7 divide-x divide-y divide-border">
-          {weeks.map((week, weekIndex) => (
-            <React.Fragment key={weekIndex}>
-              {week.map((day, dayIndex) => {
-                const dateStr = format(day, 'yyyy-MM-dd');
-                const dayAvailability = availability[dateStr];
-                const isOtherMonth = !isSameMonth(day, currentMonth);
-
-                return (
-                  <div
-                    key={`${weekIndex}-${dayIndex}`}
-                    className={cn(
-                      'min-h-28 p-2 relative',
-                      isOtherMonth && 'bg-muted/50',
-                      isToday(day) && 'bg-accent/20'
-                    )}
+    <Card className="w-full max-w-4xl mx-auto">
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle>My Availability</CardTitle>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setMonth(subMonths(month, 1))}
+              aria-label="Previous month"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setMonth(addMonths(month, 1))}
+              aria-label="Next month"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+            <Sheet open={isUpdateSheetOpen} onOpenChange={setIsUpdateSheetOpen}>
+              <SheetTrigger asChild>
+                <Button variant="default">Update Availability</Button>
+              </SheetTrigger>
+              <SheetContent>
+                <SheetHeader>
+                  <SheetTitle>Update Availability</SheetTitle>
+                </SheetHeader>
+                <div className="py-4">
+                  <Select
+                    value={selectedPeriod}
+                    onValueChange={(value: DayPeriod) => setSelectedPeriod(value)}
                   >
-                    <div className={cn(
-                      'font-medium text-sm mb-2',
-                      isOtherMonth && 'text-muted-foreground'
-                    )}>
-                      {format(day, 'd')}
-                    </div>
-                    
-                    <div className="space-y-1">
-                      <button
-                        onClick={() => {
-                          setSelectedDate(dateStr);
-                          setSelectedPeriod('morning');
-                        }}
-                        className={cn(
-                          'w-full flex items-center gap-1.5 px-2 py-1.5 rounded-md text-xs',
-                          'transition-colors duration-200',
-                          'text-white font-medium',
-                          dayAvailability?.morning_available 
-                            ? getPriorityColor(dayAvailability.morning_priority)
-                            : 'bg-gray-200/80 hover:bg-gray-200 text-gray-700'
-                        )}
-                      >
-                        <Sun className="h-3 w-3" />
-                        Morning
-                      </button>
-
-                      <button
-                        onClick={() => {
-                          setSelectedDate(dateStr);
-                          setSelectedPeriod('evening');
-                        }}
-                        className={cn(
-                          'w-full flex items-center gap-1.5 px-2 py-1.5 rounded-md text-xs',
-                          'transition-colors duration-200',
-                          'text-white font-medium',
-                          dayAvailability?.evening_available 
-                            ? getPriorityColor(dayAvailability.evening_priority)
-                            : 'bg-gray-200/80 hover:bg-gray-200 text-gray-700'
-                        )}
-                      >
-                        <Moon className="h-3 w-3" />
-                        Evening
-                      </button>
-                    </div>
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="morning">
+                        <div className="flex items-center gap-2">
+                          <Sun className="w-4 h-4" />
+                          Morning
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="evening">
+                        <div className="flex items-center gap-2">
+                          <Moon className="w-4 h-4" />
+                          Evening
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-4">
+                  <div className="text-sm text-muted-foreground">
+                    {selectedDates.length > 0
+                      ? `Set availability for ${selectedDates.length} selected ${selectedDates.length === 1 ? 'day' : 'days'}`
+                      : 'Select dates on the calendar to update availability'}
                   </div>
-                );
-              })}
-            </React.Fragment>
-          ))}
-        </div>
-      </div>
-
-      <Dialog 
-        open={!!selectedDate && !!selectedPeriod} 
-        onOpenChange={() => {
-          setSelectedDate(null);
-          setSelectedPeriod(null);
-        }}
-      >
-        <DialogContent className="sm:max-w-[400px]">
-          <DialogHeader>
-            <DialogTitle className="text-center">
-              {selectedPeriod === 'morning' ? 'Morning' : 'Evening'} Availability
-              <div className="text-sm font-normal text-muted-foreground mt-1">
-                {selectedDate && format(new Date(selectedDate), 'MMMM d, yyyy')}
-              </div>
-            </DialogTitle>
-          </DialogHeader>
-          <div className="flex gap-2 justify-center p-4">
-            {(['high', 'medium', 'low'] as const).map(priority => (
-              <Button
-                key={priority}
-                onClick={() => {
-                  if (selectedDate && selectedPeriod) {
-                    handleUpdateAvailability(selectedDate, selectedPeriod, priority);
-                  }
-                }}
-                className={cn(
-                  'capitalize flex-1',
-                  getPriorityColor(priority)
-                )}
-              >
-                {priority}
-              </Button>
-            ))}
+                  <div className="flex flex-col gap-2">
+                    <Button
+                      onClick={() => handleUpdateAvailability('available')}
+                      className="w-full bg-green-500 hover:bg-green-600"
+                      disabled={selectedDates.length === 0}
+                    >
+                      Available
+                    </Button>
+                    <Button
+                      onClick={() => handleUpdateAvailability('maybe')}
+                      className="w-full bg-yellow-500 hover:bg-yellow-600"
+                      disabled={selectedDates.length === 0}
+                    >
+                      Maybe
+                    </Button>
+                    <Button
+                      onClick={() => handleUpdateAvailability('unavailable')}
+                      className="w-full bg-red-500 hover:bg-red-600"
+                      disabled={selectedDates.length === 0}
+                    >
+                      Unavailable
+                    </Button>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
-        </DialogContent>
-      </Dialog>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          <Calendar
+            mode="multiple"
+            selected={selectedDates}
+            onSelect={setSelectedDates as any}
+            month={month}
+            onMonthChange={setMonth}
+            className="rounded-md border"
+            components={{
+              Day: ({ date, ...props }: CalendarDayProps) => (
+                <Button
+                  {...props}
+                  className={cn(
+                    props.className,
+                    getDayClass(date),
+                    'h-9 w-9 p-0 font-normal aria-selected:opacity-100'
+                  )}
+                />
+              ),
+            }}
+          />
+          
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <Badge variant="outline" className="bg-green-200">Fully Available</Badge>
+            <Badge variant="outline" className="bg-yellow-200">Maybe Available</Badge>
+            <Badge variant="outline" className="bg-red-200">Unavailable</Badge>
+            <Badge variant="outline" className="bg-gradient-to-b from-green-200 to-red-200">Morning Only</Badge>
+            <Badge variant="outline" className="bg-gradient-to-b from-red-200 to-green-200">Evening Only</Badge>
+            <Badge variant="outline" className="bg-gradient-to-b from-yellow-200 to-green-200">Partial Availability</Badge>
+          </div>
+        </div>
+      </CardContent>
     </Card>
-  );
+  )
 }
+
