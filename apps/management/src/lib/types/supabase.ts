@@ -9,6 +9,145 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      availability: {
+        Row: {
+          created_at: string | null
+          date: string
+          evening_available: boolean
+          evening_priority:
+            | Database["public"]["Enums"]["availability_priority"]
+            | null
+          id: string
+          member_id: string | null
+          morning_available: boolean
+          morning_priority:
+            | Database["public"]["Enums"]["availability_priority"]
+            | null
+          notes: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          date: string
+          evening_available?: boolean
+          evening_priority?:
+            | Database["public"]["Enums"]["availability_priority"]
+            | null
+          id?: string
+          member_id?: string | null
+          morning_available?: boolean
+          morning_priority?:
+            | Database["public"]["Enums"]["availability_priority"]
+            | null
+          notes?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          evening_available?: boolean
+          evening_priority?:
+            | Database["public"]["Enums"]["availability_priority"]
+            | null
+          id?: string
+          member_id?: string | null
+          morning_available?: boolean
+          morning_priority?:
+            | Database["public"]["Enums"]["availability_priority"]
+            | null
+          notes?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "availability_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      availability_requests: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          due_date: string
+          id: string
+          quarter_end: string
+          quarter_start: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          due_date: string
+          id?: string
+          quarter_end: string
+          quarter_start: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          due_date?: string
+          id?: string
+          quarter_end?: string
+          quarter_start?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "availability_requests_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      availability_responses: {
+        Row: {
+          created_at: string | null
+          id: string
+          member_id: string | null
+          request_id: string | null
+          submitted_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          member_id?: string | null
+          request_id?: string | null
+          submitted_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          member_id?: string | null
+          request_id?: string | null
+          submitted_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "availability_responses_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "availability_responses_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "availability_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       members: {
         Row: {
           created_at: string | null
@@ -214,6 +353,7 @@ export type Database = {
         | "not_attending"
         | "performed"
         | "no_show"
+      availability_priority: "high" | "medium" | "low"
       member_status: "active" | "inactive" | "pending"
       show_status: "scheduled" | "performed" | "completed"
       user_role: "admin" | "manager" | "member"

@@ -1,4 +1,4 @@
-This is a monorepo. `/apps/` has 2 TOTALLY different thigns in it. `/apps/hugo-site` is a huge static site. `/apps/management` is a Next.js app. I have these in the same repo so that in the future I can generate some static content for hugo from the management app. Please make sure to check with me on which app we are working on before doing anything! 
+This is a monorepo. `/apps/` has 2 TOTALLY different things in it. `/apps/hugo-site` is a huge static site. `/apps/management` is a Next.js app. I have these in the same repo so that in the future I can generate some static content for hugo from the management app. Please make sure to check with me on which app we are working on before doing anything! 
 
 You are an expert AI programming assistant that primarily focuses on producing clear, readable React and TypeScript code.
 
@@ -32,7 +32,7 @@ React/Next.js:
 * Use Shadcn UI for components.
 * Implement responsive design with Tailwind CSS.
 * Use Zod for validation.
-* Use Radix UI for icons.
+* Use Lucide React for icons.
 * Use dynamic loading for non-critical components.
 * Use server actions for all data mutations.
 * Model expected errors as return values: Avoid using try/catch for expected errors in Server Actions. Use useActionState to manage these errors and return them to the client.
