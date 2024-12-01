@@ -3,6 +3,15 @@ title: "Shows"
 defaultImage: "images/default-show.jpg"
 shows:
   upcoming:
+    - title: "Spoonful of Sass"
+      date: 2025-01-16T19:00:00
+      venu: "Endgames"
+      image: "images/endgames.png"
+    - title: "Savifest"
+      date: 2025-02-16T14:15:00
+      venue: "Media and Immersive eXperience, Mesa, AZ"
+      ticketLink: "https://savifest.com/troupes/sass-factory"
+      image: "images/shows/savifest2025.jpg"
     - title: "Jokeland"
       date: 2024-11-09T19:30:00
       venue: "Jokeland"
