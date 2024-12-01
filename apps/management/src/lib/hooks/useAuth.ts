@@ -21,18 +21,20 @@ export function useAuth() {
         return
       }
 
-      // Check if user is admin
-      const { data: adminData } = await supabase
+      // Check if user has staff role (admin or manager)
+      const { data: userRoles } = await supabase
         .from('user_roles')
-        .select('user_id')
+        .select('role')
         .eq('user_id', session.user.id)
-        .eq('role', 'admin')
-        .single()
+
+      const isAdmin = userRoles?.some(role => role.role === 'admin') ?? false
+      const isStaff = userRoles?.some(role => ['admin', 'manager'].includes(role.role)) ?? false
 
       setState({
         session: {
           user: session.user,
-          isAdmin: !!adminData
+          isAdmin,
+          isStaff
         },
         isLoading: false,
       })
@@ -43,18 +45,20 @@ export function useAuth() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session) {
-        // Check if user is admin
-        const { data: adminData } = await supabase
+        // Check if user has staff role (admin or manager)
+        const { data: userRoles } = await supabase
           .from('user_roles')
-          .select('user_id')
+          .select('role')
           .eq('user_id', session.user.id)
-          .eq('role', 'admin')
-          .single()
+
+        const isAdmin = userRoles?.some(role => role.role === 'admin') ?? false
+        const isStaff = userRoles?.some(role => ['admin', 'manager'].includes(role.role)) ?? false
 
         setState({
           session: {
             user: session.user,
-            isAdmin: !!adminData
+            isAdmin,
+            isStaff
           },
           isLoading: false,
         })
