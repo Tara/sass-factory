@@ -5,7 +5,8 @@ shows:
   upcoming:
     - title: "Spoonful of Sass"
       date: 2025-01-16T19:00:00
-      venu: "Endgames"
+      venue: "Endgames"
+      address: "2965 Mission St, San Francisco, CA"
       image: "images/endgames.png"
     - title: "Savifest"
       date: 2025-02-16T14:15:00
