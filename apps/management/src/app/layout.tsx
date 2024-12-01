@@ -1,12 +1,10 @@
 import { headers, cookies } from 'next/headers'
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { MainNav } from "@/components/main-nav";
 import { UserAccountNav } from "@/components/user-account-nav";
 import { Providers } from "@/components/providers";
-import { User } from '@supabase/auth-helpers-nextjs'
 import { Toaster } from "@/components/ui/toaster"
 import Link from "next/link"
 

@@ -32,6 +32,11 @@ export function MainNav() {
         label: "Shows",
         active: pathname === "/shows",
       },
+      {
+        href: "/members",
+        label: "Members",
+        active: pathname === "/members",
+      },
     ] : [])
   ]
 
