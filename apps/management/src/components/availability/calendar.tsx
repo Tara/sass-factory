@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -16,8 +16,15 @@ import { Badge } from '@/components/ui/badge'
 import { Sun, Moon, CalendarRange, ChevronLeft, ChevronRight } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
-import { format, isSameDay, addMonths, subMonths, eachDayOfInterval, isWithinInterval } from 'date-fns'
+import { format, isSameDay, addMonths, subMonths, eachDayOfInterval, isWithinInterval, isBefore, isAfter } from 'date-fns'
 import type { Database } from '@/lib/types/supabase'
+import type { DayPickerProps } from "react-day-picker"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 type Availability = 'available' | 'maybe' | 'unavailable' | 'unknown'
 type DayPeriod = 'all-day' | 'morning' | 'evening'
@@ -47,6 +54,10 @@ export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarPr
   const [selectedPeriod, setSelectedPeriod] = useState<DayPeriod>('all-day')
   const [availability, setAvailability] = useState<Record<string, DayAvailability>>({})
   const [month, setMonth] = useState<Date>(new Date())
+  const [isDragging, setIsDragging] = useState(false)
+  const [dragStart, setDragStart] = useState<Date | null>(null)
+  const [dragEnd, setDragEnd] = useState<Date | null>(null)
+  const calendarRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const loadAvailability = async () => {
@@ -125,48 +136,104 @@ export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarPr
       'h-9 w-9 p-0 font-normal relative',
       'text-gray-900',
       'transition-all duration-200',
-      'hover:brightness-95',
-      {
-        'bg-primary text-primary-foreground': isSelected,
-      }
+      'hover:opacity-100',
+      '[&:hover]:brightness-100'
     )
 
-    if (isSelected) return baseClasses
+    if (isSelected) 
+      return cn(baseClasses, 'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground')
 
-    // Simplified color states
+    // Simplified color states with hover preservation
     if (morning === 'unknown' && evening === 'unknown') 
-      return cn(baseClasses, 'bg-gray-200')
+      return cn(baseClasses, 'bg-gray-200 hover:bg-gray-200')
     if (morning === 'available' && evening === 'available') 
-      return cn(baseClasses, 'bg-green-200')
+      return cn(baseClasses, 'bg-green-200 hover:bg-green-200')
     if (morning === 'unavailable' && evening === 'unavailable') 
-      return cn(baseClasses, 'bg-red-200')
+      return cn(baseClasses, 'bg-red-200 hover:bg-red-200')
     if (morning === 'maybe' && evening === 'maybe') 
-      return cn(baseClasses, 'bg-yellow-200')
+      return cn(baseClasses, 'bg-yellow-200 hover:bg-yellow-200')
 
     // Mixed states
-    return cn(baseClasses, 'bg-orange-200')
+    return cn(baseClasses, 'bg-orange-200 hover:bg-orange-200')
   }
 
   function renderCalendarDay({ date, displayMonth }: DayProps): JSX.Element {
     const isSelected = selectedDates.some(selectedDate => isSameDay(selectedDate, date))
+    const dayAvailability = getDayAvailability(date)
     
     return (
-      <Button
-        variant="ghost"
-        onClick={(e) => {
-          e.preventDefault()
-          e.stopPropagation()
-          const newSelectedDates = isSelected
-            ? selectedDates.filter(selectedDate => !isSameDay(selectedDate, date))
-            : [...selectedDates, date]
-          setSelectedDates(newSelectedDates)
-        }}
-        className={getDayClass(date, isSelected)}
-      >
-        {format(date, 'd')}
-      </Button>
+      <TooltipProvider>
+        <Tooltip delayDuration={100}>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              onMouseDown={(e) => handleDragStart(e, date)}
+              onMouseEnter={() => handleDragEnter(date)}
+              onMouseUp={() => handleDragEnd()}
+              className={getDayClass(date, isSelected)}
+              aria-label={`Select ${format(date, 'MMMM d, yyyy')}`}
+            >
+              {format(date, 'd')}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent className="p-2 space-y-1">
+            <div className="text-sm font-medium">
+              {format(date, 'MMMM d, yyyy')}
+            </div>
+            <div className="flex items-center gap-2">
+              <Sun className="h-4 w-4" />
+              <span className="text-sm">
+                Morning: {getAvailabilityLabel(dayAvailability.morning)}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Moon className="h-4 w-4" />
+              <span className="text-sm">
+                Evening: {getAvailabilityLabel(dayAvailability.evening)}
+              </span>
+            </div>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     )
   }
+
+  const handleDragStart = (e: React.MouseEvent, date: Date) => {
+    e.preventDefault()
+    setIsDragging(true)
+    setDragStart(date)
+    setDragEnd(date)
+    setSelectedDates([date])
+  }
+
+  const handleDragEnter = (date: Date) => {
+    if (isDragging && dragStart) {
+      setDragEnd(date)
+      const start = dragStart < date ? dragStart : date
+      const end = dragStart < date ? date : dragStart
+      const dateRange = eachDayOfInterval({ start, end })
+      setSelectedDates(dateRange)
+    }
+  }
+
+  const handleDragEnd = () => {
+    setIsDragging(false)
+    setDragStart(null)
+    setDragEnd(null)
+  }
+
+  useEffect(() => {
+    const handleMouseUp = () => {
+      if (isDragging) {
+        handleDragEnd()
+      }
+    }
+
+    document.addEventListener('mouseup', handleMouseUp)
+    return () => {
+      document.removeEventListener('mouseup', handleMouseUp)
+    }
+  }, [isDragging])
 
   const handleSelect: SelectMultipleEventHandler = (days) => {
     if (days) setSelectedDates(days)
@@ -188,6 +255,16 @@ export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarPr
 
     ranges.push([rangeStart, sortedDates[sortedDates.length - 1]])
     return ranges
+  }
+
+  function getAvailabilityLabel(availability: Availability): string {
+    const labels = {
+      available: 'Available',
+      maybe: 'Maybe Available',
+      unavailable: 'Not Available',
+      unknown: 'Unknown'
+    }
+    return labels[availability]
   }
 
   return (
@@ -217,17 +294,25 @@ export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarPr
           </div>
         </CardHeader>
         <CardContent>
-          <Calendar
-            mode="multiple"
-            selected={selectedDates}
-            onSelect={handleSelect}
-            month={month}
-            onMonthChange={setMonth}
-            className="rounded-md border"
-            components={{
-              Day: renderCalendarDay
-            }}
-          />
+          <div ref={calendarRef}>
+            <Calendar
+              mode="multiple"
+              selected={selectedDates}
+              onSelect={handleSelect}
+              month={month}
+              onMonthChange={setMonth}
+              className={cn(
+                "rounded-md border",
+                "[&_table]:w-full",
+                "[&_th]:w-[14.28%] [&_td]:w-[14.28%]",
+                "[&_th]:text-center [&_td]:text-center",
+                "[&_th]:font-normal [&_th]:text-muted-foreground"
+              )}
+              components={{
+                Day: renderCalendarDay
+              } satisfies DayPickerProps['components']}
+            />
+          </div>
           
           <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
             <Badge variant="outline" className="bg-green-200">Available</Badge>
@@ -301,21 +386,21 @@ export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarPr
             <div className="flex flex-col gap-2">
               <Button
                 onClick={() => handleUpdateAvailability('available')}
-                className="w-full bg-green-500 hover:bg-green-600"
+                className="w-full bg-green-300 hover:bg-green-400 text-gray-900"
                 disabled={selectedDates.length === 0}
               >
                 Available
               </Button>
               <Button
                 onClick={() => handleUpdateAvailability('maybe')}
-                className="w-full bg-yellow-500 hover:bg-yellow-600"
+                className="w-full bg-yellow-300 hover:bg-yellow-400 text-gray-900"
                 disabled={selectedDates.length === 0}
               >
                 Maybe
               </Button>
               <Button
                 onClick={() => handleUpdateAvailability('unavailable')}
-                className="w-full bg-red-500 hover:bg-red-600"
+                className="w-full bg-red-300 hover:bg-red-400 text-gray-900"
                 disabled={selectedDates.length === 0}
               >
                 Unavailable
