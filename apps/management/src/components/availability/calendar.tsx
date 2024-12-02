@@ -21,7 +21,7 @@ import { format, isSameDay, addMonths, subMonths } from 'date-fns'
 import type { Database } from '@/lib/types/supabase'
 
 type Availability = 'available' | 'maybe' | 'unavailable' | 'unknown'
-type DayPeriod = 'morning' | 'evening'
+type DayPeriod = 'all-day' | 'morning' | 'evening'
 
 interface DayAvailability {
   morning: Availability
@@ -43,19 +43,9 @@ interface AvailabilityRow {
   updated_at: string | null
 }
 
-interface CustomCalendarDayProps extends Omit<CalendarDayProps, 'displayMonth'> {
-  date: Date
-  displayMonth?: Date
-  selected?: boolean
-  className?: string
-  onClick?: (day: Date) => void
-  onMouseEnter?: (day: Date) => void
-  onMouseLeave?: (day: Date) => void
-}
-
 export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarProps) {
   const [selectedDates, setSelectedDates] = useState<Date[]>([])
-  const [selectedPeriod, setSelectedPeriod] = useState<DayPeriod>('morning')
+  const [selectedPeriod, setSelectedPeriod] = useState<DayPeriod>('all-day')
   const [availability, setAvailability] = useState<Record<string, DayAvailability>>({})
   const [month, setMonth] = useState<Date>(new Date())
   const [isUpdateSheetOpen, setIsUpdateSheetOpen] = useState(false)
@@ -93,9 +83,11 @@ export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarPr
     for (const date of selectedDates) {
       const dateStr = format(date, 'yyyy-MM-dd')
       const currentAvailability = availability[dateStr] || { morning: 'available', evening: 'available' }
+      
       const updatedAvailability = {
         ...currentAvailability,
-        [selectedPeriod]: availabilityStatus,
+        morning: selectedPeriod === 'all-day' || selectedPeriod === 'morning' ? availabilityStatus : currentAvailability.morning,
+        evening: selectedPeriod === 'all-day' || selectedPeriod === 'evening' ? availabilityStatus : currentAvailability.evening,
       }
 
       const { error } = await supabase
@@ -129,52 +121,75 @@ export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarPr
     return availability[dateStr] || { morning: 'available', evening: 'available' }
   }
 
-  const getDayClass = (date: Date): string => {
+  const getDayClass = (date: Date, isSelected: boolean): string => {
     const { morning, evening } = getDayAvailability(date)
     
-    if (morning === 'unknown' && evening === 'unknown') return 'bg-gray-200'
-    if (morning === 'available' && evening === 'available') return 'bg-green-200'
-    if (morning === 'unavailable' && evening === 'unavailable') return 'bg-red-200'
-    if (morning === 'maybe' && evening === 'maybe') return 'bg-yellow-200'
-    
-    if (morning === 'available' && evening === 'unavailable') return 'bg-gradient-to-b from-green-200 to-red-200'
-    if (morning === 'unavailable' && evening === 'available') return 'bg-gradient-to-b from-red-200 to-green-200'
-    if (morning === 'unknown') return 'bg-gradient-to-b from-gray-200 to-green-200'
-    if (evening === 'unknown') return 'bg-gradient-to-b from-green-200 to-gray-200'
-    
-    return 'bg-gradient-to-b from-yellow-200 to-green-200'
+    const baseClasses = cn(
+      'h-9 w-9 p-0 font-normal relative',
+      'text-gray-900',
+      'transition-all duration-200',
+      'hover:brightness-95',
+      {
+        'bg-primary text-primary-foreground': isSelected,
+      }
+    )
+
+    if (isSelected) return baseClasses
+
+    // Single color states
+    if (morning === 'unknown' && evening === 'unknown') 
+      return cn(baseClasses, 'bg-gray-200')
+    if (morning === 'available' && evening === 'available') 
+      return cn(baseClasses, 'bg-green-200')
+    if (morning === 'unavailable' && evening === 'unavailable') 
+      return cn(baseClasses, 'bg-red-200')
+    if (morning === 'maybe' && evening === 'maybe') 
+      return cn(baseClasses, 'bg-yellow-200')
+
+    // Gradient states
+    const gradientClasses = {
+      'morning-available-evening-unavailable': 'bg-gradient-to-b from-green-200 to-red-200',
+      'morning-unavailable-evening-available': 'bg-gradient-to-b from-red-200 to-green-200',
+      'morning-unknown': 'bg-gradient-to-b from-gray-200 to-green-200',
+      'evening-unknown': 'bg-gradient-to-b from-green-200 to-gray-200',
+      'partial-availability': 'bg-gradient-to-b from-yellow-200 to-green-200'
+    }
+
+    let gradientClass = ''
+    if (morning === 'available' && evening === 'unavailable')
+      gradientClass = gradientClasses['morning-available-evening-unavailable']
+    else if (morning === 'unavailable' && evening === 'available')
+      gradientClass = gradientClasses['morning-unavailable-evening-available']
+    else if (morning === 'unknown')
+      gradientClass = gradientClasses['morning-unknown']
+    else if (evening === 'unknown')
+      gradientClass = gradientClasses['evening-unknown']
+    else
+      gradientClass = gradientClasses['partial-availability']
+
+    return cn(baseClasses, gradientClass)
   }
 
- const CalendarDay = ({ date, displayMonth, selected, ...props }: DayProps): JSX.Element => {
-  const isSelected = selectedDates.some(selectedDate => isSameDay(selectedDate, date))
-  
-  return (
-    <Button
-      {...props}
-      variant="ghost"
-      onClick={(e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        const newSelectedDates = isSelected
-          ? selectedDates.filter(selectedDate => !isSameDay(selectedDate, date))
-          : [...selectedDates, date]
-        setSelectedDates(newSelectedDates)
-      }}
-      className={cn(
-        'h-9 w-9 p-0 font-normal relative',
-        'text-gray-900',
-        'hover:opacity-70',
-        'transition-all duration-200',
-        getDayClass(date),
-        isSelected && 'bg-primary text-primary-foreground font-medium hover:bg-primary hover:opacity-90',
-        !isSelected && 'aria-selected:opacity-100',
-        'hover:bg-transparent',
-      )}
-    >
-      {format(date, 'd')}
-    </Button>
-  )
-}
+  function renderCalendarDay({ date, displayMonth }: DayProps): JSX.Element {
+    const isSelected = selectedDates.some(selectedDate => isSameDay(selectedDate, date))
+    
+    return (
+      <Button
+        variant="ghost"
+        onClick={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          const newSelectedDates = isSelected
+            ? selectedDates.filter(selectedDate => !isSameDay(selectedDate, date))
+            : [...selectedDates, date]
+          setSelectedDates(newSelectedDates)
+        }}
+        className={getDayClass(date, isSelected)}
+      >
+        {format(date, 'd')}
+      </Button>
+    )
+  }
 
   const handleSelect: SelectMultipleEventHandler = (days) => {
     if (days) setSelectedDates(days)
@@ -219,6 +234,12 @@ export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarPr
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="all-day">
+                        <div className="flex items-center gap-2">
+                          <CalendarRange className="w-4 h-4" />
+                          All Day
+                        </div>
+                      </SelectItem>
                       <SelectItem value="morning">
                         <div className="flex items-center gap-2">
                           <Sun className="w-4 h-4" />
@@ -294,7 +315,7 @@ export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarPr
             onMonthChange={setMonth}
             className="rounded-md border"
             components={{
-              Day: CalendarDay
+              Day: renderCalendarDay
             }}
           />
           
