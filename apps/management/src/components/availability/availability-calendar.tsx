@@ -126,7 +126,7 @@ export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarPr
 
   const getDayAvailability = (date: Date): DayAvailability => {
     const dateStr = format(date, 'yyyy-MM-dd')
-    return availability[dateStr] || { morning: 'available', evening: 'available' }
+    return availability[dateStr] || { morning: 'unknown', evening: 'unknown' }
   }
 
   const getDayClass = (date: Date, isSelected: boolean): string => {
