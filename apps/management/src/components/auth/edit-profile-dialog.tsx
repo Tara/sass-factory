@@ -76,7 +76,12 @@ export function EditProfileDialog({ isOpen, onClose, currentUser }: EditProfileD
     try {
       setIsLoading(true)
       
-      const result = await updateProfile(data)
+      const profileData = {
+        fullName: data.fullName,
+        avatarUrl: data.avatarUrl || ""
+      }
+      
+      const result = await updateProfile(profileData)
 
       if (!result.success) {
         throw new Error(result.error)
