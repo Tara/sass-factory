@@ -15,7 +15,7 @@ import {
 import { EditProfileDialog } from "@/components/auth/edit-profile-dialog"
 
 export function UserAccountNav() {
-  const { session, signOut } = useAuth()
+  const { session, signOut, refreshSession } = useAuth()
   const user = session?.user ?? null
   const [showEditProfile, setShowEditProfile] = useState(false)
 
@@ -47,7 +47,6 @@ export function UserAccountNav() {
           <DropdownMenuItem
             className="cursor-pointer"
             onSelect={(event) => {
-              event.preventDefault()
               setShowEditProfile(true)
             }}
           >
@@ -56,7 +55,6 @@ export function UserAccountNav() {
           <DropdownMenuItem
             className="cursor-pointer"
             onSelect={(event) => {
-              event.preventDefault()
               signOut()
             }}
           >
