@@ -13,11 +13,10 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { Sun, Moon, CalendarRange, ChevronLeft, ChevronRight } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
-import { format, isSameDay, addMonths, subMonths } from 'date-fns'
+import { format, isSameDay, addMonths, subMonths, eachDayOfInterval, isWithinInterval } from 'date-fns'
 import type { Database } from '@/lib/types/supabase'
 
 type Availability = 'available' | 'maybe' | 'unavailable' | 'unknown'
@@ -48,7 +47,6 @@ export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarPr
   const [selectedPeriod, setSelectedPeriod] = useState<DayPeriod>('all-day')
   const [availability, setAvailability] = useState<Record<string, DayAvailability>>({})
   const [month, setMonth] = useState<Date>(new Date())
-  const [isUpdateSheetOpen, setIsUpdateSheetOpen] = useState(false)
 
   useEffect(() => {
     const loadAvailability = async () => {
@@ -113,7 +111,6 @@ export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarPr
     }
 
     setSelectedDates([])
-    setIsUpdateSheetOpen(false)
   }
 
   const getDayAvailability = (date: Date): DayAvailability => {
@@ -136,7 +133,7 @@ export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarPr
 
     if (isSelected) return baseClasses
 
-    // Single color states
+    // Simplified color states
     if (morning === 'unknown' && evening === 'unknown') 
       return cn(baseClasses, 'bg-gray-200')
     if (morning === 'available' && evening === 'available') 
@@ -146,28 +143,8 @@ export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarPr
     if (morning === 'maybe' && evening === 'maybe') 
       return cn(baseClasses, 'bg-yellow-200')
 
-    // Gradient states
-    const gradientClasses = {
-      'morning-available-evening-unavailable': 'bg-gradient-to-b from-green-200 to-red-200',
-      'morning-unavailable-evening-available': 'bg-gradient-to-b from-red-200 to-green-200',
-      'morning-unknown': 'bg-gradient-to-b from-gray-200 to-green-200',
-      'evening-unknown': 'bg-gradient-to-b from-green-200 to-gray-200',
-      'partial-availability': 'bg-gradient-to-b from-yellow-200 to-green-200'
-    }
-
-    let gradientClass = ''
-    if (morning === 'available' && evening === 'unavailable')
-      gradientClass = gradientClasses['morning-available-evening-unavailable']
-    else if (morning === 'unavailable' && evening === 'available')
-      gradientClass = gradientClasses['morning-unavailable-evening-available']
-    else if (morning === 'unknown')
-      gradientClass = gradientClasses['morning-unknown']
-    else if (evening === 'unknown')
-      gradientClass = gradientClasses['evening-unknown']
-    else
-      gradientClass = gradientClasses['partial-availability']
-
-    return cn(baseClasses, gradientClass)
+    // Mixed states
+    return cn(baseClasses, 'bg-orange-200')
   }
 
   function renderCalendarDay({ date, displayMonth }: DayProps): JSX.Element {
@@ -195,118 +172,51 @@ export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarPr
     if (days) setSelectedDates(days)
   }
 
+  const getSelectedDateRanges = () => {
+    if (selectedDates.length === 0) return []
+    
+    const sortedDates = selectedDates.sort((a, b) => a.getTime() - b.getTime())
+    const ranges: [Date, Date][] = []
+    let rangeStart = sortedDates[0]
+
+    for (let i = 1; i < sortedDates.length; i++) {
+      if (sortedDates[i].getTime() - sortedDates[i-1].getTime() > 86400000) { // More than 1 day difference
+        ranges.push([rangeStart, sortedDates[i-1]])
+        rangeStart = sortedDates[i]
+      }
+    }
+
+    ranges.push([rangeStart, sortedDates[sortedDates.length - 1]])
+    return ranges
+  }
+
   return (
-    <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle>My Availability</CardTitle>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => setMonth(subMonths(month, 1))}
-              aria-label="Previous month"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => setMonth(addMonths(month, 1))}
-              aria-label="Next month"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-            <Sheet open={isUpdateSheetOpen} onOpenChange={setIsUpdateSheetOpen}>
-              <SheetTrigger asChild>
-                <Button variant="default">Update Availability</Button>
-              </SheetTrigger>
-              <SheetContent>
-                <SheetHeader>
-                  <SheetTitle>Update Availability</SheetTitle>
-                </SheetHeader>
-                <div className="py-4 space-y-4">
-                  <Select
-                    value={selectedPeriod}
-                    onValueChange={(value: DayPeriod) => setSelectedPeriod(value)}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all-day">
-                        <div className="flex items-center gap-2">
-                          <CalendarRange className="w-4 h-4" />
-                          All Day
-                        </div>
-                      </SelectItem>
-                      <SelectItem value="morning">
-                        <div className="flex items-center gap-2">
-                          <Sun className="w-4 h-4" />
-                          Morning
-                        </div>
-                      </SelectItem>
-                      <SelectItem value="evening">
-                        <div className="flex items-center gap-2">
-                          <Moon className="w-4 h-4" />
-                          Evening
-                        </div>
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-
-                  {selectedDates.length > 0 && (
-                    <div className="space-y-2">
-                      <div className="text-sm font-medium">Selected Dates:</div>
-                      <div className="max-h-24 overflow-y-auto space-y-1">
-                        {selectedDates.map((date) => (
-                          <div key={date.toISOString()} className="text-sm text-muted-foreground">
-                            {format(date, 'MMMM d, yyyy')}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="text-sm text-muted-foreground">
-                    {selectedDates.length > 0
-                      ? `Set availability for ${selectedDates.length} selected ${
-                          selectedDates.length === 1 ? 'day' : 'days'
-                        }`
-                      : 'Select dates on the calendar to update availability'}
-                  </div>
-                  
-                  <div className="flex flex-col gap-2">
-                    <Button
-                      onClick={() => handleUpdateAvailability('available')}
-                      className="w-full bg-green-500 hover:bg-green-600"
-                      disabled={selectedDates.length === 0}
-                    >
-                      Available
-                    </Button>
-                    <Button
-                      onClick={() => handleUpdateAvailability('maybe')}
-                      className="w-full bg-yellow-500 hover:bg-yellow-600"
-                      disabled={selectedDates.length === 0}
-                    >
-                      Maybe
-                    </Button>
-                    <Button
-                      onClick={() => handleUpdateAvailability('unavailable')}
-                      className="w-full bg-red-500 hover:bg-red-600"
-                      disabled={selectedDates.length === 0}
-                    >
-                      Unavailable
-                    </Button>
-                  </div>
-                </div>
-              </SheetContent>
-            </Sheet>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <Card className="w-full">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>My Availability</CardTitle>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setMonth(subMonths(month, 1))}
+                aria-label="Previous month"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setMonth(addMonths(month, 1))}
+                aria-label="Next month"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
+        </CardHeader>
+        <CardContent>
           <Calendar
             mode="multiple"
             selected={selectedDates}
@@ -319,18 +229,101 @@ export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarPr
             }}
           />
           
-          <div className="flex flex-wrap items-center justify-center gap-2">
-            <Badge variant="outline" className="bg-green-200">Fully Available</Badge>
-            <Badge variant="outline" className="bg-yellow-200">Maybe Available</Badge>
+          <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
+            <Badge variant="outline" className="bg-green-200">Available</Badge>
+            <Badge variant="outline" className="bg-yellow-200">Maybe</Badge>
             <Badge variant="outline" className="bg-red-200">Unavailable</Badge>
             <Badge variant="outline" className="bg-gray-200">Unknown</Badge>
-            <Badge variant="outline" className="bg-gradient-to-b from-green-200 to-red-200">Morning Only</Badge>
-            <Badge variant="outline" className="bg-gradient-to-b from-red-200 to-green-200">Evening Only</Badge>
-            <Badge variant="outline" className="bg-gradient-to-b from-yellow-200 to-green-200">Partial Availability</Badge>
+            <Badge variant="outline" className="bg-orange-200">Mixed</Badge>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle>Update Availability</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <Select
+              value={selectedPeriod}
+              onValueChange={(value: DayPeriod) => setSelectedPeriod(value)}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all-day">
+                  <div className="flex items-center gap-2">
+                    <CalendarRange className="w-4 h-4" />
+                    All Day
+                  </div>
+                </SelectItem>
+                <SelectItem value="morning">
+                  <div className="flex items-center gap-2">
+                    <Sun className="w-4 h-4" />
+                    Morning
+                  </div>
+                </SelectItem>
+                <SelectItem value="evening">
+                  <div className="flex items-center gap-2">
+                    <Moon className="w-4 h-4" />
+                    Evening
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+
+            {selectedDates.length > 0 && (
+              <div className="space-y-2">
+                <div className="text-sm font-medium">Selected Dates:</div>
+                <div className="max-h-24 overflow-y-auto space-y-1">
+                  {getSelectedDateRanges().map(([start, end], index) => (
+                    <div key={index} className="text-sm text-muted-foreground">
+                      {isSameDay(start, end) 
+                        ? format(start, 'MMMM d, yyyy')
+                        : `${format(start, 'MMMM d')} - ${format(end, 'MMMM d, yyyy')}`
+                      }
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="text-sm text-muted-foreground">
+              {selectedDates.length > 0
+                ? `Set availability for ${selectedDates.length} selected ${
+                    selectedDates.length === 1 ? 'day' : 'days'
+                  }`
+                : 'Select dates on the calendar to update availability'}
+            </div>
+            
+            <div className="flex flex-col gap-2">
+              <Button
+                onClick={() => handleUpdateAvailability('available')}
+                className="w-full bg-green-500 hover:bg-green-600"
+                disabled={selectedDates.length === 0}
+              >
+                Available
+              </Button>
+              <Button
+                onClick={() => handleUpdateAvailability('maybe')}
+                className="w-full bg-yellow-500 hover:bg-yellow-600"
+                disabled={selectedDates.length === 0}
+              >
+                Maybe
+              </Button>
+              <Button
+                onClick={() => handleUpdateAvailability('unavailable')}
+                className="w-full bg-red-500 hover:bg-red-600"
+                disabled={selectedDates.length === 0}
+              >
+                Unavailable
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   )
 }
-
