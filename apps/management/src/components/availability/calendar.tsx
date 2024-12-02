@@ -145,7 +145,7 @@ export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarPr
     return 'bg-gradient-to-b from-yellow-200 to-green-200'
   }
 
-  const CalendarDay = React.forwardRef<HTMLButtonElement, CustomCalendarDayProps>(
+ const CalendarDay = React.forwardRef<HTMLButtonElement, CustomCalendarDayProps>(
   ({ date, displayMonth, selected, onClick, onMouseEnter, onMouseLeave, className, ...props }, ref): JSX.Element => {
     const isSelected = selectedDates.some(selectedDate => isSameDay(selectedDate, date))
     
@@ -153,6 +153,7 @@ export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarPr
       <Button
         ref={ref}
         {...props}
+        variant="ghost"
         onClick={(e) => {
           e.preventDefault()
           const newSelectedDates = isSelected
@@ -165,11 +166,13 @@ export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarPr
         className={cn(
           className,
           getDayClass(date),
-          'h-9 w-9 p-0 font-normal',
+          'h-9 w-9 p-0 font-normal relative',
           'text-gray-900',
-          'hover:bg-opacity-75',
-          isSelected && 'ring-2 ring-primary ring-offset-2',
-          !isSelected && 'aria-selected:opacity-100 aria-selected:font-medium'
+          'hover:opacity-70',
+          'transition-all duration-200',
+          isSelected && 'bg-primary text-primary-foreground font-medium hover:bg-primary hover:opacity-90',
+          !isSelected && 'aria-selected:opacity-100',
+          'hover:bg-transparent',
         )}
       >
         {format(date, 'd')}
