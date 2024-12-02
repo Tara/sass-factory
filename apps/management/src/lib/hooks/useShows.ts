@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/client'
 import type { Database } from '@/lib/types/supabase'
 import type { AttendanceStatus } from '@/lib/types/shows'
 
@@ -33,10 +33,9 @@ interface BatchUpdateParams {
   }>
 }
 
-// Create a single instance of the Supabase client
-const supabase = createClientComponentClient<Database>()
-
 export function useShows() {
+  const supabase = createClient()
+
   return useQuery({
     queryKey: ['shows'],
     queryFn: async () => {
@@ -56,6 +55,7 @@ export function useShows() {
 
 export function useShow(id: string) {
   const queryClient = useQueryClient()
+  const supabase = createClient()
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['shows', id],
