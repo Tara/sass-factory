@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
-import type { DayProps as CalendarDayProps } from 'react-day-picker'
+import type { DayProps, SelectMultipleEventHandler } from 'react-day-picker'
 import {
   Select,
   SelectContent,
@@ -145,42 +145,40 @@ export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarPr
     return 'bg-gradient-to-b from-yellow-200 to-green-200'
   }
 
- const CalendarDay = React.forwardRef<HTMLButtonElement, CustomCalendarDayProps>(
-  ({ date, displayMonth, selected, onClick, onMouseEnter, onMouseLeave, className, ...props }, ref): JSX.Element => {
-    const isSelected = selectedDates.some(selectedDate => isSameDay(selectedDate, date))
-    
-    return (
-      <Button
-        ref={ref}
-        {...props}
-        variant="ghost"
-        onClick={(e) => {
-          e.preventDefault()
-          const newSelectedDates = isSelected
-            ? selectedDates.filter(selectedDate => !isSameDay(selectedDate, date))
-            : [...selectedDates, date]
-          setSelectedDates(newSelectedDates)
-        }}
-        onMouseEnter={() => onMouseEnter?.(date)}
-        onMouseLeave={() => onMouseLeave?.(date)}
-        className={cn(
-          className,
-          getDayClass(date),
-          'h-9 w-9 p-0 font-normal relative',
-          'text-gray-900',
-          'hover:opacity-70',
-          'transition-all duration-200',
-          isSelected && 'bg-primary text-primary-foreground font-medium hover:bg-primary hover:opacity-90',
-          !isSelected && 'aria-selected:opacity-100',
-          'hover:bg-transparent',
-        )}
-      >
-        {format(date, 'd')}
-      </Button>
-    )
+ const CalendarDay = ({ date, displayMonth, selected, ...props }: DayProps): JSX.Element => {
+  const isSelected = selectedDates.some(selectedDate => isSameDay(selectedDate, date))
+  
+  return (
+    <Button
+      {...props}
+      variant="ghost"
+      onClick={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        const newSelectedDates = isSelected
+          ? selectedDates.filter(selectedDate => !isSameDay(selectedDate, date))
+          : [...selectedDates, date]
+        setSelectedDates(newSelectedDates)
+      }}
+      className={cn(
+        'h-9 w-9 p-0 font-normal relative',
+        'text-gray-900',
+        'hover:opacity-70',
+        'transition-all duration-200',
+        getDayClass(date),
+        isSelected && 'bg-primary text-primary-foreground font-medium hover:bg-primary hover:opacity-90',
+        !isSelected && 'aria-selected:opacity-100',
+        'hover:bg-transparent',
+      )}
+    >
+      {format(date, 'd')}
+    </Button>
+  )
+}
+
+  const handleSelect: SelectMultipleEventHandler = (days) => {
+    if (days) setSelectedDates(days)
   }
-)
-CalendarDay.displayName = 'CalendarDay'
 
   return (
     <Card className="w-full max-w-4xl mx-auto">
@@ -291,7 +289,7 @@ CalendarDay.displayName = 'CalendarDay'
           <Calendar
             mode="multiple"
             selected={selectedDates}
-            onSelect={(dates) => {undefined}}
+            onSelect={handleSelect}
             month={month}
             onMonthChange={setMonth}
             className="rounded-md border"
