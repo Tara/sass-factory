@@ -1,4 +1,4 @@
-import { AvailabilityCalendar } from "@/components/availability/calendar"
+import { AvailabilityCalendar } from "@/components/availability/availability-calendar"
 import { createServerActionClient } from "@/lib/supabase/server"
 
 export default async function AvailabilityPage() {
