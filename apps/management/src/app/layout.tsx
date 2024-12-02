@@ -7,6 +7,7 @@ import { UserAccountNav } from "@/components/user-account-nav";
 import { Providers } from "@/components/providers";
 import { Toaster } from "@/components/ui/toaster"
 import Link from "next/link"
+import { createServerActionClient } from '@/lib/supabase/server'
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,6 +21,10 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const supabase = createServerActionClient()
+  const { data: { session } } = await supabase.auth.getSession()
+  const isAuthenticated = !!session
+
   return (
     <html lang="en">
       <body className={inter.className}>
@@ -33,10 +38,14 @@ export default async function RootLayout({
                 >
                   Improv Team
                 </Link>
-                <MainNav />
-                <div className="ml-auto">
-                  <UserAccountNav />
-                </div>
+                {isAuthenticated && (
+                  <>
+                    <MainNav />
+                    <div className="ml-auto">
+                      <UserAccountNav />
+                    </div>
+                  </>
+                )}
               </div>
             </div>
             <main className="max-w-7xl mx-auto px-8 py-6">
