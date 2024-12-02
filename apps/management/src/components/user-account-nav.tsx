@@ -16,7 +16,7 @@ import { EditProfileDialog } from "@/components/auth/edit-profile-dialog"
 
 export function UserAccountNav() {
   const { session, signOut } = useAuth()
-  const user = session?.user
+  const user = session?.user ?? null
   const [showEditProfile, setShowEditProfile] = useState(false)
 
   return (
