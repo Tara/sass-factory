@@ -3,11 +3,12 @@ title: "Shows"
 defaultImage: "images/default-show.jpg"
 shows:
   upcoming:
-    - title: "Spoonful of Sass"
-      date: 2025-01-16T19:00:00
-      venue: "Endgames"
-      address: "2965 Mission St, San Francisco, CA"
-      image: "images/endgames.png"
+    - title: "SF Sketchfest 2025"
+      date: 2025-01-17T21:00:00
+      venue: "Eclectic Box"
+      address: "446 Valencia Street, San Francisco, CA 94103"
+      ticketLink: "https://www.eventbrite.com/e/sketch-improv-showcase-tickets-1082876676289?aff=oddtdtcreator"
+      image: "images/shows/sfsketchfest2025.png"
     - title: "Savifest"
       date: 2025-02-16T14:15:00
       venue: "Media and Immersive eXperience, Mesa, AZ"
@@ -40,12 +41,6 @@ shows:
       date: 2024-01-21T15:00:00
       venue: "The Marsh"
       image: "images/shows/sketchfest2024.png"
-    - title: "SF Sketchfest 2025"
-      date: 2025-01-17T21:00:00
-      venue: "Eclectic Box"
-      address: "446 Valencia Street, San Francisco, CA 94103"
-      ticketLink: "https://www.eventbrite.com/e/sketch-improv-showcase-tickets-1082876676289?aff=oddtdtcreator"
-      image: "images/shows/sfsketchfest2025.png"
   # recurring:
   #   - title: "Monthly Showcase"
   #     day: "Last Friday"
