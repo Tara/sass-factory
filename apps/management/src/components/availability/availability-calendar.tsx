@@ -17,7 +17,6 @@ import { Sun, Moon, CalendarRange, ChevronLeft, ChevronRight } from 'lucide-reac
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
 import { format, isSameDay, addMonths, subMonths, eachDayOfInterval, isWithinInterval, isBefore, isAfter } from 'date-fns'
-import type { Database } from '@/lib/types/supabase'
 import type { DayPickerProps } from "react-day-picker"
 import {
   Tooltip,
@@ -25,29 +24,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-
-type Availability = 'available' | 'maybe' | 'unavailable' | 'unknown'
-type DayPeriod = 'all-day' | 'morning' | 'evening'
-
-interface DayAvailability {
-  morning: Availability
-  evening: Availability
-}
-
-interface AvailabilityCalendarProps {
-  initialMemberId: string
-}
-
-interface AvailabilityRow {
-  id: string
-  member_id: string | null
-  date: string
-  morning_availability: Availability
-  evening_availability: Availability
-  notes: string | null
-  created_at: string | null
-  updated_at: string | null
-}
+import type { 
+  AvailabilityStatus,
+  DayPeriod,
+  DayAvailability,
+  AvailabilityCalendarProps,
+  AvailabilityRow
+} from '@/lib/types/availability'
+import { availabilityLabels } from '@/lib/types/availability'
 
 export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarProps) {
   const [selectedDates, setSelectedDates] = useState<Date[]>([])
@@ -86,7 +70,7 @@ export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarPr
     loadAvailability()
   }, [initialMemberId])
 
-  const handleUpdateAvailability = async (availabilityStatus: Availability) => {
+  const handleUpdateAvailability = async (availabilityStatus: AvailabilityStatus) => {
     const supabase = createClient()
     
     for (const date of selectedDates) {
@@ -257,14 +241,8 @@ export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarPr
     return ranges
   }
 
-  function getAvailabilityLabel(availability: Availability): string {
-    const labels = {
-      available: 'Available',
-      maybe: 'Maybe Available',
-      unavailable: 'Not Available',
-      unknown: 'Unknown'
-    }
-    return labels[availability]
+  function getAvailabilityLabel(availability: AvailabilityStatus): string {
+    return availabilityLabels[availability]
   }
 
   return (
