@@ -113,16 +113,23 @@ export function TeamAvailabilityView({ members, availability }: TeamAvailability
     return cn(baseClasses, 'bg-red-200 hover:bg-red-300')
   }
 
-  function renderCalendarDay(props: { date: Date }): JSX.Element {
-    const { date } = props
+  function renderCalendarDay(props: { date: Date, displayMonth?: Date }): JSX.Element {
+    const { date, displayMonth } = props
     const isSelected = selectedDate ? isSameDay(date, selectedDate) : false
+    
+    // Check if the date is in the current display month
+    const isOutsideMonth = displayMonth ? date.getMonth() !== displayMonth.getMonth() : false
+    
+    if (isOutsideMonth) return <div className="h-9 w-9" />
     
     return (
       <Button
         variant="ghost"
         className={cn(
           getDayClass(date),
-          isSelected && 'ring-2 ring-primary'
+          isSelected && 'ring-2 ring-primary',
+          'w-9 h-9 p-0 font-normal text-center',
+          '[&>*]:w-full [&>*]:text-center'
         )}
         onClick={() => {
           if (isSunday(date)) {
@@ -131,7 +138,7 @@ export function TeamAvailabilityView({ members, availability }: TeamAvailability
           }
         }}
       >
-        {format(date, 'd')}
+        <div>{format(date, 'd')}</div>
       </Button>
     )
   }
