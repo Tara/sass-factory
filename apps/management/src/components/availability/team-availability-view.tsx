@@ -4,12 +4,6 @@ import { useState } from 'react'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Calendar } from '@/components/ui/calendar'
 import { Button } from '@/components/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
 import { 
   format, 
   isSunday, 
@@ -50,8 +44,7 @@ export interface DayAvailabilitySummary {
 }
 
 export function TeamAvailabilityView({ members, availability }: TeamAvailabilityViewProps) {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>()
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false)
+  const [selectedDate, setSelectedDate] = useState<Date>(() => new Date())
   const [dateRange, setDateRange] = useState<[Date, Date]>(() => {
     const start = startOfQuarter(new Date())
     const end = endOfQuarter(new Date())
@@ -134,7 +127,6 @@ export function TeamAvailabilityView({ members, availability }: TeamAvailability
         onClick={() => {
           if (isSunday(date)) {
             setSelectedDate(date)
-            setIsDetailsOpen(true)
           }
         }}
       >
@@ -145,81 +137,74 @@ export function TeamAvailabilityView({ members, availability }: TeamAvailability
 
   return (
     <div className="space-y-4">
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>Team Availability</CardTitle>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => setDateRange(prev => [
-                  startOfQuarter(subQuarters(prev[0], 1)),
-                  endOfQuarter(subQuarters(prev[0], 1))
-                ])}
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <span className="text-sm">
-                {format(dateRange[0], 'MMM yyyy')} - {format(dateRange[1], 'MMM yyyy')}
-              </span>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => setDateRange(prev => [
-                  startOfQuarter(addQuarters(prev[0], 1)),
-                  endOfQuarter(addQuarters(prev[0], 1))
-                ])}
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
+      <div className="grid grid-cols-1 md:grid-cols-[600px,1fr] gap-4">
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle>Team Availability</CardTitle>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setDateRange(prev => [
+                    startOfQuarter(subQuarters(prev[0], 1)),
+                    endOfQuarter(subQuarters(prev[0], 1))
+                  ])}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <span className="text-sm">
+                  {format(dateRange[0], 'MMM yyyy')} - {format(dateRange[1], 'MMM yyyy')}
+                </span>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setDateRange(prev => [
+                    startOfQuarter(addQuarters(prev[0], 1)),
+                    endOfQuarter(addQuarters(prev[0], 1))
+                  ])}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <Calendar
-            mode="single"
-            selected={selectedDate}
-            onSelect={setSelectedDate}
-            className="rounded-md border"
-            components={{
-              Day: renderCalendarDay
-            }}
-          />
-          
-          <div className="flex items-center justify-center gap-2 mt-4">
-            <div className="flex items-center gap-1">
-              <div className="w-3 h-3 rounded bg-green-200" />
-              <span className="text-sm">75%+ Available</span>
+          </CardHeader>
+          <CardContent>
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={(date) => date && setSelectedDate(date)}
+              className="rounded-md border"
+              components={{
+                Day: renderCalendarDay
+              }}
+            />
+            
+            <div className="flex items-center justify-center gap-2 mt-4">
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-3 rounded bg-green-200" />
+                <span className="text-sm">75%+ Available</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-3 rounded bg-yellow-200" />
+                <span className="text-sm">50%+ Available</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-3 rounded bg-red-200" />
+                <span className="text-sm">&lt;50% Available</span>
+              </div>
             </div>
-            <div className="flex items-center gap-1">
-              <div className="w-3 h-3 rounded bg-yellow-200" />
-              <span className="text-sm">50%+ Available</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <div className="w-3 h-3 rounded bg-red-200" />
-              <span className="text-sm">&lt;50% Available</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
 
-      <RehearsalSuggestions
-        dateRange={dateRange}
-        getAvailabilityForDay={getAvailabilityForDay}
-        minRequired={MIN_REQUIRED_MEMBERS}
-      />
-
-      <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {selectedDate && format(selectedDate, 'EEEE, MMMM d, yyyy')}
-            </DialogTitle>
-          </DialogHeader>
-          
-          {selectedDate && (
-            <div className="space-y-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              {format(selectedDate, 'EEEE, MMMM d, yyyy')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
               <div>
                 <h3 className="font-medium mb-2">Available ({getAvailabilityForDay(selectedDate).available.length})</h3>
                 <div className="space-y-1">
@@ -256,9 +241,15 @@ export function TeamAvailabilityView({ members, availability }: TeamAvailability
                 </div>
               </div>
             </div>
-          )}
-        </DialogContent>
-      </Dialog>
+          </CardContent>
+        </Card>
+      </div>
+
+      <RehearsalSuggestions
+        dateRange={dateRange}
+        getAvailabilityForDay={getAvailabilityForDay}
+        minRequired={MIN_REQUIRED_MEMBERS}
+      />
     </div>
   )
 } 
