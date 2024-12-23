@@ -141,6 +141,19 @@ export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarPr
     return cn(baseClasses, 'bg-orange-200 hover:bg-orange-200')
   }
 
+  function getStatusBackgroundColor(status: AvailabilityStatus): string {
+    switch (status) {
+      case 'available':
+        return 'bg-green-100'
+      case 'maybe':
+        return 'bg-yellow-100'
+      case 'unavailable':
+        return 'bg-red-100'
+      default:
+        return 'bg-gray-100'
+    }
+  }
+
   function renderCalendarDay({ date, displayMonth }: DayProps): JSX.Element {
     const isSelected = selectedDates.some(selectedDate => isSameDay(selectedDate, date))
     const dayAvailability = getDayAvailability(date)
@@ -160,17 +173,23 @@ export function AvailabilityCalendar({ initialMemberId }: AvailabilityCalendarPr
               {format(date, 'd')}
             </Button>
           </TooltipTrigger>
-          <TooltipContent className="p-2 space-y-1">
-            <div className="text-sm font-medium">
+          <TooltipContent className="p-2 space-y-1 bg-background border-2 border-border shadow-md">
+            <div className="text-sm font-medium text-foreground">
               {format(date, 'MMMM d, yyyy')}
             </div>
-            <div className="flex items-center gap-2">
+            <div className={cn(
+              "flex items-center gap-2 px-2 py-1 rounded text-black",
+              getStatusBackgroundColor(dayAvailability.morning)
+            )}>
               <Sun className="h-4 w-4" />
               <span className="text-sm">
                 Morning: {getAvailabilityLabel(dayAvailability.morning)}
               </span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className={cn(
+              "flex items-center gap-2 px-2 py-1 rounded text-black",
+              getStatusBackgroundColor(dayAvailability.evening)
+            )}>
               <Moon className="h-4 w-4" />
               <span className="text-sm">
                 Evening: {getAvailabilityLabel(dayAvailability.evening)}
