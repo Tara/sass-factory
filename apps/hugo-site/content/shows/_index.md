@@ -3,23 +3,20 @@ title: "Shows"
 defaultImage: "images/default-show.jpg"
 shows:
   upcoming:
-    - title: "Spoonful of Sass"
-      date: 2025-01-16T20:00:00
-      venue: "Endgames Improv"
-      address: "2965 Mission St, San Francisco, CA 94110"
-      ticketLink: "https://www.eventbrite.com/e/spoonful-of-sass-a-double-dose-of-improv-tickets-1146724226029"
-      image: "images/shows/spoonfulofsass.jpg"
-    - title: "SF Sketchfest 2025"
-      date: 2025-01-17T21:00:00
-      venue: "Eclectic Box"
-      address: "446 Valencia Street, San Francisco, CA 94103"
-      ticketLink: "https://www.eventbrite.com/e/sketch-improv-showcase-tickets-1082876676289?aff=oddtdtcreator"
-      image: "images/shows/sfsketchfest2025.png"
-    - title: "Savifest"
-      date: 2025-02-16T14:15:00
-      venue: "Media and Immersive eXperience, Mesa, AZ"
-      ticketLink: "https://savifest.com/troupes/sass-factory"
-      image: "images/shows/savifest2025.jpg"
+    - title: "Sketchfest 2024"
+      date: 2024-01-21T15:00:00
+      venue: "The Marsh"
+      image: "images/shows/sketchfest2024.png"
+    - title: "Endgames Comedy Festival"
+      date: 2024-09-21T21:00:00
+      venue: Endgames
+    - title: "Required Taste"
+      date: 2024-10-12T19:00:00
+      venue: "Endgames"
+      image: "images/endgames.png"
+    - title: "Vagabonds"
+      date: 2024-10-13T19:00:00
+      venue: "All Out Comedy"
     - title: "Jokeland"
       date: 2024-11-09T19:30:00
       venue: "Jokeland"
@@ -33,20 +30,53 @@ shows:
       ticketLink: "https://www.eventbrite.com/e/leela-improv-show-sat-112324-sanfrancisco-ca-tickets-1027970255707?aff=erelexpmlt"
       price: "$22.58"    
       image: "images/leela.jpg"
-    - title: "Endgames Comedy Festival"
-      date: 2024-09-21T21:00:00
-      venue: Endgames
-    - title: "Required Taste"
-      date: 2024-10-12T19:00:00
-      venue: "Endgames"
-      image: "images/endgames.png"
-    - title: "Vagabonds"
-      date: 2024-10-13T19:00:00
-      venue: "All Out Comedy"
-    - title: "Sketchfest 2024"
-      date: 2024-01-21T15:00:00
-      venue: "The Marsh"
-      image: "images/shows/sketchfest2024.png"
+    - title: "Spoonful of Sass"
+      date: 2025-01-16T20:00:00
+      venue: "Endgames Improv"
+      address: "2965 Mission St, San Francisco, CA 94110"
+      ticketLink: "https://www.eventbrite.com/e/spoonful-of-sass-a-double-dose-of-improv-tickets-1146724226029"
+      image: "images/shows/spoonfulofsass.jpg"
+    - title: "SF Sketchfest 2025"
+      date: 2025-01-17T21:00:00
+      venue: "Eclectic Box"
+      address: "446 Valencia Street, San Francisco, CA 94103"
+      ticketLink: "https://www.eventbrite.com/e/sketch-improv-showcase-tickets-1082876676289?aff=oddtdtcreator"
+      image: "images/shows/sfsketchfest2025.png"
+    - title: "Spoonful of Sass"
+      date: 2025-02-13T20:00:00
+      venue: "Endgames Improv"
+      address: "2965 Mission St, San Francisco, CA 94110"
+      ticketLink: "https://www.eventbrite.com/e/spoonful-of-sass-a-double-dose-of-improv-tickets-1146724226029"
+      image: "images/shows/spoonfulofsass.jpg"
+    - title: "Savifest"
+      date: 2025-02-16T14:15:00
+      venue: "Media and Immersive eXperience, Mesa, AZ"
+      ticketLink: "https://savifest.com/troupes/sass-factory"
+      image: "images/shows/savifest2025.jpg"
+    - title: "Spoonful of Sass"
+      date: 2025-03-13T20:00:00
+      venue: "Endgames Improv"
+      address: "2965 Mission St, San Francisco, CA 94110"
+      ticketLink: "https://www.eventbrite.com/e/spoonful-of-sass-a-double-dose-of-improv-tickets-1146724226029"
+      image: "images/shows/spoonfulofsass.jpg"
+    - title: "Spoonful of Sass"
+      date: 2025-04-10T20:00:00
+      venue: "Endgames Improv"
+      address: "2965 Mission St, San Francisco, CA 94110"
+      ticketLink: "https://www.eventbrite.com/e/spoonful-of-sass-a-double-dose-of-improv-tickets-1146724226029"
+      image: "images/shows/spoonfulofsass.jpg"
+    - title: "Spoonful of Sass"
+      date: 2025-05-08T20:00:00
+      venue: "Endgames Improv"
+      address: "2965 Mission St, San Francisco, CA 94110"
+      ticketLink: "https://www.eventbrite.com/e/spoonful-of-sass-a-double-dose-of-improv-tickets-1146724226029"
+      image: "images/shows/spoonfulofsass.jpg"
+    - title: "Spoonful of Sass"
+      date: 2025-06-05T20:00:00
+      venue: "Endgames Improv"
+      address: "2965 Mission St, San Francisco, CA 94110"
+      ticketLink: "https://www.eventbrite.com/e/spoonful-of-sass-a-double-dose-of-improv-tickets-1146724226029"
+      image: "images/shows/spoonfulofsass.jpg"
   # recurring:
   #   - title: "Monthly Showcase"
   #     day: "Last Friday"
