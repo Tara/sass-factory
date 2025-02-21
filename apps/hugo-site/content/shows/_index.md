@@ -70,7 +70,7 @@ shows:
       date: 2025-03-28T19:00:00
       venue: "Sacramento Comedy Spot"
       address: "1050 20th St #130, Sacramento, CA 95811"
-      image: "images/femme-fest.jpg"
+      image: "images/femme-fest.png"
     - title: "Spoonful of Sass"
       date: 2025-04-10T20:00:00
       venue: "Endgames Improv"
