@@ -59,6 +59,18 @@ shows:
       address: "2965 Mission St, San Francisco, CA 94110"
       ticketLink: "https://www.eventbrite.com/e/spoonful-of-sass-a-double-dose-of-improv-tickets-1146724226029"
       image: "images/shows/spoonfulofsass.jpg"
+    - title: "Leela Spring Show"
+      date: 2025-03-15T19:30:00
+      venue: "Leela"
+      address: "901 Mission Street, San Francisco, CA 94103"
+      ticketLink: "https://www.eventbrite.com/e/leela-improv-show-sat-031525-sanfrancisco-ca-tickets-1243626413079"
+      price: "$22.58"
+      image: "images/leela.jpg"
+    - title: "Femme Fest 2025"
+      date: 2025-03-28T19:00:00
+      venue: "Sacramento Comedy Spot"
+      address: "1050 20th St #130, Sacramento, CA 95811"
+      image: "images/femme-fest.jpg"
     - title: "Spoonful of Sass"
       date: 2025-04-10T20:00:00
       venue: "Endgames Improv"
