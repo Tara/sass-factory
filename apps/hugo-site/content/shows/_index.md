@@ -90,6 +90,13 @@ shows:
       address: "2965 Mission St, San Francisco, CA 94110"
       ticketLink: "https://www.eventbrite.com/e/spoonful-of-sass-a-double-dose-of-improv-tickets-1146724226029"
       image: "images/shows/spoonfulofsass.jpg"
+    - title: "Leela Spring Show"
+      date: 2025-06-14T19:30:00
+      venue: "Leela"
+      address: "901 Mission Street, San Francisco, CA 94103"
+      ticketLink: "https://www.eventbrite.com/e/leela-improv-show-sat-061425-sanfrancisco-ca-tickets-1335400110679"
+      price: "$22.58"
+      image: "images/leela.jpg"
   # recurring:
   #   - title: "Monthly Showcase"
   #     day: "Last Friday"
