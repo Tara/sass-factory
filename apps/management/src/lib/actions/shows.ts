@@ -1,6 +1,6 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
+import { createServerActionClient } from '@/lib/supabase/server'
 import { showSchema, type ShowFormValues } from '@/lib/validations/show'
 import { revalidatePath } from 'next/cache'
 import type { Database } from '@/lib/types/supabase'
@@ -23,7 +23,7 @@ export async function updateShow(data: UpdateShowData) {
     status: updateData.status as ShowStatus,
   }
 
-  const supabase = await createClient()
+  const supabase = createServerActionClient()
 
   const { error } = await supabase
     .from('shows')

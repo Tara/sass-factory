@@ -1,67 +1,62 @@
 "use client"
 
 import { useState } from "react"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
-import { useRouter } from "next/navigation"
-import { useAuthUser } from "@/lib/hooks/useAuthUser"
+import { useAuth } from "@/lib/hooks/useAuth"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { EditProfileDialog } from "@/components/auth/edit-profile-dialog"
 
 export function UserAccountNav() {
-  const router = useRouter()
-  const supabase = createClientComponentClient()
-  const { user, isLoading } = useAuthUser()
-  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false)
-
-  const handleSignOut = async () => {
-    await supabase.auth.signOut()
-    router.push("/auth/signin")
-    router.refresh()
-  }
-
-  if (isLoading || !user) return null
+  const { session, signOut } = useAuth()
+  const user = session?.user ?? null
+  const [showEditProfile, setShowEditProfile] = useState(false)
 
   return (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger>
-          <Avatar>
-            <AvatarImage src={user.user_metadata.avatar_url} />
-            <AvatarFallback>
-              {user.email?.charAt(0).toUpperCase() || "U"}
-            </AvatarFallback>
-          </Avatar>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={user?.user_metadata?.avatar_url} alt={user?.email ?? ''} />
+              <AvatarFallback>
+                {user?.email?.charAt(0).toUpperCase() ?? 'U'}
+              </AvatarFallback>
+            </Avatar>
+          </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <div className="flex items-center justify-start gap-2 p-2">
-            <div className="flex flex-col space-y-1 leading-none">
-              {user.user_metadata.full_name && (
-                <p className="font-medium">{user.user_metadata.full_name}</p>
-              )}
-              {user.email && (
-                <p className="w-[200px] truncate text-sm text-muted-foreground">
-                  {user.email}
-                </p>
-              )}
+        <DropdownMenuContent className="w-56" align="end" forceMount>
+          <DropdownMenuLabel className="font-normal">
+            <div className="flex flex-col space-y-1">
+              <p className="text-sm font-medium leading-none">
+                {user?.user_metadata?.full_name || user?.email}
+              </p>
+              <p className="text-xs leading-none text-muted-foreground">
+                {user?.email}
+              </p>
             </div>
-          </div>
+          </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem 
-            className="cursor-pointer" 
-            onClick={() => setIsEditProfileOpen(true)}
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onSelect={(event) => {
+              setShowEditProfile(true)
+            }}
           >
-            Edit Profile
+            Edit profile
           </DropdownMenuItem>
-          <DropdownMenuItem 
-            className="text-red-600 cursor-pointer" 
-            onClick={handleSignOut}
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onSelect={(event) => {
+              signOut()
+            }}
           >
             Sign out
           </DropdownMenuItem>
@@ -69,8 +64,8 @@ export function UserAccountNav() {
       </DropdownMenu>
 
       <EditProfileDialog
-        isOpen={isEditProfileOpen}
-        onClose={() => setIsEditProfileOpen(false)}
+        isOpen={showEditProfile}
+        onClose={() => setShowEditProfile(false)}
         currentUser={user}
       />
     </>

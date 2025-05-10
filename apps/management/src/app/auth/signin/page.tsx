@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
@@ -18,7 +18,7 @@ const signInSchema = z.object({
 
 type SignInForm = z.infer<typeof signInSchema>
 
-export default function SignIn() {
+function SignInContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const {
@@ -133,5 +133,26 @@ export default function SignIn() {
         </form>
       </Card>
     </div>
+  )
+}
+
+export default function SignIn() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center">
+        <Card className="w-[400px]">
+          <CardHeader>
+            <h1 className="text-2xl font-bold">Loading...</h1>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground text-center">
+              Please wait while we load the sign in page.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    }>
+      <SignInContent />
+    </Suspense>
   )
 } 

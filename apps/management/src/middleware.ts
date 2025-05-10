@@ -1,25 +1,39 @@
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
+import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
   const res = NextResponse.next()
-  const supabase = createMiddlewareClient({ req: request, res })
-
-  // Refresh session if expired
-  await supabase.auth.getSession()
-
-  // Don't redirect auth-related routes
-  if (request.nextUrl.pathname.startsWith('/auth/')) {
-    return res
-  }
+  
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return request.cookies.get(name)?.value
+        },
+        set(name: string, value: string, options: any) {
+          res.cookies.set({ name, value, ...options })
+        },
+        remove(name: string, options: any) {
+          res.cookies.delete({ name, ...options })
+        },
+      },
+    }
+  )
 
   const {
     data: { session },
   } = await supabase.auth.getSession()
 
-  // If no session and trying to access protected route, redirect to signin
-  if (!session && !request.nextUrl.pathname.startsWith('/auth/')) {
+  // Allow access to auth-related routes even without session
+  if (request.nextUrl.pathname.startsWith('/auth/')) {
+    return res
+  }
+
+  // For all other routes, redirect to signin if no session
+  if (!session) {
     return NextResponse.redirect(new URL('/auth/signin', request.url))
   }
 
@@ -28,15 +42,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public folder
-     * - auth/confirm (email confirmation)
-     * - api/auth/confirm (confirmation API)
-     */
     '/((?!_next/static|_next/image|favicon.ico|public/|auth/confirm|api/auth/confirm).*)',
   ],
-} 
+}
