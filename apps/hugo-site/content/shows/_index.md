@@ -97,6 +97,12 @@ shows:
       ticketLink: "https://www.eventbrite.com/e/leela-improv-show-sat-061425-sanfrancisco-ca-tickets-1335400110679"
       price: "$22.58"
       image: "images/leela.jpg"
+    - title: "Chicago iO Fest"
+      date: 2025-07-26T00:00:00
+      venue: "The Weed"
+      address: "1501 N Kingsbury St, Chicago, IL 60642"
+      ticketLink: "https://ioimprov.com/io-fest/"
+      image: "images/io-fest2025.png"
   # recurring:
   #   - title: "Monthly Showcase"
   #     day: "Last Friday"
