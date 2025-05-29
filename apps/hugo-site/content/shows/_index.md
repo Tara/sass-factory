@@ -102,7 +102,7 @@ shows:
       venue: "The Weed"
       address: "1501 N Kingsbury St, Chicago, IL 60642"
       ticketLink: "https://ioimprov.com/io-fest/"
-      image: "images/io-fest2025.png"
+      image: "images/io-fest25.png"
   # recurring:
   #   - title: "Monthly Showcase"
   #     day: "Last Friday"
