@@ -97,6 +97,18 @@ shows:
       ticketLink: "https://www.eventbrite.com/e/leela-improv-show-sat-061425-sanfrancisco-ca-tickets-1335400110679"
       price: "$22.58"
       image: "images/leela.jpg"
+    - title: "Indie Improv Night"
+      date: 2025-06-29T20:00:00
+      venue: "All Out Comedy"
+      address: "2550 Telegraph Avenue, Oakland, CA 94612"
+      ticketLink: "https://events.humanitix.com/indie-improv-night-l24sl9t3"
+      price: "$10.00"
+    - title: "Vagabonds"
+      date: 2025-07-13T19:00:00
+      venue: "All Out Comedy"
+      address: "2550 Telegraph Avenue, Oakland, CA 94612"
+      ticketLink: "https://www.alloutcomedytheater.com/vagabonds"
+      price: "$10.00"
     - title: "Chicago iO Fest"
       date: 2025-07-26T00:00:00
       venue: "The Weed"
