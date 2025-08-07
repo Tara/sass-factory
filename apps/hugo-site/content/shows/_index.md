@@ -128,7 +128,7 @@ shows:
       address: "3092 16th Street San Francisco, CA 94103"
       ticketLink: "https://www.eventbrite.com/e/forever-improv-tickets-1471071086219"
       price: "$10.30"
-      image: "images/forever.jpg"
+      image: "images/forever-improv.jpg"
     - title: "Spoonful of Sass"
       date: 2025-08-28T20:00:00
       venue: "Endgames Improv"
