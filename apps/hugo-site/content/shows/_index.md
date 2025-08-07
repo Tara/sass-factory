@@ -115,6 +115,26 @@ shows:
       address: "1501 N Kingsbury St, Chicago, IL 60642"
       ticketLink: "https://ioimprov.com/io-fest/"
       image: "images/io-fest25.png"
+    - title: "Leela Summer Show"
+      date: 2025-08-16T19:30:00
+      venue: "Leela"
+      address: "901 Mission Street, San Francisco, CA 94103"
+      ticketLink: "https://www.eventbrite.com/e/leela-improv-show-sat-081625-sanfrancisco-ca-tickets-1567371603659?aff=oddtdtcreator"
+      price: "$22.58"
+      image: "images/leela.jpg"
+    - title: "Forever Improv!"
+      date: 2025-08-22T19:00:00
+      venue: "Manny's"
+      address: "3092 16th Street San Francisco, CA 94103"
+      ticketLink: "https://www.eventbrite.com/e/forever-improv-tickets-1471071086219"
+      price: "$10.30"
+      image: "images/forever.jpg"
+    - title: "Spoonful of Sass"
+      date: 2025-08-28T20:00:00
+      venue: "Endgames Improv"
+      address: "2965 Mission St, San Francisco, CA 94110"
+      ticketLink: "https://www.eventbrite.com/e/spoonful-of-sass-a-double-dose-of-improv-tickets-1146724226029"
+      image: "images/shows/spoonfulofsass.jpg"
   # recurring:
   #   - title: "Monthly Showcase"
   #     day: "Last Friday"
