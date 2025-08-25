@@ -135,6 +135,24 @@ shows:
       address: "2965 Mission St, San Francisco, CA 94110"
       ticketLink: "https://www.eventbrite.com/e/spoonful-of-sass-a-double-dose-of-improv-tickets-1146724226029"
       image: "images/shows/spoonfulofsass.jpg"
+    - title: "Spoonful of Sass"
+      date: 2025-09-25T20:00:00
+      venue: "Endgames Improv"
+      address: "2965 Mission St, San Francisco, CA 94110"
+      ticketLink: "https://www.eventbrite.com/e/spoonful-of-sass-a-double-dose-of-improv-tickets-1146724226029"
+      image: "images/shows/spoonfulofsass.jpg"
+    - title: "Spoonful of Sass"
+      date: 2025-10-23T20:00:00
+      venue: "Endgames Improv"
+      address: "2965 Mission St, San Francisco, CA 94110"
+      ticketLink: "https://www.eventbrite.com/e/spoonful-of-sass-a-double-dose-of-improv-tickets-1146724226029"
+      image: "images/shows/spoonfulofsass.jpg"
+    - title: "Spoonful of Sass"
+      date: 2025-11-20T20:00:00
+      venue: "Endgames Improv"
+      address: "2965 Mission St, San Francisco, CA 94110"
+      ticketLink: "https://www.eventbrite.com/e/spoonful-of-sass-a-double-dose-of-improv-tickets-1146724226029"
+      image: "images/shows/spoonfulofsass.jpg"
   # recurring:
   #   - title: "Monthly Showcase"
   #     day: "Last Friday"
