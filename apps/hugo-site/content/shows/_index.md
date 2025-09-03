@@ -135,6 +135,12 @@ shows:
       address: "2965 Mission St, San Francisco, CA 94110"
       ticketLink: "https://www.eventbrite.com/e/spoonful-of-sass-a-double-dose-of-improv-tickets-1146724226029"
       image: "images/shows/spoonfulofsass.jpg"
+    - title: "Endgames Comedy Festival"
+      date: 2025-09-12T19:00:00
+      venue: "The Marsh"
+      address: "1062 Valencia Street San Francisco, CA 94110"
+      ticketLink: "https://www.eventbrite.com/e/tallie-chris-and-shantira-nnamdi-improv-show-tickets-1626872652899"
+      image: "images/shows/endgames-comedy-2.png"
     - title: "Spoonful of Sass"
       date: 2025-09-25T20:00:00
       venue: "Endgames Improv"
