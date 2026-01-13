@@ -1,4 +1,4 @@
-This is a monorepo. `/apps/` has 2 TOTALLY different thigns in it. `/apps/hugo-site` is a huge static site. `/apps/management` is a Next.js app. I have these in the same repo so that in the future I can generate some static content for hugo from the management app. Please make sure to check with me on which app we are working on before doing anything! 
+This is a monorepo. `/apps/` has 2 TOTALLY different things in it. `/apps/hugo-site` is a huge static site. `/apps/management` is a Next.js app. I have these in the same repo so that in the future I can generate some static content for hugo from the management app. Please make sure to check with me on which app we are working on before doing anything! 
 
 You are an expert AI programming assistant that primarily focuses on producing clear, readable React and TypeScript code.
 
@@ -7,6 +7,8 @@ You always use the Latest stable version of TypeScript, JavaScript, React, Node.
 You carefully provide accurate, factual, thoughtful answers, and are a genius at reasoning ai to chat, to generate code style and structure
 
 Key Principles:
+* You never assume and always ask clarifying questions when you don't have information.
+* When a file is referenced that you don't have, ask for it rather than guessing its contents.
 * Write concise, technical responses with accurate TypeScript examples.
 * Use functional, declarative programming. Avoid classes.
 * Prefer iteration and modularization over duplication.
@@ -32,7 +34,7 @@ React/Next.js:
 * Use Shadcn UI for components.
 * Implement responsive design with Tailwind CSS.
 * Use Zod for validation.
-* Use Radix UI for icons.
+* Use Lucide React for icons.
 * Use dynamic loading for non-critical components.
 * Use server actions for all data mutations.
 * Model expected errors as return values: Avoid using try/catch for expected errors in Server Actions. Use useActionState to manage these errors and return them to the client.

@@ -1,16 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/client'
 import type { Database } from '@/lib/types/supabase'
 import type { Member, NewMember, MemberStatus } from '@/lib/types/members'
-
-// Create a single instance of the Supabase client
-const supabase = createClientComponentClient<Database>()
 
 function getDefaultAvatar(name: string) {
   return `https://api.dicebear.com/9.x/bottts/svg?seed=${encodeURIComponent(name)}`
 }
 
-async function fetchMembers(): Promise<Member[]> {
+async function fetchMembers(supabase: any): Promise<Member[]> {
   const { data, error } = await supabase
     .from('members')
     .select('*')
@@ -21,7 +18,7 @@ async function fetchMembers(): Promise<Member[]> {
   return data as Member[]
 }
 
-async function deleteMember(id: string) {
+async function deleteMember(id: string, supabase: any) {
   const { error } = await supabase
     .from('members')
     .delete()
@@ -30,7 +27,7 @@ async function deleteMember(id: string) {
   if (error) throw error
 }
 
-async function toggleMemberStatus(id: string, currentStatus: MemberStatus) {
+async function toggleMemberStatus(id: string, currentStatus: MemberStatus, supabase: any) {
   const newStatus = currentStatus === 'active' ? 'inactive' : 'active'
   const { data, error } = await supabase
     .from('members')
@@ -45,10 +42,11 @@ async function toggleMemberStatus(id: string, currentStatus: MemberStatus) {
 
 export function useMembers() {
   const queryClient = useQueryClient()
+  const supabase = createClient()
 
   const { data: members = [], isLoading, error } = useQuery<Member[]>({
     queryKey: ['members'],
-    queryFn: fetchMembers
+    queryFn: () => fetchMembers(supabase)
   })
 
   const addMemberMutation = useMutation({
@@ -71,7 +69,7 @@ export function useMembers() {
   })
 
   const deleteMemberMutation = useMutation({
-    mutationFn: deleteMember,
+    mutationFn: (id: string) => deleteMember(id, supabase),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['members'] })
     }
@@ -79,7 +77,7 @@ export function useMembers() {
 
   const toggleStatusMutation = useMutation({
     mutationFn: ({ id, status }: { id: string, status: MemberStatus }) => 
-      toggleMemberStatus(id, status),
+      toggleMemberStatus(id, status, supabase),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['members'] })
     }

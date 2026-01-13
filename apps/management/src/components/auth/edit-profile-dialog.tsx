@@ -1,11 +1,12 @@
-"use client"
+'use client'
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { useRouter } from "next/navigation"
+import { User } from '@supabase/supabase-js'
+import { updateProfile } from '@/lib/actions/update-profile'
 
 import {
   Dialog,
@@ -35,61 +36,69 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>
 interface EditProfileDialogProps {
   isOpen: boolean
   onClose: () => void
-  currentUser: any
+  currentUser: User | null
 }
 
 export function EditProfileDialog({ isOpen, onClose, currentUser }: EditProfileDialogProps) {
   const [isLoading, setIsLoading] = useState(false)
-  const supabase = createClientComponentClient()
   const router = useRouter()
   const { toast } = useToast()
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
-      fullName: currentUser?.user_metadata?.full_name || "",
-      avatarUrl: currentUser?.user_metadata?.avatar_url || "",
+      fullName: "",
+      avatarUrl: "",
     },
   })
 
-  const handleClose = () => {
-    console.log('handleClose called')
-    form.reset()
-    onClose()
-  }
+  useEffect(() => {
+    if (currentUser) {
+      form.reset({
+        fullName: currentUser.user_metadata?.full_name || "",
+        avatarUrl: currentUser.user_metadata?.avatar_url || "",
+      })
+    }
+  }, [currentUser, form])
 
   async function onSubmit(data: ProfileFormValues) {
-    console.log('onSubmit called with data:', data)
-    
-    if (isLoading) {
-      console.log('Submit blocked - already loading')
+    if (!currentUser) {
+      toast({
+        title: "Error",
+        description: "No user found. Please try logging in again.",
+        variant: "destructive",
+      })
       return
     }
 
+    if (isLoading) return
+
     try {
-      console.log('Setting loading state...')
       setIsLoading(true)
       
-      console.log('Calling Supabase updateUser...')
+      const profileData = {
+        fullName: data.fullName,
+        avatarUrl: data.avatarUrl || ""
+      }
       
-      // Send update without waiting for response
-      supabase.auth.updateUser({
-        data: {
-          full_name: data.fullName,
-          avatar_url: data.avatarUrl,
-        },
-      })
+      const result = await updateProfile(profileData)
 
-      // Show success immediately
+      if (!result.success) {
+        throw new Error(result.error)
+      }
+
+      // Close dialog
+      handleClose()
+
+      // Show success toast
       toast({
         title: "Profile updated",
-        description: "Your changes are being saved...",
+        description: "Your changes have been saved successfully.",
       })
-      
-      // Close dialog and refresh
-      handleClose()
-      router.refresh()
 
+      // Simple router refresh should be enough since we're using server action
+      router.refresh()
+      
     } catch (error) {
       console.error('Profile update error:', error)
       toast({
@@ -104,15 +113,17 @@ export function EditProfileDialog({ isOpen, onClose, currentUser }: EditProfileD
     }
   }
 
-  const handleOpenChange = (open: boolean) => {
-    console.log('handleOpenChange called with:', { open, isLoading })
-    if (!open && !isLoading) {
-      handleClose()
-    }
+  const handleClose = () => {
+    form.reset()
+    onClose()
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+    <Dialog open={isOpen} onOpenChange={(open) => {
+      if (!open && !isLoading) {
+        handleClose()
+      }
+    }}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Profile</DialogTitle>
@@ -163,4 +174,4 @@ export function EditProfileDialog({ isOpen, onClose, currentUser }: EditProfileD
       </DialogContent>
     </Dialog>
   )
-} 
+}
